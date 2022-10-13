@@ -1,0 +1,427 @@
+
+
+#' An S4 class to represent component Ay (the last advice or reference catch) 
+#' of the rfb, rb, and chr rules.
+#' 
+#' The classes \code{rfb_Ay}, \code{rb_Ay}, and \code{chr_Ay} inherit from 
+#' \code{comp_Ay} and their only difference is that the slot \code{catch_rule}
+#' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
+#' 
+#' @slot value The value of component Ay (reference catch)
+#' @slot catch_rule The catch rule for which Ay is used. One of 'rfb', 'rb', or 'chr'.
+#' @slot data Time series of historical catches and/or advice
+#' @slot avg_years Number of years for calculating average catch
+#' @slot basis Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch
+#' @slot advice_metric Advice metric, 'catch' or 'landings'.
+#' 
+#' @rdname comp_Ay-class
+#' @export
+setClass(
+  Class = "comp_Ay",
+  slots = c(
+    value = "numeric",
+    units = "character",
+    catch_rule = "character",
+    data = "vector",
+    avg_years = "numeric",
+    basis = "character",
+    advice_metric = "character"
+  ),
+  prototype = list(
+    value = NA_real_,
+    units = NA_character_,
+    catch_rule = NA_character_,
+    data = data.frame(matrix(
+      ncol = 3, nrow = 0,
+      dimnames = list(NULL, c("year", "catch", "advice"))
+    )),
+    avg_years = NA_real_,
+    basis = NA_character_,
+    advice_metric = NA_character_
+  )
+)
+
+#' @describeIn comp_Ay-class
+setClass(Class = "rfb_Ay", 
+         contains = "comp_Ay",
+         prototype = list(catch_rule = "rfb"))
+#' @describeIn comp_Ay-class
+setClass(Class = "rb_Ay", 
+         contains = "comp_Ay",
+         prototype = list(catch_rule = "rb"))
+#' @describeIn comp_Ay-class
+setClass(Class = "chr_Ay", 
+         contains = "comp_Ay",
+         prototype = list(catch_rule = "chr"))
+
+### validity checks
+setValidity("comp_Ay", function(object) {
+  if (!identical(length(object@value), 1L)) {
+    "slot value must be of length 1"
+  } else if (!identical(length(object@units), 1L)) {
+    "slot units must be of length 1"
+  } else if (isFALSE(object@catch_rule %in% c(NA, "rfb", "rb", "chr"))) {
+    paste0("Unknown catch rule ", object@catch_rule, ". Must be ",
+           "rfb, rb, or chr!")
+  } else if (!identical(length(object@catch_rule), 1L)) {
+    "slot catch_rule must be of length 1"
+  } else if (isFALSE(object@basis %in% c(NA, "advice", "average catch"))) {
+    paste0("Unknown catch rule ", object@basis, ". Must be ",
+           "'average' or 'average catch'!")
+  } else if (!identical(length(object@basis), 1L)) {
+    "slot basis must be of length 1"
+  } else if (!identical(length(object@advice_metric), 1L)) {
+    "slot advice_metric must be of length 1"
+  } else {
+    TRUE
+  }
+})
+
+#' rfb/rb/chr rule - component Ay (reference catch or advice)
+#'
+#' This function defines the reference catch (last advice or average of 
+#' historical catches) for the rfb, rb, and chr rules.
+#' 
+#' The function accepts as its first argument (`object`):
+#' - a single value representing a reference catch, e.g. the previous catch advice
+#' - a vector of historical values which are used to calculate the average catch
+#' - a data.frame with columns 'year' and either of 'advice', 'catch', 'landings'
+#' - an object of class `comp_Ay`
+#' 
+#' \code{rfb_Ay()}, \code{rb_Ay()}, and \code{chr_Ay()} are aliases for
+#' \code{comp_Ay()} in which the \code{catch_rule} argument is already set to 
+#' 'rfb', 'rb', or 'chr'.
+#' 
+#' The reference catch is set following ICES (2022).
+#'
+#' Usually, the reference catch is the previous advised catch. Alternatively,
+#' if the rfb/rb/chr rule is applied the first time, it can be based on an
+#' average of historical catches.
+#' 
+#' @param object The reference catch. See details
+#' @param units [Optional] The units of the reference catch, e.g. "tonnes".
+#' @param catch_rule [Optional] The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
+#' @param data [Internal] Data used for calculating reference catch.
+#' @param avg_years [Optional] Number of years for calculating average catch or vector years to use
+#' @param basis [Optional] Basis of Ay. Either "advice" for using the previous advice or "average catch" when based on an average of historical catch
+#' @param advice_metric
+#' @param ... Additional arguments (Not used) 
+#'
+#' @references 
+#' ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+#'
+#'
+#' @return An object of class \code{comp_Ay}
+#'
+#' @examples
+#' 
+#' @name comp_Ay
+#' @export
+NULL
+
+#' @rdname comp_Ay
+setGeneric(
+  name = "comp_Ay",
+  def = function(object, value, units, catch_rule, data, avg_years, 
+                 basis = "advice", advice_metric = "catch", ...) {
+    standardGeneric("comp_Ay")
+  },
+  signature = c("object")
+)
+
+### numeric -> use as Ay
+#' @describeIn comp_Ay
+#' @keywords internal
+#' @name comp_Ay
+setMethod(comp_Ay,
+  signature = c(object = "numeric"),
+  function(object, value, units, catch_rule, data, avg_years, basis,
+           advice_metric, ...) {
+    value <- object
+    object <- new(Class = "comp_Ay")
+    comp_Ay_calc(
+      object = object, value = value, units = units, catch_rule = catch_rule, 
+      data = data, avg_years = avg_years, basis = basis,
+      advice_metric = advice_metric, ...
+    )
+  }
+)
+
+### numeric -> use as Ay
+#' @describeIn comp_Ay
+#' @keywords internal
+#' @name comp_Ay
+setMethod(comp_Ay,
+  signature = c(object = "data.frame"),
+  function(object, value, units, catch_rule, data, avg_years, basis,
+           advice_metric, ...) {
+    data <- object
+    object <- new(Class = "comp_Ay")
+    comp_Ay_calc(
+      object = object, value = value, units = units, catch_rule = catch_rule,
+      data = data, avg_years = avg_years, basis = basis,
+      advice_metric = advice_metric, ...
+    )
+  }
+)
+
+### comp_Ay -> validate and update if needed
+#' @describeIn comp_Ay
+#' @keywords internal
+#' @name comp_Ay
+setMethod(comp_Ay,
+  signature = c(object = "comp_Ay"),
+  function(object, value, units, catch_rule, data, avg_years, basis, 
+           advice_metric, ...) {
+    validObject(object)
+    comp_Ay_calc(
+      object = object, value = value, units = units, catch_rule = catch_rule,
+      data = data, avg_years = avg_years, basis = basis,
+      advice_metric = advice_metric, ...
+    )
+  }
+)
+
+comp_Ay_calc <- function(object, value, units, catch_rule, data, avg_years, 
+                         basis, advice_metric, ...) {
+  
+  ### create empty object, if missing
+  if (missing(object)) object <- new(Class = "comp_Ay")
+  
+  ### format/check/insert values, if provided
+  if (!missing(units))
+    if (!identical(units, ""))
+      object@units <- as.character(units)
+  if (!missing(catch_rule))
+    object@catch_rule <- match.arg(catch_rule, choices = c("rfb", "rb", "chr"))
+  if (!missing(basis))
+    object@basis <- match.arg(basis, choices = c("advice", "average catch"))
+  if (!missing(advice_metric))
+    object@advice_metric <- match.arg(advice_metric, 
+                                      choices = c("catch", "landings"))
+  
+  ### argument "data" contains data to use for calculating Ay
+  if (!missing(data)) {
+    if (is(data, "data.frame")) {
+      ### make sure that columns "catch"/"landings"/"advice" and "year" exist
+      names(data) <- tolower(names(data))
+      names(data) <- trimws(names(data), which = "both")
+      if (identical(ncol(data), 1L)) {
+        ### if single column provided, assume this contains the catch
+        names(data) <- object@advice_metric
+        data$year <- seq_along(data$catch)
+      } else {
+        if (all(!c("catch", "landings", "advice") %in% names(data))) 
+          stop("column 'catch'/'landings'/'advice' missing in data.frame provided as data")
+        if (isFALSE("year" %in% names(data))) 
+          stop("column 'year' missing in data.frame provided as data")
+      }
+      ### check if request metric (catch/landings) is available
+      if (identical(object@basis, "average catch")) {
+        if (identical(object@advice_metric, "catch")) {
+          if (!"catch" %in% names(data)) 
+            stop("Average catch requested but catch not provided")
+        } else if (identical(object@advice_metric, "landings")) {
+          if (!"landings" %in% names(data)) 
+            stop("Average landings requested but landings not provided")
+        }
+      }
+    }
+    object@data <- data
+    ### if avg_years not specified, use all years
+    if (missing(avg_years) & identical(object@basis, "average catch")) 
+      avg_years <- length(data$year)
+  }
+  ### years for average catch
+  if (!missing(avg_years)) {
+    ### if a single number is provided, this is the number of years to use
+    if (identical(length(avg_years), 1L)) {
+      avg_years <- tail(object@data$year, avg_years)
+      ### otherwise assume years to be considered are provided
+    }
+    object@avg_years <- avg_years
+  }
+  
+  ### use value, if provided
+  if (!missing(value)) {
+    object@value <- value
+    
+  ### calculate Ay
+  } else {
+    if (is.na(object@basis) | identical(object@basis, "average catch")) {
+      value <- mean(object@data$catch[object@data$year %in% object@avg_years],
+                  na.rm = TRUE)
+      object@basis <- "average catch"
+    } else if (identical(object@basis, "advice")) {
+      ### use advice 
+      if (all(!is.na(object@avg_years))) {
+        value <- mean(object@data$advice[object@data$year == object@avg_years],
+                      na.rm = TRUE)
+      } else {
+        ### find last advice value 
+        pos <- tail(which(!is.na(object@data$advice)), 1)
+        value <- object@data$advice[pos]
+        object@avg_years <- object@data$year[pos]
+      }
+    }
+    object@value <- value
+    
+  }
+  
+  return(object)
+  
+}
+
+### alias for rfb rule
+#' @rdname comp_Ay
+setGeneric(
+  name = "rfb_Ay",
+  def = function(object, value, units, catch_rule = "rfb", data, avg_years,
+                 basis = "advice", advice_metric = "advice", ...) {
+    standardGeneric("rfb_Ay")
+  },
+  signature = c("object")
+)
+#' @describeIn comp_Ay
+#' @keywords internal
+#' @name comp_Ay
+setMethod(rfb_Ay,
+  signature = c(object = "ANY"),
+  function(object, value, units, catch_rule = "rfb", data, avg_years,
+           basis, advice_metric, ...) {
+    catch_rule <- match.arg(catch_rule)
+    object <- comp_Ay(
+      object = object, value = value, units = units, catch_rule = catch_rule,
+      data = data, avg_years = avg_years, basis = basis,
+      ...
+    )
+    class(object) <- "rfb_Ay"
+    return(object)
+  }
+)
+
+### alias for rb rule
+#' @rdname comp_Ay
+setGeneric(
+  name = "rb_Ay",
+  def = function(object, value, units, catch_rule = "rb", data, avg_years, 
+                 basis = "advice", advice_metric = "catch", ...) {
+    standardGeneric("rb_Ay")
+  },
+  signature = c("object")
+)
+#' @describeIn comp_Ay
+#' @keywords internal
+#' @name comp_Ay
+setMethod(rb_Ay,
+  signature = c(object = "ANY"),
+  function(object, value, units, catch_rule = "rb", data, avg_years,
+           basis, ...) {
+    catch_rule <- match.arg(catch_rule)
+    object <- comp_Ay(
+      object = object, value = value, units = units, catch_rule = catch_rule,
+      data = data, avg_years = avg_years, basis = basis,
+      ...
+    )
+    class(object) <- "rb_Ay"
+    return(object)
+  }
+)
+
+### alias for chr rule
+#' @rdname comp_Ay
+setGeneric(
+  name = "chr_Ay",
+  def = function(object, value, units, catch_rule = "chr", data, avg_years,
+                 basis = "advice", advice_metric = "catch", ...) {
+    standardGeneric("chr_Ay")
+  },
+  signature = c("object")
+)
+#' @describeIn comp_Ay
+#' @keywords internal
+#' @name comp_Ay
+setMethod(chr_Ay,
+  signature = c(object = "ANY"),
+  function(object, value, catch_rule = "chr", data, avg_years,
+           basis, ...) {
+    catch_rule <- match.arg(catch_rule)
+    object <- comp_Ay(
+      object = object, value = value, units = units, catch_rule = catch_rule,
+      data = data, avg_years = avg_years, basis = basis,
+      ...
+    )
+    class(object) <- "chr_Ay"
+    return(object)
+  }
+)
+
+### value of object
+setGeneric(
+  name = "value",
+  def = function(object) standardGeneric("value")
+)
+setMethod(
+  f = "value", signature = "comp_Ay",
+  definition = function(object) {
+    return(object@value)
+  }
+)
+
+
+### print to screen
+setMethod(
+  f = "show", signature = "comp_Ay",
+  definition = function(object) {
+    cat(paste0(object@value, "\n"))
+  }
+)
+
+### detailed summary
+setMethod(
+  f = "summary", signature = "comp_Ay",
+  definition = function(object) {
+    txt <- paste0(
+      paste(rep("-", 50), collapse = ""), "\n",
+      "component Ay:\n"
+    )
+    txt <- paste0(txt, paste0("Reference catch Ay = ", object@value, "\n"))
+    if (identical(object@basis, "average catch")) {
+      txt <- paste0(
+        txt, "based on average catches (years ",
+        paste0(object@avg_years, collapse = ", "), ")\n"
+      )
+    }
+    txt <- paste0(txt, paste0(paste(rep("-", 50), collapse = "")))
+    cat(txt)
+  }
+)
+
+### ICES advice style table
+setGeneric(
+  name = "advice",
+  def = function(object) standardGeneric("advice")
+)
+setMethod(
+  f = "advice", signature = "comp_Ay",
+  definition = function(object) {
+    txt <- paste0(paste(rep("-", 80), collapse = ""), "\n")
+    if (identical(object@basis, "advice")) {
+      txt_Ay <- paste0("Previous ", object@advice_metric, 
+                       " advice Ay (advised ", object@advice_metric, " for ", 
+                       object@avg_years, ")")
+    } else if (identical(object@basis, "average catch")) {
+      txt_Ay <- paste0("Mean ", object@advice_metric, " Cy (", 
+                       paste0(object@avg_years, collapse = ", "), ")")
+    } else {
+      txt_Ay <- paste0("Reference ", object@advice_metric)
+    }
+    Ay_value <- round(object@value)
+    txt_Ay_value <- paste0(Ay_value, " ", object@units)
+    txt_add <- paste0(format(txt_Ay, width = 48), " | ",
+                      format(txt_Ay_value, width = 29, justify = "right"),
+                      "\n")
+    txt <- paste0(txt, txt_add, paste(rep("-", 80), collapse = ""), "\n")
+    cat(txt)
+  }
+)
