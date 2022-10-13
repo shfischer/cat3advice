@@ -1,0 +1,9 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+thoughts/*
+scripts/*
+stocks/*
+tmp/*
+*tmp.R
