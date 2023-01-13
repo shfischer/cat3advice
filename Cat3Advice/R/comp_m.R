@@ -371,3 +371,49 @@ setMethod(
     cat(txt)
   }
 )
+
+### ICES advice style table
+setGeneric(
+  name = "advice",
+  def = function(object) standardGeneric("advice")
+)
+setMethod(
+  f = "advice", signature = "comp_m",
+  definition = function(object) {
+    txt <- paste0(paste(rep("-", 80), collapse = ""), "\n",
+                  "Precautionary multiplier to maintain biomass above Blim ",
+                  "with 95% probability\n")
+    
+    if (is(object, "rfb_m") | identical(object@catch_rule, "rfb") &
+        isTRUE(object@value %in% c(0.95, 0.9))) {
+      generic <- TRUE
+    } else if (is(object, "rb_m") | identical(object@catch_rule, "rb") &
+               isTRUE(object@value %in% c(0.5))) {
+      generic <- TRUE
+    } else if (is(object, "chr_m") | identical(object@catch_rule, "chr") &
+               isTRUE(object@value %in% c(0.5))) {
+      generic <- TRUE
+    } else {
+      generic <- FALSE
+    }
+    
+    txt_m1 <- paste0("m: multiplier") 
+    txt_m2 <- paste0(ifelse(generic, 
+                            "(generic multiplier based on life history)",
+                            "(stock-specific multiplier)"))
+    val_m <- icesAdvice::icesRound(object@value)
+    
+    txt <- paste0(txt,
+                  paste0(format(txt_m1, width = 48), " | ",
+                         format(val_m, width = 29, justify = "right"),
+                         "\n",
+                         format(paste0("   ", txt_m2), width = 48), " | ",
+                         format("", width = 29, justify = "right"),
+                         "\n")
+    )
+    
+    cat(txt)
+  }
+)
+
+
