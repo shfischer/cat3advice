@@ -32,7 +32,7 @@
 #' 
 #' @export
 
-### rfb_r
+### rfb_r ####
 #' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "comp_r"), 
           definition = function(x, y_label, ...) {
@@ -102,7 +102,7 @@ setMethod(f = "plot", signature = c(x = "comp_r"),
   return(p)
 })
 
-### rfb_b
+### rfb_b ####
 #' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "comp_b"), 
           definition = function(x, y_label, ...) {
@@ -170,7 +170,7 @@ setMethod(f = "plot", signature = c(x = "comp_b"),
   return(p)
 })
 
-### comp_r and comp_b
+### comp_r and comp_b ####
 ### set S3 plot() as generic so that it can be used with S4 methods
 # setGeneric("plot")
 #' @rdname rfb_plot
@@ -263,9 +263,195 @@ setMethod(f = "plot", signature = c(x = "comp_r", y = "comp_b"),
   return(p)
 })
 
-### comp_r and comp_b - but order reversed
+### comp_r and comp_b - but order reversed ####
 #' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "comp_b", y = "comp_r"), 
           definition = function(x, y, y_label, ...) {
   plot(x = y, y = x, y_label = y_label, ...)
 })
+
+### rfb_f ####
+#' @rdname rfb_plot
+setMethod(f = "plot", signature = c(x = "comp_f"), 
+          definition = function(x, y_label, ...) {
+            
+  object <- x
+  
+  ### check validity
+  . <- validObject(object)
+  
+  ### get range of years and index values
+  yr_min <- min(object@indicator$year, na.rm = TRUE)
+  yr_max <- max(object@indicator$year, na.rm = TRUE)
+  idx_min <- min(object@indicator$Lmean, na.rm = TRUE)
+  idx_max <- max(object@indicator$Lmean, na.rm = TRUE)
+  
+  ### index units
+  if (missing(y_label)) {
+    y_label <- "Mean catch length"
+    if (!is.na(object@units))
+      y_label <- paste0(y_label, " in ", object@units)
+  }
+  
+  ### data.frame for reference length
+  Lref_df <- data.frame(name = "L[F==M]", value = x@Lref@value)
+  
+  ### create plot
+  p <- ggplot()
+  
+  p <- p +
+    geom_line(data = object@indicator,
+              aes(x = year, y = Lmean),
+              color = "#ed6028") +
+    geom_hline(data = Lref_df, 
+               aes(yintercept = value, colour = name)) +
+    scale_colour_manual("",
+                        values = c("L[F==M]" = "#679dfe"),
+                        labels = scales::parse_format()) +
+    scale_x_continuous(breaks = scales::pretty_breaks()) +
+    coord_cartesian(ylim = c(0, idx_max * 1.1),
+                    xlim = c(yr_min - 1, yr_max + 1),
+                    expand = FALSE) +
+    labs(x = "", y = y_label, 
+         title = "Length indicator") +
+    theme_bw(base_size = 8) +
+    theme(axis.title.y = element_text(face = "bold"),
+          axis.title.x = element_blank(),
+          legend.position = "bottom",
+          legend.key.height = unit(0.5, "lines"),
+          plot.title = element_text(face = "bold", colour = "#ed6028"))
+  return(p)
+})
+
+
+#' Plot length frequencies
+#'
+#' A convenience function for plotting length frequencies and length reference
+#' points.
+#' 
+#' @param x An object of class \code{Lc}, \code{Lmean}, ...
+#' @param ... Additional arguments. Not currently used.
+#'  
+#' @return An object of class \code{gg}/\code{ggplot} with the plot.
+#' Can be manipulated with the usual ggplot2 commands, e.g. \code{ylim()}.
+#'
+#' @examples
+#' 
+#' @export
+
+### Lc
+#' @rdname length_freq_plot
+setMethod(f = "plot", signature = c(x = "Lc"), 
+          definition = function(x, ...) {
+  
+  if (all(is.na(x@data$year))) 
+    x@data$year <- "pooled data"
+  if (all(is.na(x@summary$year))) 
+    x@summary$year <- "pooled data"
+            
+  p <- x@data %>%
+    ggplot(aes(x = length, y = numbers)) +
+    geom_col() +
+    geom_col(
+      data = dplyr::bind_rows(
+        x@summary |> ### modal length
+          dplyr::select(year, L = Lmode, N = Nmode) |>
+          dplyr::mutate(source = "mode"),
+        x@summary |> ### length at first capture
+          dplyr::select(year, L = Lc, N = Nc) |>
+          dplyr::mutate(source = "c"),
+        ### empty data to ensure bin width is kept
+        x@data |>
+          dplyr::select(year, L = length) |>
+          unique() |>
+          dplyr::mutate(N = NA, source = NA)
+      ) |>
+        dplyr::mutate(source = factor(source,
+          levels = c("c", "mode"),
+          labels = c("Lc", "mode")
+        )),
+      aes(x = L, y = N, fill = source)
+    ) +
+    scale_fill_manual("Length", values = c("Lc" = "red", "mode" = "black")) +
+    geom_hline(
+      data = x@summary |>
+        dplyr::select(year, mode = Nmode) |>
+        dplyr::mutate("mode/2" = mode / 2) |>
+        tidyr::pivot_longer(-year) |>
+        dplyr::mutate(name = factor(name,
+          levels = c("mode", "mode/2")
+        )),
+      aes(yintercept = value, linetype = name),
+      size = 0.4
+    ) +
+    scale_linetype("Numbers") +
+    coord_cartesian(xlim = c(0, NA), ylim = c(0, NA)) +
+    facet_wrap(~year) +
+    labs(x = paste0("Length", 
+                    ifelse(length(x@units) > 0, 
+                           paste0(" (", x@units, ")"),
+                           "")), 
+         y = "Numbers") +
+    theme_bw()
+  
+  ### add average Lc line if provided
+  if (isTRUE(x@averaged)) {
+    p <- p + 
+      geom_vline(data = data.frame(length = x@value, colour = "Lc (average)"),
+                 aes(xintercept = length, colour = colour),
+                 linetype = "dashed") +
+      scale_colour_manual("", values = c("Lc (average)" = "red"))
+  }
+  
+  return(p)
+  
+})
+
+### Lc
+#' @rdname length_freq_plot
+setMethod(
+  f = "plot", signature = c(x = "Lmean"),
+  definition = function(x, ...) {
+    if (all(is.na(x@data$year))) {
+      x@data$year <- "pooled data"
+    }
+    if (all(is.na(x@summary$year))) {
+      x@summary$year <- "pooled data"
+    }
+
+    p <- x@data %>%
+      ggplot(aes(x = length, y = numbers)) +
+      geom_col() +
+      geom_vline(data = x@summary |>
+                   tidyr::pivot_longer(c(Lc, Lmean)) |>
+                   mutate(name = factor(name, 
+                                        levels = c("Lc", "Lmean"),
+                                        labels = c("L[c]", "L[mean]"))),
+                 aes(xintercept = value, colour = name, linetype = name)) +
+      scale_linetype_manual("", 
+                            values = c("L[c]" = "dashed", 
+                                       "L[mean]" = "solid"), 
+                            labels = scales::parse_format()) +
+      scale_colour_manual("", 
+                          values = c("L[c]" = "grey", 
+                                     "L[mean]" = "red"), 
+                          labels = scales::parse_format()) +
+      coord_cartesian(xlim = c(0, NA), ylim = c(0, NA)) +
+      facet_wrap(~year) +
+      labs(
+        x = paste0(
+          "Length",
+          ifelse(length(x@units) > 0,
+            paste0(" (", x@units, ")"),
+            ""
+          )
+        ),
+        y = "Numbers"
+      ) +
+      theme_bw() +
+      theme(legend.text.align = 0)
+    
+    return(p)
+  }
+)
+
