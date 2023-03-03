@@ -1,3 +1,5 @@
+#' @include generics.R
+
 #' Plot elements of the rfb/rb/chr rule
 #'
 #' A convenience function for plotting elements of the rfb, rb, and chr rules

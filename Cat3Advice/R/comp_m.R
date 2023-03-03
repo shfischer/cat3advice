@@ -1,4 +1,4 @@
-
+#' @include generics.R
 
 #' An S4 class to represent component m (the multiplier) of the rfb, rb, and 
 #' chr rules.
@@ -22,15 +22,15 @@ setClass(Class = "comp_m",
                           catch_rule = NA_character_,
                           k = NA_real_))
 
-#' @describeIn comp_m-class
+#' @rdname comp_m-class
 setClass(Class = "rfb_m", 
          contains = "comp_m",
          prototype = list(catch_rule = "rfb"))
-#' @describeIn comp_m-class
+#' @rdname comp_m-class
 setClass(Class = "rb_m", 
          contains = "comp_m",
          prototype = list(catch_rule = "rb"))
-#' @describeIn comp_m-class
+#' @rdname comp_m-class
 setClass(Class = "chr_m", 
          contains = "comp_m",
          prototype = list(catch_rule = "chr"))
@@ -101,9 +101,10 @@ setGeneric(name = "comp_m",
            signature = c("object"))
 
 ### numeric -> use as m value
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(comp_m, 
           signature = c(object = "numeric"), 
           function(object, catch_rule, k, ...) {
@@ -115,9 +116,10 @@ setMethod(comp_m,
     
 })
 ### comp_m -> validate and update if needed
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(comp_m, 
           signature = c(object = "comp_m"), 
           function(object, catch_rule, k, ...) {
@@ -129,9 +131,10 @@ setMethod(comp_m,
 })
 
 ### missing -> derive m
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(comp_m, 
           signature = c(object = "missing"), 
           function(object, catch_rule, k, ...) {
@@ -210,9 +213,10 @@ setGeneric(name = "rfb_m",
            def = function(object, value, catch_rule = "rfb", k, ...) 
              standardGeneric("rfb_m"),
            signature = c("object"))
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(rfb_m, 
           signature = c(object = "comp_m"), 
           function(object, value, catch_rule = "rfb", k, ...) {
@@ -221,9 +225,10 @@ setMethod(rfb_m,
                    k = k, ...)
   class(object) <- "rfb_m"
 })
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(rfb_m, 
           signature = c(object = "numeric"), 
           function(object, value, catch_rule = "rfb", k, ...) {
@@ -232,9 +237,10 @@ setMethod(rfb_m,
   object <- new(Class = "rfb_m")
   comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
 })
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(rfb_m, 
           signature = c(object = "missing"), 
           function(object, value, catch_rule = "rfb", k, ...) {
@@ -248,9 +254,10 @@ setGeneric(name = "rb_m",
            def = function(object, value, catch_rule = "rb", k, ...) 
              standardGeneric("rb_m"),
            signature = c("object"))
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(rb_m, 
           signature = c(object = "comp_m"), 
           function(object, value, catch_rule = "rb", k, ...) {
@@ -259,9 +266,10 @@ setMethod(rb_m,
                    k = k, ...)
   class(object) <- "rb_m"
 })
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(rb_m, 
           signature = c(object = "numeric"), 
           function(object, value, catch_rule = "rb", k, ...) {
@@ -270,9 +278,10 @@ setMethod(rb_m,
   object <- new(Class = "rb_m")
   comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
 })
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(rb_m, 
           signature = c(object = "missing"), 
           function(object, value, catch_rule = "rb", k, ...) {
@@ -286,9 +295,10 @@ setGeneric(name = "chr_m",
            def = function(object, value, catch_rule = "chr", k, ...) 
              standardGeneric("chr_m"),
            signature = c("object"))
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(chr_m, 
           signature = c(object = "comp_m"), 
           function(object, value, catch_rule = "chr", k, ...) {
@@ -297,9 +307,10 @@ setMethod(chr_m,
                    k = k, ...)
   class(object) <- "chr_m"
 })
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(chr_m, 
           signature = c(object = "numeric"), 
           function(object, value, catch_rule = "chr", k, ...) {
@@ -308,9 +319,10 @@ setMethod(chr_m,
   object <- new(Class = "chr_m")
   comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
 })
-#' @describeIn comp_m
+#' @rdname comp_m
 #' @keywords internal
-#' @name comp_m
+#' @usage NULL
+
 setMethod(chr_m, 
           signature = c(object = "missing"), 
           function(object, value, catch_rule = "chr", k, ...) {

@@ -108,6 +108,7 @@ setClass(
 #' @return An object of class \code{Lc}
 #'
 #' @examples
+#' 
 #' @export
 setGeneric(
   name = "Lc",

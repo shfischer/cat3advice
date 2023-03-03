@@ -1,3 +1,5 @@
+#' @include generics.R
+
 #' An S4 class to represent component r of the rfb and rb rules.
 #' 
 #' This class (\code{comp_r}) stores the input for component r (the index ratio
@@ -12,7 +14,7 @@
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot catch_rule \code{factor}. The catch rule for which the biomass safeguard is used. One of 'rfb' or 'rb'.
 #' 
-#' @rdname comp_r-class
+#' @name comp_r-class
 #' @export
 setClass(Class = "comp_r", 
          slots = c(value = "numeric",

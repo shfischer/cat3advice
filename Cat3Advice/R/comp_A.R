@@ -1,4 +1,4 @@
-
+#' @include generics.R
 
 #' An S4 class to represent component Ay (the last advice or reference catch) 
 #' of the rfb, rb, and chr rules.
@@ -41,15 +41,15 @@ setClass(
   )
 )
 
-#' @describeIn comp_Ay-class
+#' @rdname comp_Ay-class
 setClass(Class = "rfb_Ay", 
          contains = "comp_Ay",
          prototype = list(catch_rule = "rfb"))
-#' @describeIn comp_Ay-class
+#' @rdname comp_Ay-class
 setClass(Class = "rb_Ay", 
          contains = "comp_Ay",
          prototype = list(catch_rule = "rb"))
-#' @describeIn comp_Ay-class
+#' @rdname comp_Ay-class
 setClass(Class = "chr_Ay", 
          contains = "comp_Ay",
          prototype = list(catch_rule = "chr"))
@@ -104,7 +104,7 @@ setValidity("comp_Ay", function(object) {
 #' @param data [Internal] Data used for calculating reference catch.
 #' @param avg_years [Optional] Number of years for calculating average catch or vector years to use
 #' @param basis [Optional] Basis of Ay. Either "advice" for using the previous advice or "average catch" when based on an average of historical catch
-#' @param advice_metric
+#' @param advice_metric Advice metric, e.g. catch or landings.
 #' @param ... Additional arguments (Not used) 
 #'
 #' @references 
@@ -130,9 +130,8 @@ setGeneric(
 )
 
 ### numeric -> use as Ay
-#' @describeIn comp_Ay
+#' @rdname comp_Ay
 #' @keywords internal
-#' @name comp_Ay
 setMethod(comp_Ay,
   signature = c(object = "numeric"),
   function(object, value, units, catch_rule, data, avg_years, basis,
@@ -148,9 +147,8 @@ setMethod(comp_Ay,
 )
 
 ### numeric -> use as Ay
-#' @describeIn comp_Ay
+#' @rdname comp_Ay
 #' @keywords internal
-#' @name comp_Ay
 setMethod(comp_Ay,
   signature = c(object = "data.frame"),
   function(object, value, units, catch_rule, data, avg_years, basis,
@@ -166,9 +164,8 @@ setMethod(comp_Ay,
 )
 
 ### comp_Ay -> validate and update if needed
-#' @describeIn comp_Ay
+#' @rdname comp_Ay
 #' @keywords internal
-#' @name comp_Ay
 setMethod(comp_Ay,
   signature = c(object = "comp_Ay"),
   function(object, value, units, catch_rule, data, avg_years, basis, 
@@ -282,9 +279,8 @@ setGeneric(
   },
   signature = c("object")
 )
-#' @describeIn comp_Ay
+#' @rdname comp_Ay
 #' @keywords internal
-#' @name comp_Ay
 setMethod(rfb_Ay,
   signature = c(object = "ANY"),
   function(object, value, units, catch_rule = "rfb", data, avg_years,
@@ -310,9 +306,8 @@ setGeneric(
   },
   signature = c("object")
 )
-#' @describeIn comp_Ay
+#' @rdname comp_Ay
 #' @keywords internal
-#' @name comp_Ay
 setMethod(rb_Ay,
   signature = c(object = "ANY"),
   function(object, value, units, catch_rule = "rb", data, avg_years,
@@ -338,9 +333,8 @@ setGeneric(
   },
   signature = c("object")
 )
-#' @describeIn comp_Ay
+#' @rdname comp_Ay
 #' @keywords internal
-#' @name comp_Ay
 setMethod(chr_Ay,
   signature = c(object = "ANY"),
   function(object, value, catch_rule = "chr", data, avg_years,
@@ -398,10 +392,10 @@ setMethod(
 )
 
 ### ICES advice style table
-setGeneric(
-  name = "advice",
-  def = function(object) standardGeneric("advice")
-)
+# setGeneric(
+#   name = "advice",
+#   def = function(object) standardGeneric("advice")
+# )
 setMethod(
   f = "advice", signature = "comp_Ay",
   definition = function(object) {

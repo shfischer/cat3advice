@@ -1,3 +1,6 @@
+#' @include generics.R
+#' @include length_data.R
+
 #' An S4 class to represent component f of the rfb rule.
 #'
 #' This class (\code{comp_f}) stores the input for component f (the length 

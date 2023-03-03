@@ -1,3 +1,5 @@
+#' @include generics.R
+
 #' An S4 class to represent component b of the rfb/rb/chr rules.
 #' 
 #' This class (\code{comp_b}) stores the input for component b (the biomass
@@ -350,15 +352,16 @@ setMethod(f = "value", signature = "comp_b",
 })
 
 ### ICES advice style table
-setGeneric(
-  name = "advice",
-  def = function(object) standardGeneric("advice")
-)
+# setGeneric(
+#   name = "advice",
+#   def = function(object) standardGeneric("advice")
+# )
 setMethod(
   f = "advice", signature = "comp_b",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n",
-                  "Biomass safeguard\n")
+                  "Biomass safeguard\n",
+                  paste(rep("-", 80), collapse = ""), "\n")
     
     I_last_year <- ifelse(!is.na(object@yr_last), object@yr_last, "last")
     txt_I <- paste0("Last index value (I", I_last_year, ")")
