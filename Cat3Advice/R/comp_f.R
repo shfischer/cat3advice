@@ -55,7 +55,7 @@ setClass(
 
 #' rfb rule - component f (fishing pressure proxy, length indicator)
 #'
-#' This function calculates component f (the fishing pressure proxy, derved from a length indicator ) of the rfb rule. 
+#' This function calculates component f (the fishing pressure proxy, derived from a length indicator ) of the rfb rule. 
 #' 
 #' The value is calculated by comparing the mean catch length (above length of first capture Lc) to a reference length.
 #'
@@ -146,158 +146,98 @@ setMethod(comp_f,
 
 ### data.frame -> use as index
 #' @rdname comp_r
-setMethod(comp_r,
-  signature = c(object = "data.frame"),
-  function(object, n0, n1, n2, units, catch_rule, ...) {
-    idx <- object
-    names(idx) <- tolower(names(idx))
-    ### check if "year" column exists
-    if (isFALSE("year" %in% names(idx))) {
-      stop("Column \"year\" missing in idx")
-    }
-    ### check if "index" column exists
-    if (isFALSE("index" %in% names(idx))) {
-      if (identical(ncol(idx), 2L)) {
-        message(paste0(
-          "Column \"index\" missing in idx. Using column ",
-          "\"", names(idx)[2], "\" instead"
-        ))
-      } else {
-        stop("Column \"index\" missing in idx")
-      }
-    }
-    comp_r_calc(
-      idx = idx, n0 = n0, n1 = n1, n2 = n2, units = units,
-      catch_rule = catch_rule, ...
-    )
-  }
-)
+# setMethod(comp_r,
+#   signature = c(object = "data.frame"),
+#   function(object, n0, n1, n2, units, catch_rule, ...) {
+#     idx <- object
+#     names(idx) <- tolower(names(idx))
+#     ### check if "year" column exists
+#     if (isFALSE("year" %in% names(idx))) {
+#       stop("Column \"year\" missing in idx")
+#     }
+#     ### check if "index" column exists
+#     if (isFALSE("index" %in% names(idx))) {
+#       if (identical(ncol(idx), 2L)) {
+#         message(paste0(
+#           "Column \"index\" missing in idx. Using column ",
+#           "\"", names(idx)[2], "\" instead"
+#         ))
+#       } else {
+#         stop("Column \"index\" missing in idx")
+#       }
+#     }
+#     comp_r_calc(
+#       idx = idx, n0 = n0, n1 = n1, n2 = n2, units = units,
+#       catch_rule = catch_rule, ...
+#     )
+#   }
+# )
 ### numeric -> use as ratio
 #' @rdname comp_r
-setMethod(comp_r,
-  signature = c(object = "numeric"),
-  function(object, ...) {
-
-    ### create empty comp_r object
-    res <- new("comp_r")
-
-    ### remove parameters
-    res@n0 <- NA_real_
-    res@n1 <- NA_real_
-    res@n2 <- NA_real_
-
-    ### insert value
-    res@value <- object
-
-    return(res)
-  }
-)
+# setMethod(comp_r,
+#   signature = c(object = "numeric"),
+#   function(object, ...) {
+# 
+#     ### create empty comp_r object
+#     res <- new("comp_r")
+# 
+#     ### remove parameters
+#     res@n0 <- NA_real_
+#     res@n1 <- NA_real_
+#     res@n2 <- NA_real_
+# 
+#     ### insert value
+#     res@value <- object
+# 
+#     return(res)
+#   }
+# )
 ### comp_r -> check validity and update values if necessary
 #' @rdname comp_r
-setMethod(comp_r,
-  signature = c(object = "comp_r"),
-  function(object, n0, n1, n2, units, catch_rule, ...) {
-    ### check validity
-    validObject(object)
-    ### run comp_r() to update slots and recalculate if needed
-    comp_r_calc(object, n0, n1, n2, units, catch_rule, ...)
-  }
-)
+# setMethod(comp_r,
+#   signature = c(object = "comp_r"),
+#   function(object, n0, n1, n2, units, catch_rule, ...) {
+#     ### check validity
+#     validObject(object)
+#     ### run comp_r() to update slots and recalculate if needed
+#     comp_r_calc(object, n0, n1, n2, units, catch_rule, ...)
+#   }
+# )
 
 ### alias for rfb and rb rule
 #' @rdname comp_r
 #' @export
-rfb_r <- comp_r
+# rfb_r <- comp_r
 #' @rdname comp_r
 #' @export
-rb_r <- comp_r
+# rb_r <- comp_r
 
 ### validity checks
-setValidity("comp_r", function(object) {
-  if (any(c(length(object@n0), length(object@n0), length(object@n0)) != 1)) {
-    "n0, n1, and n2 must each be of length 1"
-  } else if (!identical(length(object@value), 1L)) {
-    "value must be of length 1"
-  } else if (!identical(length(object@units), 1L)) {
-    "units must be of length 1"
-  } else {
-    TRUE
-  }
-})
-
-
-
-
-comp_r_calc <- function(object, idx, n0, n1, n2, units, catch_rule) {
-  ### create empty rfb_r object, if missing
-  if (missing(object)) object <- new("rfb_r")
-  if (!missing(catch_rule)) object@catch_rule <- catch_rule
-
-  ### add/update index, if provided
-  if (!missing(idx)) object@idx <- idx
-
-  ### add/update parameters, if provided
-  if (!missing(n0)) object@n0 <- n0
-  if (!missing(n1)) object@n1 <- n1
-  if (!missing(n2)) object@n2 <- n2
-
-  if (!missing(units)) object@units <- units
-
-  if (isTRUE(length(object@idx) < 1)) {
-    warning("Empty index provided, cannot calculate/update ratio!")
-  } else {
-
-    ### find last data year
-    object@yr_last <- tail(object@idx$year, 1)
-
-    ### determine years to use
-    object@n1_yrs <-
-      seq(
-        from = object@yr_last - object@n0 - object@n1 + 1,
-        to = object@yr_last - object@n0
-      )
-    object@n2_yrs <-
-      seq(
-        from = object@yr_last - object@n0 - object@n1 - object@n2 + 1,
-        to = object@yr_last - object@n0 - object@n1
-      )
-    ### estimate mean index over these years
-    object@n1_mean <-
-      mean(object@idx$index[object@idx$year %in% object@n1_yrs],
-        na.rm = TRUE
-      )
-    object@n2_mean <-
-      mean(object@idx$index[object@idx$year %in% object@n2_yrs],
-        na.rm = TRUE
-      )
-    ### calculate index ratio
-    object@value <- object@n1_mean / object@n2_mean
-  }
-
-  return(object)
-}
-
-### alias for rfb and rb rule
-#' @rdname comp_r
-#' @export
-rfb_r <- comp_r
-#' @rdname comp_r
-#' @export
-rb_r <- comp_r
+# setValidity("comp_r", function(object) {
+#   if (any(c(length(object@n0), length(object@n0), length(object@n0)) != 1)) {
+#     "n0, n1, and n2 must each be of length 1"
+#   } else if (!identical(length(object@value), 1L)) {
+#     "value must be of length 1"
+#   } else if (!identical(length(object@units), 1L)) {
+#     "units must be of length 1"
+#   } else {
+#     TRUE
+#   }
+# })
 
 ### print to screen
 setMethod(
-  f = "show", signature = "comp_r",
+  f = "show", signature = "comp_f",
   definition = function(object) {
     cat(paste0(object@value, "\n"))
   }
 )
 setMethod(
-  f = "summary", signature = "comp_r",
+  f = "summary", signature = "comp_f",
   definition = function(object) {
     txt <- (paste0(
       paste(rep("-", 50), collapse = ""), "\n",
-      "component r:\n",
+      "component f:\n",
       "last index year: ", object@yr_last, "\n",
       "using a ", object@n1, " over ", object@n2, " ratio ",
       "with a time lag of n0=", object@n0, "\n",
@@ -318,7 +258,7 @@ setGeneric(
   def = function(object) standardGeneric("value")
 )
 setMethod(
-  f = "value", signature = "comp_r",
+  f = "value", signature = "comp_f",
   definition = function(object) {
     return(object@value)
   }
@@ -334,55 +274,55 @@ setMethod(
 #
 
 ### ICES advice style table
-setGeneric(
-  name = "advice",
-  def = function(object) standardGeneric("advice")
-)
-setMethod(
-  f = "advice", signature = "comp_r",
-  definition = function(object) {
-    txt <- paste0(
-      paste(rep("-", 80), collapse = ""), "\n",
-      "Stock biomass trend\n"
-    )
-
-    txt_A <- paste0("Index A (", paste0(object@n1_yrs, collapse = ","), ")")
-    txt_B <- paste0("Index B (", paste0(object@n2_yrs, collapse = ","), ")")
-    txt_r <- paste0("r: stock biomass trend (index ratio A/B)")
-
-    val_A <- paste0(
-      icesAdvice::icesRound(object@n1_mean),
-      ifelse(!is.na(object@units), paste0(" ", object@units), "")
-    )
-    val_B <- paste0(
-      icesAdvice::icesRound(object@n2_mean),
-      ifelse(!is.na(object@units), paste0(" ", object@units), "")
-    )
-    val_r <- icesAdvice::icesRound(object@value)
-
-    txt <- paste0(
-      txt,
-      paste0(
-        format(txt_A, width = 48), " | ",
-        format(val_A, width = 29, justify = "right"),
-        "\n"
-      ),
-      paste0(
-        format(txt_B, width = 48), " | ",
-        format(val_B, width = 29, justify = "right"),
-        "\n"
-      ),
-      paste0(
-        format(txt_r, width = 48), " | ",
-        format(val_r, width = 29, justify = "right"),
-        "\n"
-      )
-    )
-    txt <- paste0(txt, paste(rep("-", 80), collapse = ""), "\n")
-
-    cat(txt)
-  }
-)
+# setGeneric(
+#   name = "advice",
+#   def = function(object) standardGeneric("advice")
+# )
+# setMethod(
+#   f = "advice", signature = "comp_r",
+#   definition = function(object) {
+#     txt <- paste0(
+#       paste(rep("-", 80), collapse = ""), "\n",
+#       "Stock biomass trend\n"
+#     )
+# 
+#     txt_A <- paste0("Index A (", paste0(object@n1_yrs, collapse = ","), ")")
+#     txt_B <- paste0("Index B (", paste0(object@n2_yrs, collapse = ","), ")")
+#     txt_r <- paste0("r: stock biomass trend (index ratio A/B)")
+# 
+#     val_A <- paste0(
+#       icesAdvice::icesRound(object@n1_mean),
+#       ifelse(!is.na(object@units), paste0(" ", object@units), "")
+#     )
+#     val_B <- paste0(
+#       icesAdvice::icesRound(object@n2_mean),
+#       ifelse(!is.na(object@units), paste0(" ", object@units), "")
+#     )
+#     val_r <- icesAdvice::icesRound(object@value)
+# 
+#     txt <- paste0(
+#       txt,
+#       paste0(
+#         format(txt_A, width = 48), " | ",
+#         format(val_A, width = 29, justify = "right"),
+#         "\n"
+#       ),
+#       paste0(
+#         format(txt_B, width = 48), " | ",
+#         format(val_B, width = 29, justify = "right"),
+#         "\n"
+#       ),
+#       paste0(
+#         format(txt_r, width = 48), " | ",
+#         format(val_r, width = 29, justify = "right"),
+#         "\n"
+#       )
+#     )
+#     txt <- paste0(txt, paste(rep("-", 80), collapse = ""), "\n")
+# 
+#     cat(txt)
+#   }
+# )
 
 
 
