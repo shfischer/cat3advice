@@ -277,16 +277,17 @@ setMethod(f = "value", signature = "comp_r",
 # 
 
 ### ICES advice style table
-setGeneric(
-  name = "advice",
-  def = function(object) standardGeneric("advice")
-)
+# setGeneric(
+#   name = "advice",
+#   def = function(object) standardGeneric("advice")
+# )
 setMethod(
   f = "advice", signature = "comp_r",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n",
-                  "Stock biomass trend\n")
-    
+                  "Stock biomass trend\n",
+                  paste(rep("-", 80), collapse = ""), "\n")
+
     txt_A <- paste0("Index A (", paste0(object@n1_yrs, collapse = ","), ")")
     txt_B <- paste0("Index B (", paste0(object@n2_yrs, collapse = ","), ")")
     txt_r <- paste0("r: stock biomass trend (index ratio A/B)")
