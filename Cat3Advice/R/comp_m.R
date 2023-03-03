@@ -372,11 +372,13 @@ setMethod(
   }
 )
 
-### ICES advice style table
-setGeneric(
-  name = "advice",
-  def = function(object) standardGeneric("advice")
-)
+### ------------------------------------------------------------------------ ###
+### ICES advice style table ####
+### ------------------------------------------------------------------------ ###
+### advice - comp_m
+#' @rdname advice
+#' @usage NULL
+#' @export
 setMethod(
   f = "advice", signature = "comp_m",
   definition = function(object) {
@@ -415,5 +417,34 @@ setMethod(
     cat(txt)
   }
 )
-
+### advice - rfb_m
+#' @rdname advice
+#' @usage NULL
+#' @export
+setMethod(
+  f = "advice", signature = "rfb_m",
+  definition = function(object) {
+    txt <- callNextMethod()
+    cat(txt)
+  })
+### advice - rb_m
+#' @rdname advice
+#' @usage NULL
+#' @export
+setMethod(
+  f = "advice", signature = "rb_m",
+  definition = function(object) {
+    txt <- callNextMethod()
+    cat(txt)
+  })
+### advice - chr_m
+#' @rdname advice
+#' @usage NULL
+#' @export
+setMethod(
+  f = "advice", signature = "chr_m",
+  definition = function(object) {
+    txt <- callNextMethod()
+    cat(txt)
+  })
 
