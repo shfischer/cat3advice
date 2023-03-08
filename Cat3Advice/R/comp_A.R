@@ -1,10 +1,14 @@
 #' @include generics.R
 
+### ------------------------------------------------------------------------ ###
+### comp_A class ####
+### ------------------------------------------------------------------------ ###
+
 #' An S4 class to represent component Ay (the last advice or reference catch) 
 #' of the rfb, rb, and chr rules.
 #' 
-#' The classes \code{rfb_Ay}, \code{rb_Ay}, and \code{chr_Ay} inherit from 
-#' \code{comp_Ay} and their only difference is that the slot \code{catch_rule}
+#' The classes \code{rfb_A}, \code{rb_A}, and \code{chr_A} inherit from 
+#' \code{comp_A} and their only difference is that the slot \code{catch_rule}
 #' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 #' 
 #' @slot value The value of component Ay (reference catch)
@@ -14,10 +18,10 @@
 #' @slot basis Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch
 #' @slot advice_metric Advice metric, 'catch' or 'landings'.
 #' 
-#' @rdname comp_Ay-class
+#' @rdname comp_A-class
 #' @export
 setClass(
-  Class = "comp_Ay",
+  Class = "comp_A",
   slots = c(
     value = "numeric",
     units = "character",
@@ -41,21 +45,21 @@ setClass(
   )
 )
 
-#' @rdname comp_Ay-class
-setClass(Class = "rfb_Ay", 
-         contains = "comp_Ay",
+#' @rdname comp_A-class
+setClass(Class = "rfb_A", 
+         contains = "comp_A",
          prototype = list(catch_rule = "rfb"))
-#' @rdname comp_Ay-class
-setClass(Class = "rb_Ay", 
-         contains = "comp_Ay",
+#' @rdname comp_A-class
+setClass(Class = "rb_A", 
+         contains = "comp_A",
          prototype = list(catch_rule = "rb"))
-#' @rdname comp_Ay-class
-setClass(Class = "chr_Ay", 
-         contains = "comp_Ay",
+#' @rdname comp_A-class
+setClass(Class = "chr_A", 
+         contains = "comp_A",
          prototype = list(catch_rule = "chr"))
 
 ### validity checks
-setValidity("comp_Ay", function(object) {
+setValidity("comp_A", function(object) {
   if (!identical(length(object@value), 1L)) {
     "slot value must be of length 1"
   } else if (!identical(length(object@units), 1L)) {
@@ -77,6 +81,11 @@ setValidity("comp_Ay", function(object) {
   }
 })
 
+### ------------------------------------------------------------------------ ###
+### comp_A methods ####
+### ------------------------------------------------------------------------ ###
+
+
 #' rfb/rb/chr rule - component Ay (reference catch or advice)
 #'
 #' This function defines the reference catch (last advice or average of 
@@ -86,10 +95,10 @@ setValidity("comp_Ay", function(object) {
 #' - a single value representing a reference catch, e.g. the previous catch advice
 #' - a vector of historical values which are used to calculate the average catch
 #' - a data.frame with columns 'year' and either of 'advice', 'catch', 'landings'
-#' - an object of class `comp_Ay`
+#' - an object of class `comp_A`
 #' 
-#' \code{rfb_Ay()}, \code{rb_Ay()}, and \code{chr_Ay()} are aliases for
-#' \code{comp_Ay()} in which the \code{catch_rule} argument is already set to 
+#' \code{rfb_A()}, \code{rb_A()}, and \code{chr_A()} are aliases for
+#' \code{comp_A()} in which the \code{catch_rule} argument is already set to 
 #' 'rfb', 'rb', or 'chr'.
 #' 
 #' The reference catch is set following ICES (2022).
@@ -111,34 +120,35 @@ setValidity("comp_Ay", function(object) {
 #' ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 #'
 #'
-#' @return An object of class \code{comp_Ay}
+#' @return An object of class \code{comp_A}
 #'
 #' @examples
 #' 
-#' @name comp_Ay
+#' @name comp_A
 #' @export
 NULL
 
-#' @rdname comp_Ay
+#' @rdname comp_A
 setGeneric(
-  name = "comp_Ay",
+  name = "comp_A",
   def = function(object, value, units, catch_rule, data, avg_years, 
                  basis = "advice", advice_metric = "catch", ...) {
-    standardGeneric("comp_Ay")
+    standardGeneric("comp_A")
   },
   signature = c("object")
 )
 
 ### numeric -> use as Ay
-#' @rdname comp_Ay
+#' @rdname comp_A
+#' @usage NULL
 #' @keywords internal
-setMethod(comp_Ay,
+setMethod(comp_A,
   signature = c(object = "numeric"),
   function(object, value, units, catch_rule, data, avg_years, basis,
            advice_metric, ...) {
     value <- object
-    object <- new(Class = "comp_Ay")
-    comp_Ay_calc(
+    object <- new(Class = "comp_A")
+    comp_A_calc(
       object = object, value = value, units = units, catch_rule = catch_rule, 
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
@@ -147,15 +157,16 @@ setMethod(comp_Ay,
 )
 
 ### numeric -> use as Ay
-#' @rdname comp_Ay
+#' @rdname comp_A
+#' @usage NULL
 #' @keywords internal
-setMethod(comp_Ay,
+setMethod(comp_A,
   signature = c(object = "data.frame"),
   function(object, value, units, catch_rule, data, avg_years, basis,
            advice_metric, ...) {
     data <- object
-    object <- new(Class = "comp_Ay")
-    comp_Ay_calc(
+    object <- new(Class = "comp_A")
+    comp_A_calc(
       object = object, value = value, units = units, catch_rule = catch_rule,
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
@@ -163,15 +174,16 @@ setMethod(comp_Ay,
   }
 )
 
-### comp_Ay -> validate and update if needed
-#' @rdname comp_Ay
+### comp_A -> validate and update if needed
+#' @rdname comp_A
+#' @usage NULL
 #' @keywords internal
-setMethod(comp_Ay,
-  signature = c(object = "comp_Ay"),
+setMethod(comp_A,
+  signature = c(object = "comp_A"),
   function(object, value, units, catch_rule, data, avg_years, basis, 
            advice_metric, ...) {
     validObject(object)
-    comp_Ay_calc(
+    comp_A_calc(
       object = object, value = value, units = units, catch_rule = catch_rule,
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
@@ -179,11 +191,11 @@ setMethod(comp_Ay,
   }
 )
 
-comp_Ay_calc <- function(object, value, units, catch_rule, data, avg_years, 
+comp_A_calc <- function(object, value, units, catch_rule, data, avg_years, 
                          basis, advice_metric, ...) {
   
   ### create empty object, if missing
-  if (missing(object)) object <- new(Class = "comp_Ay")
+  if (missing(object)) object <- new(Class = "comp_A")
   
   ### format/check/insert values, if provided
   if (!missing(units))
@@ -270,82 +282,85 @@ comp_Ay_calc <- function(object, value, units, catch_rule, data, avg_years,
 }
 
 ### alias for rfb rule
-#' @rdname comp_Ay
+#' @rdname comp_A
 setGeneric(
-  name = "rfb_Ay",
+  name = "rfb_A",
   def = function(object, value, units, catch_rule = "rfb", data, avg_years,
                  basis = "advice", advice_metric = "advice", ...) {
-    standardGeneric("rfb_Ay")
+    standardGeneric("rfb_A")
   },
   signature = c("object")
 )
-#' @rdname comp_Ay
+#' @rdname comp_A
+#' @usage NULL
 #' @keywords internal
-setMethod(rfb_Ay,
+setMethod(rfb_A,
   signature = c(object = "ANY"),
   function(object, value, units, catch_rule = "rfb", data, avg_years,
            basis, advice_metric, ...) {
     catch_rule <- match.arg(catch_rule)
-    object <- comp_Ay(
+    object <- comp_A(
       object = object, value = value, units = units, catch_rule = catch_rule,
       data = data, avg_years = avg_years, basis = basis,
       ...
     )
-    class(object) <- "rfb_Ay"
+    class(object) <- "rfb_A"
     return(object)
   }
 )
 
 ### alias for rb rule
-#' @rdname comp_Ay
+#' @rdname comp_A
 setGeneric(
-  name = "rb_Ay",
+  name = "rb_A",
   def = function(object, value, units, catch_rule = "rb", data, avg_years, 
                  basis = "advice", advice_metric = "catch", ...) {
-    standardGeneric("rb_Ay")
+    standardGeneric("rb_A")
   },
   signature = c("object")
 )
-#' @rdname comp_Ay
+#' @rdname comp_A
+#' @usage NULL
 #' @keywords internal
-setMethod(rb_Ay,
+setMethod(rb_A,
   signature = c(object = "ANY"),
   function(object, value, units, catch_rule = "rb", data, avg_years,
            basis, ...) {
     catch_rule <- match.arg(catch_rule)
-    object <- comp_Ay(
+    object <- comp_A(
       object = object, value = value, units = units, catch_rule = catch_rule,
       data = data, avg_years = avg_years, basis = basis,
       ...
     )
-    class(object) <- "rb_Ay"
+    class(object) <- "rb_A"
     return(object)
   }
 )
 
 ### alias for chr rule
-#' @rdname comp_Ay
+#' @rdname comp_A
 setGeneric(
-  name = "chr_Ay",
+  name = "chr_A",
   def = function(object, value, units, catch_rule = "chr", data, avg_years,
                  basis = "advice", advice_metric = "catch", ...) {
-    standardGeneric("chr_Ay")
+    standardGeneric("chr_A")
   },
   signature = c("object")
 )
-#' @rdname comp_Ay
+#' @rdname comp_A
 #' @keywords internal
-setMethod(chr_Ay,
+#' @usage NULL
+setMethod(chr_A,
   signature = c(object = "ANY"),
   function(object, value, catch_rule = "chr", data, avg_years,
            basis, ...) {
     catch_rule <- match.arg(catch_rule)
-    object <- comp_Ay(
+    object <- comp_A(
       object = object, value = value, units = units, catch_rule = catch_rule,
       data = data, avg_years = avg_years, basis = basis,
       ...
     )
-    class(object) <- "chr_Ay"
+    class(object) <- "chr_A"
     return(object)
   }
 )
@@ -356,7 +371,7 @@ setGeneric(
   def = function(object) standardGeneric("value")
 )
 setMethod(
-  f = "value", signature = "comp_Ay",
+  f = "value", signature = "comp_A",
   definition = function(object) {
     return(object@value)
   }
@@ -365,7 +380,7 @@ setMethod(
 
 ### print to screen
 setMethod(
-  f = "show", signature = "comp_Ay",
+  f = "show", signature = "comp_A",
   definition = function(object) {
     cat(paste0(object@value, "\n"))
   }
@@ -373,7 +388,7 @@ setMethod(
 
 ### detailed summary
 setMethod(
-  f = "summary", signature = "comp_Ay",
+  f = "summary", signature = "comp_A",
   definition = function(object) {
     txt <- paste0(
       paste(rep("-", 50), collapse = ""), "\n",
@@ -391,31 +406,35 @@ setMethod(
   }
 )
 
+### ------------------------------------------------------------------------ ###
+### advice table ####
+### ------------------------------------------------------------------------ ###
+
 ### ICES advice style table
 # setGeneric(
 #   name = "advice",
 #   def = function(object) standardGeneric("advice")
 # )
 setMethod(
-  f = "advice", signature = "comp_Ay",
+  f = "advice", signature = "comp_A",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n")
     if (identical(object@basis, "advice")) {
-      txt_Ay <- paste0("Previous ", object@advice_metric, 
+      txt_A <- paste0("Previous ", object@advice_metric, 
                        " advice Ay (advised ", object@advice_metric, " for ", 
                        object@avg_years, ")")
     } else if (identical(object@basis, "average catch")) {
-      txt_Ay <- paste0("Mean ", object@advice_metric, " Cy (", 
+      txt_A <- paste0("Mean ", object@advice_metric, " Cy (", 
                        paste0(object@avg_years, collapse = ", "), ")")
     } else {
-      txt_Ay <- paste0("Reference ", object@advice_metric)
+      txt_A <- paste0("Reference ", object@advice_metric)
     }
     Ay_value <- round(object@value)
-    txt_Ay_value <- paste0(Ay_value, " ", object@units)
-    txt_add <- paste0(format(txt_Ay, width = 48), " | ",
-                      format(txt_Ay_value, width = 29, justify = "right"),
+    txt_A_value <- paste0(Ay_value, " ", object@units)
+    txt_add <- paste0(format(txt_A, width = 48), " | ",
+                      format(txt_A_value, width = 29, justify = "right"),
                       "\n")
-    txt <- paste0(txt, txt_add, paste(rep("-", 80), collapse = ""), "\n")
+    #txt <- paste0(txt, txt_add, paste(rep("-", 80), collapse = ""), "\n")
     cat(txt)
   }
 )
