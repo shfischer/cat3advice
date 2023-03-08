@@ -1,5 +1,8 @@
 #' @include generics.R
 
+### ------------------------------------------------------------------------ ###
+### comp_m class ####
+### ------------------------------------------------------------------------ ###
 #' An S4 class to represent component m (the multiplier) of the rfb, rb, and 
 #' chr rules.
 #' 
@@ -35,7 +38,9 @@ setClass(Class = "chr_m",
          contains = "comp_m",
          prototype = list(catch_rule = "chr"))
 
-
+### ------------------------------------------------------------------------ ###
+### comp_m methods ####
+### ------------------------------------------------------------------------ ###
 #' rfb/rb/chr rule - component m (multiplier)
 #'
 #' This function returns the default multiplier for the rfb, rb, and chr rules.
@@ -143,7 +148,10 @@ setMethod(comp_m,
               ...)
   
 })
-  
+
+### ------------------------------------------------------------------------ ###
+### comp_m calculation ####
+### ------------------------------------------------------------------------ ###
 comp_m_calc <- function(object, value, catch_rule, k, ...) {
   
   ### create empty object, if missing
@@ -206,6 +214,10 @@ comp_m_calc <- function(object, value, catch_rule, k, ...) {
   return(object)
   
 }
+
+### ------------------------------------------------------------------------ ###
+### comp_m aliases ####
+### ------------------------------------------------------------------------ ###
 
 ### alias for rfb rule
 #' @rdname comp_m
@@ -331,7 +343,9 @@ setMethod(chr_m,
   comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
 })
 
-
+### ------------------------------------------------------------------------ ###
+### comp_m validity ####
+### ------------------------------------------------------------------------ ###
 ### validity checks
 setValidity("comp_m", function(object) {
   if (!identical(length(object@value), 1L)) {
@@ -350,6 +364,9 @@ setValidity("comp_m", function(object) {
   }
 })
 
+### ------------------------------------------------------------------------ ###
+### comp_m convience methods ####
+### ------------------------------------------------------------------------ ###
 ### value of object
 setGeneric(name = "value", 
            def = function(object)  standardGeneric("value"))
@@ -358,13 +375,13 @@ setMethod(f = "value", signature = "comp_m",
             return(object@value)
 })
 
-
 ### print to screen
 setMethod(f = "show", signature = "comp_m", 
           definition = function(object) {
             cat(paste0(object@value, "\n"))
 })
-  
+
+### summary
 setMethod(
   f = "summary", signature = "comp_m",
   definition = function(object) {

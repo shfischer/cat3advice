@@ -1,5 +1,9 @@
 #' @include generics.R
 
+### ------------------------------------------------------------------------ ###
+### comp_r class ####
+### ------------------------------------------------------------------------ ###
+
 #' An S4 class to represent component r of the rfb and rb rules.
 #' 
 #' This class (\code{comp_r}) stores the input for component r (the index ratio
@@ -38,12 +42,15 @@ setClass(Class = "comp_r",
 setClass(Class = "rfb_r", 
          contains = "comp_r",
          prototype = list(catch_rule = factor("rfb", 
-                                              levels = c("rfb", "rb", "chr"))))
+                                              levels = c("rfb", "rb"))))
 #' @rdname comp_r-class
 setClass(Class = "rb_r", 
          contains = "comp_r",
          prototype = list(catch_rule = factor("rb", 
-                                              levels = c("rfb", "rb", "chr"))))
+                                              levels = c("rfb", "rb"))))
+### ------------------------------------------------------------------------ ###
+### comp_r methods ####
+### ------------------------------------------------------------------------ ###
 
 #' rfb/rb rule - component r (index ratio)
 #'
@@ -171,7 +178,9 @@ rfb_r <- comp_r
 #' @export
 rb_r <- comp_r
 
-### validity checks
+### ------------------------------------------------------------------------ ###
+### validity checks ####
+### ------------------------------------------------------------------------ ###
 setValidity("comp_r", function(object) {
   if (any(c(length(object@n0), length(object@n0), length(object@n0)) != 1)) {
     "n0, n1, and n2 must each be of length 1"
@@ -185,8 +194,9 @@ setValidity("comp_r", function(object) {
 })
 
 
-
-
+### ------------------------------------------------------------------------ ###
+### comp_r calculation ####
+### ------------------------------------------------------------------------ ###
 comp_r_calc <- function(object, idx, n0, n1, n2, units, catch_rule) {
   ### create empty rfb_r object, if missing
   if (missing(object)) object <- new("rfb_r")
@@ -232,13 +242,9 @@ comp_r_calc <- function(object, idx, n0, n1, n2, units, catch_rule) {
   return(object)
 }
 
-### alias for rfb and rb rule
-#' @rdname comp_r
-#' @export
-rfb_r <- comp_r
-#' @rdname comp_r
-#' @export
-rb_r <- comp_r
+### ------------------------------------------------------------------------ ###
+### convenience methods ####
+### ------------------------------------------------------------------------ ###
 
 ### print to screen
 setMethod(f = "show", signature = "comp_r", 
@@ -278,11 +284,9 @@ setMethod(f = "value", signature = "comp_r",
 # 
 # 
 
-### ICES advice style table
-# setGeneric(
-#   name = "advice",
-#   def = function(object) standardGeneric("advice")
-# )
+### ------------------------------------------------------------------------ ###
+### ICES advice style table ####
+### ------------------------------------------------------------------------ ###
 setMethod(
   f = "advice", signature = "comp_r",
   definition = function(object) {
@@ -311,7 +315,7 @@ setMethod(
                          format(val_r, width = 29, justify = "right"),
                          "\n")
                   )
-    txt <- paste0(txt, paste(rep("-", 80), collapse = ""), "\n")
+    #txt <- paste0(txt, paste(rep("-", 80), collapse = ""), "\n")
     
     cat(txt)
   }

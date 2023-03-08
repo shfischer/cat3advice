@@ -1,5 +1,8 @@
 #' @include generics.R
 
+### ------------------------------------------------------------------------ ###
+### comp_b class ####
+### ------------------------------------------------------------------------ ###
 #' An S4 class to represent component b of the rfb/rb/chr rules.
 #' 
 #' This class (\code{comp_b}) stores the input for component b (the biomass
@@ -64,6 +67,9 @@ setClass(Class = "chr_b",
          prototype = list(catch_rule = factor("chr", 
                                               levels = c("rfb", "rb", "chr"))))
 
+### ------------------------------------------------------------------------ ###
+### comp_b methods ####
+### ------------------------------------------------------------------------ ###
 #' rb/rfb/chr rule - component b (biomass safeguard)
 #'
 #' This function calculates component b (the biomass safeguard) of the rb, rfb,
@@ -216,6 +222,9 @@ rb_b <- comp_b
 #' @export
 chr_b <- comp_b
 
+### ------------------------------------------------------------------------ ###
+### comp_b validity ####
+### ------------------------------------------------------------------------ ###
 ### validity checks
 setValidity("comp_b", function(object) {
   if (!identical(length(object@value), 1L)) {
@@ -243,6 +252,9 @@ setValidity("comp_b", function(object) {
   }
 })
 
+### ------------------------------------------------------------------------ ###
+### comp_b calculation ####
+### ------------------------------------------------------------------------ ###
 ### function for creating/calculating biomass safeguard
 comp_b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
                        yr_last, units, catch_rule) {
@@ -313,6 +325,9 @@ comp_b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
   return(object)
 }
 
+### ------------------------------------------------------------------------ ###
+### convenience methods ####
+### ------------------------------------------------------------------------ ###
 setMethod(f = "show", signature = "comp_b", 
           definition = function(object) {
   cat(paste0(object@value, "\n"))
@@ -351,11 +366,9 @@ setMethod(f = "value", signature = "comp_b",
   return(object@value)
 })
 
-### ICES advice style table
-# setGeneric(
-#   name = "advice",
-#   def = function(object) standardGeneric("advice")
-# )
+### ------------------------------------------------------------------------ ###
+### ICES advice style table ####
+### ------------------------------------------------------------------------ ###
 setMethod(
   f = "advice", signature = "comp_b",
   definition = function(object) {

@@ -3,7 +3,6 @@
 ### ------------------------------------------------------------------------ ###
 ### comp_A class ####
 ### ------------------------------------------------------------------------ ###
-
 #' An S4 class to represent component Ay (the last advice or reference catch) 
 #' of the rfb, rb, and chr rules.
 #' 
@@ -84,8 +83,6 @@ setValidity("comp_A", function(object) {
 ### ------------------------------------------------------------------------ ###
 ### comp_A methods ####
 ### ------------------------------------------------------------------------ ###
-
-
 #' rfb/rb/chr rule - component Ay (reference catch or advice)
 #'
 #' This function defines the reference catch (last advice or average of 
@@ -191,6 +188,9 @@ setMethod(comp_A,
   }
 )
 
+### ------------------------------------------------------------------------ ###
+### comp_A calculation ####
+### ------------------------------------------------------------------------ ###
 comp_A_calc <- function(object, value, units, catch_rule, data, avg_years, 
                          basis, advice_metric, ...) {
   
@@ -365,6 +365,9 @@ setMethod(chr_A,
   }
 )
 
+### ------------------------------------------------------------------------ ###
+### convenience methods ####
+### ------------------------------------------------------------------------ ###
 ### value of object
 setGeneric(
   name = "value",
@@ -376,7 +379,6 @@ setMethod(
     return(object@value)
   }
 )
-
 
 ### print to screen
 setMethod(
@@ -407,14 +409,8 @@ setMethod(
 )
 
 ### ------------------------------------------------------------------------ ###
-### advice table ####
+### ICES advice style table ####
 ### ------------------------------------------------------------------------ ###
-
-### ICES advice style table
-# setGeneric(
-#   name = "advice",
-#   def = function(object) standardGeneric("advice")
-# )
 setMethod(
   f = "advice", signature = "comp_A",
   definition = function(object) {

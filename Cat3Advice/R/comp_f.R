@@ -1,6 +1,9 @@
 #' @include generics.R
 #' @include length_data.R
 
+### ------------------------------------------------------------------------ ###
+### comp_f class ####
+### ------------------------------------------------------------------------ ###
 #' An S4 class to represent component f of the rfb rule.
 #'
 #' This class (\code{comp_f}) stores the input for component f (the length 
@@ -56,6 +59,9 @@ setClass(
   ))
 )
 
+### ------------------------------------------------------------------------ ###
+### comp_f methods ####
+### ------------------------------------------------------------------------ ###
 #' rfb rule - component f (fishing pressure proxy, length indicator)
 #'
 #' This function calculates component f (the fishing pressure proxy, derived from a length indicator ) of the rfb rule. 
@@ -215,6 +221,9 @@ setMethod(comp_f,
 #' @export
 # rb_r <- comp_r
 
+### ------------------------------------------------------------------------ ###
+### comp_f validity ####
+### ------------------------------------------------------------------------ ###
 ### validity checks
 # setValidity("comp_r", function(object) {
 #   if (any(c(length(object@n0), length(object@n0), length(object@n0)) != 1)) {
@@ -227,6 +236,10 @@ setMethod(comp_f,
 #     TRUE
 #   }
 # })
+
+### ------------------------------------------------------------------------ ###
+### comp_f convenience methods ####
+### ------------------------------------------------------------------------ ###
 
 ### print to screen
 setMethod(
@@ -276,58 +289,71 @@ setMethod(
 #
 #
 
-### ICES advice style table
-# setGeneric(
-#   name = "advice",
-#   def = function(object) standardGeneric("advice")
-# )
-# setMethod(
-#   f = "advice", signature = "comp_r",
-#   definition = function(object) {
-#     txt <- paste0(
-#       paste(rep("-", 80), collapse = ""), "\n",
-#       "Stock biomass trend\n"
-#     )
-# 
-#     txt_A <- paste0("Index A (", paste0(object@n1_yrs, collapse = ","), ")")
-#     txt_B <- paste0("Index B (", paste0(object@n2_yrs, collapse = ","), ")")
-#     txt_r <- paste0("r: stock biomass trend (index ratio A/B)")
-# 
-#     val_A <- paste0(
-#       icesAdvice::icesRound(object@n1_mean),
-#       ifelse(!is.na(object@units), paste0(" ", object@units), "")
-#     )
-#     val_B <- paste0(
-#       icesAdvice::icesRound(object@n2_mean),
-#       ifelse(!is.na(object@units), paste0(" ", object@units), "")
-#     )
-#     val_r <- icesAdvice::icesRound(object@value)
-# 
-#     txt <- paste0(
-#       txt,
-#       paste0(
-#         format(txt_A, width = 48), " | ",
-#         format(val_A, width = 29, justify = "right"),
-#         "\n"
-#       ),
-#       paste0(
-#         format(txt_B, width = 48), " | ",
-#         format(val_B, width = 29, justify = "right"),
-#         "\n"
-#       ),
-#       paste0(
-#         format(txt_r, width = 48), " | ",
-#         format(val_r, width = 29, justify = "right"),
-#         "\n"
-#       )
-#     )
-#     txt <- paste0(txt, paste(rep("-", 80), collapse = ""), "\n")
-# 
-#     cat(txt)
-#   }
-# )
+### ------------------------------------------------------------------------ ###
+### ICES advice style table ####
+### ------------------------------------------------------------------------ ###
+### advice - comp_f
+#' @rdname advice
+#' @usage NULL
+#' @export
+setMethod(
+  f = "advice", signature = "comp_f",
+  definition = function(object) {
+    txt <- paste0(
+      paste(rep("-", 80), collapse = ""), "\n",
+      "Fishing pressure proxy\n",
+      paste(rep("-", 80), collapse = ""), "\n"
+    )
 
+    txt_Lmean <- paste0("Mean catch length (Lmean = L", object@yr_last, ")")
+    txt_Lref <- paste0("MSY proxy length (", object@Lref@basis, ")")
+    txt_f1 <- paste0("f: Fishing pressure proxy relative to MSY proxy")
+    txt_f2 <- paste0("   (L", object@yr_last, "/", object@Lref@basis, ")")
 
+    val_Lmean <- paste0(
+      icesAdvice::icesRound(object@Lmean@value[as.character(object@yr_last)]),
+      ifelse(!is.na(object@units), paste0(" ", object@units), "")
+    )
+    val_Lref <- paste0(
+      icesAdvice::icesRound(object@Lref@value),
+      ifelse(!is.na(object@units), paste0(" ", object@units), "")
+    )
+    val_f <- icesAdvice::icesRound(object@value)
+
+    txt <- paste0(
+      txt,
+      paste0(
+        format(txt_Lmean, width = 48), " | ",
+        format(val_Lmean, width = 29, justify = "right"),
+        "\n"
+      ),
+      paste0(
+        format(txt_Lref, width = 48), " | ",
+        format(val_Lref, width = 29, justify = "right"),
+        "\n"
+      ),
+      paste0(format(txt_f1, width = 48), " | \n"),
+      paste0(
+        format(txt_f2, width = 48), " | ",
+        format(val_f, width = 29, justify = "right"),
+        "\n"
+      )
+    )
+    #txt <- paste0(txt, paste(rep("-", 80), collapse = ""), "\n")
+
+    cat(txt)
+  }
+)
+### advice - rfb_f
+#' @rdname advice
+#' @usage NULL
+#' @export
+setMethod(
+  f = "advice", signature = "rfb_f",
+  definition = function(object) {
+    txt <- callNextMethod()
+    cat(txt)
+  })
 
 
 
