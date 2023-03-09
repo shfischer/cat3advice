@@ -105,10 +105,10 @@ setClass(
 #' @export
 setGeneric(
   name = "comp_f",
-  def = function(data, Lmean, Lref, units, catch_rule, ...) {
+  def = function(object, Lmean, Lref, units, catch_rule, ...) {
     standardGeneric("comp_f")
   },
-  signature = c("data", "Lmean", "Lref")
+  signature = c("object", "Lmean", "Lref")
 )
 
 ### Lmean = data.frame; Lref = numeric
@@ -117,14 +117,13 @@ setGeneric(
 ### Lmean = Lmean; Lref = data.frame
 ### Lmean = Lmean; Lref = Lref
 
-### data = missing; Lmean = Lmean; Lref = Lref
+### object = missing; Lmean = Lmean; Lref = Lref
 #' @rdname comp_f
+#' @usage NULL
+#' @export
 setMethod(comp_f,
-  signature = c(data = "missing", Lmean = "Lmean", Lref = "Lref"),
-  function(data, Lmean, Lref, units, catch_rule, ...) {
-    
-    Lmean <- lmean
-    Lref <- lref
+  signature = c(object = "missing", Lmean = "Lmean", Lref = "Lref"),
+  function(object, Lmean, Lref, units, catch_rule, ...) {
     
     object <- new("comp_f")
     object@Lmean <- Lmean
@@ -155,65 +154,59 @@ setMethod(comp_f,
 )
 
 
-### data.frame -> use as index
-#' @rdname comp_r
-# setMethod(comp_r,
-#   signature = c(object = "data.frame"),
-#   function(object, n0, n1, n2, units, catch_rule, ...) {
-#     idx <- object
-#     names(idx) <- tolower(names(idx))
-#     ### check if "year" column exists
-#     if (isFALSE("year" %in% names(idx))) {
-#       stop("Column \"year\" missing in idx")
-#     }
-#     ### check if "index" column exists
-#     if (isFALSE("index" %in% names(idx))) {
-#       if (identical(ncol(idx), 2L)) {
-#         message(paste0(
-#           "Column \"index\" missing in idx. Using column ",
-#           "\"", names(idx)[2], "\" instead"
-#         ))
-#       } else {
-#         stop("Column \"index\" missing in idx")
-#       }
-#     }
-#     comp_r_calc(
-#       idx = idx, n0 = n0, n1 = n1, n2 = n2, units = units,
-#       catch_rule = catch_rule, ...
-#     )
-#   }
-# )
-### numeric -> use as ratio
-#' @rdname comp_r
-# setMethod(comp_r,
-#   signature = c(object = "numeric"),
-#   function(object, ...) {
-# 
-#     ### create empty comp_r object
-#     res <- new("comp_r")
-# 
-#     ### remove parameters
-#     res@n0 <- NA_real_
-#     res@n1 <- NA_real_
-#     res@n2 <- NA_real_
-# 
-#     ### insert value
-#     res@value <- object
-# 
-#     return(res)
-#   }
-# )
-### comp_r -> check validity and update values if necessary
-#' @rdname comp_r
-# setMethod(comp_r,
-#   signature = c(object = "comp_r"),
-#   function(object, n0, n1, n2, units, catch_rule, ...) {
-#     ### check validity
-#     validObject(object)
-#     ### run comp_r() to update slots and recalculate if needed
-#     comp_r_calc(object, n0, n1, n2, units, catch_rule, ...)
-#   }
-# )
+
+### comp_f -> check validity
+#' @rdname comp_f
+#' @usage NULL
+#' @export
+setMethod(comp_f,
+  signature = c(object = "comp_f", Lmean = "missing", Lref = "missing"),
+  function(object, Lmean = object@Lmean, Lref = object@Lmean, 
+           units, catch_rule, ...) {
+    ### check validity
+    validObject(object)
+    
+    return(object)
+  }
+)
+
+### ------------------------------------------------------------------------ ###
+### aliases ####
+### ------------------------------------------------------------------------ ###
+### rfb_f
+#' @rdname comp_f
+#' @usage NULL
+#' @export
+setGeneric(
+  name = "rfb_f",
+  def = function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
+    standardGeneric("rfb_f")
+  },
+  signature = c("object", "Lmean", "Lref")
+)
+#' @rdname comp_f
+#' @usage NULL
+#' @export
+setMethod(rfb_f,
+          signature = c(object = "missing", Lmean = "Lmean", Lref = "Lref"),
+          function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
+            
+  comp_f(object = object, Lmean = Lmean, Lref = Lref, units = units, 
+         catch_rule = catch_rule, ... = ...)
+            
+})
+### comp_f -> check validity
+#' @rdname comp_f
+#' @usage NULL
+#' @export
+setMethod(rfb_f,
+          signature = c(object = "comp_f", Lmean = "missing", Lref = "missing"),
+          function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
+            
+  validObject(object)
+  return(object)
+  
+})
 
 ### alias for rfb and rb rule
 #' @rdname comp_r
@@ -294,7 +287,6 @@ setMethod(
 ### ------------------------------------------------------------------------ ###
 ### ICES advice style table ####
 ### ------------------------------------------------------------------------ ###
-### advice - comp_f
 #' @rdname advice
 #' @usage NULL
 #' @export
