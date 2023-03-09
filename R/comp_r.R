@@ -270,8 +270,7 @@ setMethod(f = "summary", signature = "comp_r",
                paste0(paste(rep("-", 50), collapse = ""))))
     cat(txt)
 })
-setGeneric(name = "value", 
-           def = function(object)  standardGeneric("value"))
+
 setMethod(f = "value", signature = "comp_r", 
           definition = function(object) {
   return(object@value)
