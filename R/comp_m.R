@@ -165,9 +165,16 @@ comp_m_calc <- function(object, value, catch_rule, k, ...) {
   ### use multiplier, if provided
   if (!missing(value)) {
     object@value <- value
-    
   ### derive multiplier from input data
   } else {
+    
+    ### if multiplier already exists in object, keep value
+    if (!is.na(object@value)) {
+      m_exists <- TRUE
+      object_value <- object@value
+    } else {
+      m_exists <- FALSE
+    }
     
     ### chr rule
     if (identical(object@catch_rule, "chr")) {
@@ -186,20 +193,37 @@ comp_m_calc <- function(object, value, catch_rule, k, ...) {
       if (!is.na(object@k)) {
         if (object@k < 0.2) {
           object@value <- 0.95
-          message(paste0("Multiplier (m) for the rfb rule: ",
-                         "selecting value based on k: m=", object@value))
+          if (isFALSE(m_exists)) {
+            message(paste0("Multiplier (m) for the rfb rule: ",
+                           "selecting value based on k: m=", object@value))
+          }
         } else if (object@k < 0.32) {
           object@value <- 0.9
-          message(paste0("Multiplier (m) for the rfb rule: ",
-                         "selecting value based on k: m=", object@value))
+          if (isFALSE(m_exists)) {
+            message(paste0("Multiplier (m) for the rfb rule: ",
+                           "selecting value based on k: m=", object@value))
+          }
         } else if (object@k >= 0.32)
           stop(paste0("k=", object@k, "/year is outside the recommended",
                       "range of k<0.32/year for the rfb rule!"))
       } else {
         object@value <- 0.90
-        message(paste0("Multiplier (m) for the rfb rule: ",
-                       "no value for k given, selecting the more precautionary",
-                       " m=", object@value))
+        if (isFALSE(m_exists)) {
+          message(paste0("Multiplier (m) for the rfb rule: ",
+                         "no value for k given, selecting the more",
+                         "precautionary m=", object@value))
+        }
+      }
+      
+      ### if m provided, compare with new calculation
+      if (isTRUE(m_exists)) {
+        if (!identical(object_value, object@value)) {
+          message(paste0("The value provided for the multiplier ",
+                         "m=", object_value, " does not follow the ICES ",
+                         "technical guidelines (m=", object@value, "). ",
+                         "Proceed with caution!"))
+          object@value <- object_value
+        }
       }
       
     } else {
@@ -358,7 +382,7 @@ setValidity("comp_m", function(object) {
   } else if (!identical(length(object@k), 1L)) {
     "slot k must be of length 1"
   } else if (!is.na(object@k)) {
-    if (k < 0 | k > 10) "slot k value infeasible"
+    if (object@k < 0 | object@k > 10) "slot k value infeasible"
   } else {
     TRUE
   }
