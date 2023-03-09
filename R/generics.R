@@ -31,3 +31,9 @@ setGeneric(
 #' #' @rdname advice
 #' #' @export
 #' setMethod(f = "advice", signature = "comp_m", definition = function(object) 1)
+
+### ------------------------------------------------------------------------ ###
+### value ####
+### ------------------------------------------------------------------------ ###
+setGeneric(name = "value", 
+           def = function(object)  standardGeneric("value"))
