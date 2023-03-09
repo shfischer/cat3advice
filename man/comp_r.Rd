@@ -26,10 +26,6 @@ comp_r(object, n0, n1, n2, units, catch_rule, ...)
 comp_r(object, n0, n1, n2, units, catch_rule, ...)
 
 comp_r(object, n0, n1, n2, units, catch_rule, ...)
-
-comp_r(object, n0, n1, n2, units, catch_rule, ...)
-
-comp_r(object, n0, n1, n2, units, catch_rule, ...)
 }
 \arguments{
 \item{object}{The biomass index. Can be a \code{data.frame} with columns 'data' and 'index' or an \code{FLQuant} object defined by \code{FLCore}.}
@@ -83,6 +79,8 @@ plot(rfb_r(df_idx, units = "kg/hr"))
 }
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+
+Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2023. Risk equivalence in data‐limited and data‐rich fisheries management: An example based on the ICES advice framework. Fish and Fisheries, 24: 231--247. \url{https://doi.org/10.1111/faf.12722}.
 
 Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2021. Application of explicit precautionary principles in data-limited fisheries management. ICES Journal of Marine Science, 78: 2931--2942. \url{https://doi.org/10.1093/icesjms/fsab169}.
 

@@ -428,7 +428,6 @@ setMethod(
 ### ------------------------------------------------------------------------ ###
 ### ICES advice style table ####
 ### ------------------------------------------------------------------------ ###
-### advice - comp_m
 #' @rdname advice
 #' @usage NULL
 #' @export
@@ -437,8 +436,8 @@ setMethod(
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n",
                   "Precautionary multiplier to maintain biomass above Blim ",
-                  "with 95% probability\n")
-    
+                  "with 95% probability\n",
+                  paste(rep("-", 80), collapse = ""), "\n")
     if (is(object, "rfb_m") | identical(object@catch_rule, "rfb") &
         isTRUE(object@value %in% c(0.95, 0.9))) {
       generic <- TRUE

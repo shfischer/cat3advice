@@ -411,6 +411,9 @@ setMethod(
 ### ------------------------------------------------------------------------ ###
 ### ICES advice style table ####
 ### ------------------------------------------------------------------------ ###
+#' @rdname advice
+#' @usage NULL
+#' @export
 setMethod(
   f = "advice", signature = "comp_A",
   definition = function(object) {
@@ -430,7 +433,7 @@ setMethod(
     txt_add <- paste0(format(txt_A, width = 48), " | ",
                       format(txt_A_value, width = 29, justify = "right"),
                       "\n")
-    #txt <- paste0(txt, txt_add, paste(rep("-", 80), collapse = ""), "\n")
+    txt <- paste0(txt, txt_add)
     cat(txt)
   }
 )

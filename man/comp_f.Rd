@@ -3,11 +3,13 @@
 \name{comp_f}
 \alias{comp_f}
 \alias{comp_f,missing,Lmean,Lref-method}
+\alias{comp_f,comp_f,missing,missing-method}
+\alias{rfb_f}
+\alias{rfb_f,missing,Lmean,Lref-method}
+\alias{rfb_f,comp_f,missing,missing-method}
 \title{rfb rule - component f (fishing pressure proxy, length indicator)}
 \usage{
-comp_f(data, Lmean, Lref, units, catch_rule, ...)
-
-\S4method{comp_f}{missing,Lmean,Lref}(data, Lmean, Lref, units, catch_rule, ...)
+comp_f(object, Lmean, Lref, units, catch_rule, ...)
 }
 \arguments{
 \item{Lmean}{The mean catch length. Either a \code{data.frame} with columns
@@ -47,6 +49,8 @@ a substantial changes in the fishery or fishery selectivity.
 }
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+
+Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2023. Risk equivalence in data‐limited and data‐rich fisheries management: An example based on the ICES advice framework. Fish and Fisheries, 24: 231--247. \url{https://doi.org/10.1111/faf.12722}.
 
 Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2021. Application of explicit precautionary principles in data-limited fisheries management. ICES Journal of Marine Science, 78: 2931--2942. \url{https://doi.org/10.1093/icesjms/fsab169}.
 

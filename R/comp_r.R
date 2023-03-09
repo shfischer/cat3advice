@@ -288,6 +288,9 @@ setMethod(f = "value", signature = "comp_r",
 ### ------------------------------------------------------------------------ ###
 ### ICES advice style table ####
 ### ------------------------------------------------------------------------ ###
+#' @rdname advice
+#' @usage NULL
+#' @export
 setMethod(
   f = "advice", signature = "comp_r",
   definition = function(object) {
