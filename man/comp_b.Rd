@@ -2,30 +2,68 @@
 % Please edit documentation in R/comp_b.R
 \name{comp_b}
 \alias{comp_b}
-\alias{comp_b,FLQuant-method}
 \alias{comp_b,data.frame-method}
 \alias{comp_b,numeric-method}
 \alias{comp_b,comp_b-method}
 \alias{rfb_b}
+\alias{rfb_b,ANY-method}
 \alias{rb_b}
+\alias{rb_b,ANY-method}
 \alias{chr_b}
+\alias{chr_b,ANY-method}
 \title{rb/rfb/chr rule - component b (biomass safeguard)}
 \usage{
-comp_b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
+comp_b(
+  object,
+  idx_value,
+  Itrigger,
+  Iloss,
+  w,
+  yr_ref,
+  n0,
+  units,
+  catch_rule,
+  ...
+)
 
-\S4method{comp_b}{FLQuant}(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
+rfb_b(
+  object,
+  idx_value,
+  Itrigger,
+  Iloss,
+  w,
+  yr_ref,
+  n0,
+  units,
+  catch_rule = "rfb",
+  ...
+)
 
-\S4method{comp_b}{data.frame}(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
+rb_b(
+  object,
+  idx_value,
+  Itrigger,
+  Iloss,
+  w,
+  yr_ref,
+  n0,
+  units,
+  catch_rule = "rb",
+  ...
+)
 
-\S4method{comp_b}{numeric}(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
-
-\S4method{comp_b}{comp_b}(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
-
-comp_b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
-
-comp_b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
-
-comp_b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
+chr_b(
+  object,
+  idx_value,
+  Itrigger,
+  Iloss,
+  w,
+  yr_ref,
+  n0,
+  units,
+  catch_rule = "chr",
+  ...
+)
 }
 \arguments{
 \item{object}{The biomass index. Can be a \code{data.frame} with columns 'data' and 'index' or an \code{FLQuant} object defined by \code{FLCore}.}
@@ -44,9 +82,9 @@ comp_b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, ...)
 
 \item{units}{Optional. The units of the biomass index, e.g. 'kg/hr'. Only used for plotting.}
 
-\item{...}{Additional arguments. Not used.}
-
 \item{catch_rule}{Optional. One of 'rfb', 'rb', or 'chr'.}
+
+\item{...}{Additional arguments. Not used.}
 }
 \value{
 An object of class \code{comp_b} with the value of the biomass 

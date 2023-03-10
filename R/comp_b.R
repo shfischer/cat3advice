@@ -138,28 +138,32 @@ setClass(Class = "chr_b",
 #' @export
 setGeneric(name = "comp_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, ...) 
+                          yr_ref, n0, units, catch_rule, ...) 
            standardGeneric("comp_b"),
            signature = c("object"))
 
 ### FLQuant -> convert to data.frame
-#' @rdname comp_b
-setMethod(comp_b, 
-          signature = c(object = "FLQuant"), 
-          function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, ...) {
-  ### convert FLQuant into data.frame
-  idx <- as.data.frame(object)[, c("year", "data")]
-  names(idx)[2] <- "index"
-  comp_b(object = idx, idx_value = idx_value, Itrigger = Itrigger, Iloss = Iloss, 
-         w = w, yr_ref = yr_ref, n0 = n0, units = units, ...)
-})
+# #' @rdname comp_b
+# #' @usage NULL
+# #' @export
+# setMethod(comp_b, 
+#           signature = c(object = "FLQuant"), 
+#           function(object, idx_value, Itrigger, Iloss, w,
+#                    yr_ref, n0, units, ...) {
+#   ### convert FLQuant into data.frame
+#   idx <- as.data.frame(object)[, c("year", "data")]
+#   names(idx)[2] <- "index"
+#   comp_b(object = idx, idx_value = idx_value, Itrigger = Itrigger, Iloss = Iloss, 
+#          w = w, yr_ref = yr_ref, n0 = n0, units = units, ...)
+# })
 ### data.frame -> use as index
 #' @rdname comp_b
+#' @usage NULL
+#' @export
 setMethod(comp_b, 
           signature = c(object = "data.frame"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, ...) {
+                   yr_ref, n0, units, catch_rule, ...) {
   idx <- object
   names(idx) <- tolower(names(idx))
   ### check if "year" column exists
@@ -174,18 +178,22 @@ setMethod(comp_b,
       stop("Column \"index\" missing in idx")
     }
   }
-  comp_b_calc(idx = idx, idx_value = idx_value, Itrigger = Itrigger, Iloss = Iloss, 
-              w = w, yr_ref = yr_ref, n0 = n0, units = units, ...)
+  comp_b_calc(idx = idx, idx_value = idx_value, Itrigger = Itrigger, 
+              Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, units = units, 
+              ...)
 })
 ### numeric -> use as b
 #' @rdname comp_b
+#' @usage NULL
+#' @export
 setMethod(comp_b, 
           signature = c(object = "numeric"), 
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, ...) {
+                   yr_ref, n0, units, catch_rule, ...) {
             
   ### create empty comp_b object
   res <- new("comp_b")
+  if (!missing(catch_rule)) res@catch_rule <- catch_rule
   
   ### remove parameters
   res@w <- NA_real_
@@ -203,26 +211,90 @@ setMethod(comp_b,
 })
 ### comp_b -> check validity and update values if necessary
 #' @rdname comp_b
+#' @usage NULL
+#' @export
 setMethod(comp_b, 
           signature = c(object = "comp_b"), 
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, ...) {
+                   yr_ref, n0, units, catch_rule, ...) {
   ### check validity
   validObject(object)
   ### run comp_b() to update slots and recalculate if needed
   comp_b_calc(object, ...)
 })
 
-### alias for rfb, rb, and chr rule
+### ------------------------------------------------------------------------ ###
+### alias ####
+### ------------------------------------------------------------------------ ###
+### define aliases rfb_b, rb_b, and chr_b for comp_b
+### set object signature to ANY and let comp_b deal with method dispatch
+
+### rfb
 #' @rdname comp_b
 #' @export
-rfb_b <- comp_b
+setGeneric(name = "rfb_b", 
+           def = function(object, idx_value, Itrigger, Iloss, w,
+                          yr_ref, n0, units, catch_rule = "rfb", ...) 
+             standardGeneric("rfb_b"),
+           signature = c("object"))
+#' @rdname comp_b
+#' @usage NULL
+#' @export
+setMethod(rfb_b, 
+          signature = c(object = "ANY"),
+          function(object, idx_value, Itrigger, Iloss, w,
+                   yr_ref, n0, units, catch_rule = "rfb", ...) {
+  catch_rule <- match.arg(catch_rule)
+  object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
+                   Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
+                   units = units, catch_rule = catch_rule, ... = ...)
+  class(object) <- "rfb_b"
+  return(object)
+})
+### rb
 #' @rdname comp_b
 #' @export
-rb_b <- comp_b
+setGeneric(name = "rb_b", 
+           def = function(object, idx_value, Itrigger, Iloss, w,
+                          yr_ref, n0, units, catch_rule = "rb", ...) 
+             standardGeneric("rb_b"),
+           signature = c("object"))
+#' @rdname comp_b
+#' @usage NULL
+#' @export
+setMethod(rb_b, 
+          signature = c(object = "ANY"),
+          function(object, idx_value, Itrigger, Iloss, w,
+                   yr_ref, n0, units, catch_rule = "rb", ...) {
+  catch_rule <- match.arg(catch_rule)
+  object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
+                   Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
+                   units = units, catch_rule = catch_rule, ... = ...)
+  class(object) <- "rb_b"
+  return(object)
+})
+### chr
 #' @rdname comp_b
 #' @export
-chr_b <- comp_b
+setGeneric(name = "chr_b", 
+           def = function(object, idx_value, Itrigger, Iloss, w,
+                          yr_ref, n0, units, catch_rule = "chr", ...) 
+             standardGeneric("chr_b"),
+           signature = c("object"))
+#' @rdname comp_b
+#' @usage NULL
+#' @export
+setMethod(chr_b, 
+          signature = c(object = "ANY"),
+          function(object, idx_value, Itrigger, Iloss, w,
+                   yr_ref, n0, units, catch_rule = "chr", ...) {
+  catch_rule <- match.arg(catch_rule)
+  object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
+                   Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
+                   units = units, catch_rule = catch_rule, ... = ...)
+  class(object) <- "chr_b"
+  return(object)
+})
 
 ### ------------------------------------------------------------------------ ###
 ### comp_b validity ####

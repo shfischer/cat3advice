@@ -6,16 +6,13 @@
 \alias{comp_m,comp_m-method}
 \alias{comp_m,missing-method}
 \alias{rfb_m}
-\alias{rfb_m,comp_m-method}
-\alias{rfb_m,numeric-method}
+\alias{rfb_m,ANY-method}
 \alias{rfb_m,missing-method}
 \alias{rb_m}
-\alias{rb_m,comp_m-method}
-\alias{rb_m,numeric-method}
+\alias{rb_m,ANY-method}
 \alias{rb_m,missing-method}
 \alias{chr_m}
-\alias{chr_m,comp_m-method}
-\alias{chr_m,numeric-method}
+\alias{chr_m,ANY-method}
 \alias{chr_m,missing-method}
 \title{rfb/rb/chr rule - component m (multiplier)}
 \usage{
@@ -87,4 +84,3 @@ comp_m(catch_rule = "chr") # 0.5
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 }
-\keyword{internal}

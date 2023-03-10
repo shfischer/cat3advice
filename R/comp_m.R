@@ -100,6 +100,7 @@ setClass(Class = "chr_m",
 NULL
 
 #' @rdname comp_m
+#' @export
 setGeneric(name = "comp_m", 
            def = function(object, catch_rule, k, ...) 
              standardGeneric("comp_m"),
@@ -107,9 +108,8 @@ setGeneric(name = "comp_m",
 
 ### numeric -> use as m value
 #' @rdname comp_m
-#' @keywords internal
 #' @usage NULL
-
+#' @export
 setMethod(comp_m, 
           signature = c(object = "numeric"), 
           function(object, catch_rule, k, ...) {
@@ -122,9 +122,8 @@ setMethod(comp_m,
 })
 ### comp_m -> validate and update if needed
 #' @rdname comp_m
-#' @keywords internal
 #' @usage NULL
-
+#' @export
 setMethod(comp_m, 
           signature = c(object = "comp_m"), 
           function(object, catch_rule, k, ...) {
@@ -137,9 +136,8 @@ setMethod(comp_m,
 
 ### missing -> derive m
 #' @rdname comp_m
-#' @keywords internal
 #' @usage NULL
-
+#' @export
 setMethod(comp_m, 
           signature = c(object = "missing"), 
           function(object, catch_rule, k, ...) {
@@ -242,129 +240,104 @@ comp_m_calc <- function(object, value, catch_rule, k, ...) {
 ### ------------------------------------------------------------------------ ###
 ### comp_m aliases ####
 ### ------------------------------------------------------------------------ ###
+### define aliases rfb_m, rb_m, and chr_m for comp_m
+### set object signature to ANY and let comp_m deal with method dispatch
+### also include signature "missing" because "ANY" does not include it
 
-### alias for rfb rule
+### rfb
 #' @rdname comp_m
+#' @export
 setGeneric(name = "rfb_m", 
            def = function(object, value, catch_rule = "rfb", k, ...) 
              standardGeneric("rfb_m"),
            signature = c("object"))
 #' @rdname comp_m
-#' @keywords internal
+#' @export
 #' @usage NULL
-
 setMethod(rfb_m, 
-          signature = c(object = "comp_m"), 
+          signature = c(object = "ANY"), 
           function(object, value, catch_rule = "rfb", k, ...) {
   catch_rule <- match.arg(catch_rule)
   object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "rfb_m"
+  return(object)
 })
 #' @rdname comp_m
-#' @keywords internal
+#' @export
 #' @usage NULL
-
-setMethod(rfb_m, 
-          signature = c(object = "numeric"), 
-          function(object, value, catch_rule = "rfb", k, ...) {
-  catch_rule <- match.arg(catch_rule)
-  value <- object
-  object <- new(Class = "rfb_m")
-  comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
-})
-#' @rdname comp_m
-#' @keywords internal
-#' @usage NULL
-
 setMethod(rfb_m, 
           signature = c(object = "missing"), 
           function(object, value, catch_rule = "rfb", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- new(Class = "rfb_m")
-  comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
+  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+                   k = k, ...)
+  class(object) <- "rfb_m"
+  return(object)
 })
-### alias for rb rule
+
+### rb
 #' @rdname comp_m
+#' @export
 setGeneric(name = "rb_m", 
            def = function(object, value, catch_rule = "rb", k, ...) 
              standardGeneric("rb_m"),
            signature = c("object"))
 #' @rdname comp_m
-#' @keywords internal
+#' @export
 #' @usage NULL
-
 setMethod(rb_m, 
-          signature = c(object = "comp_m"), 
+          signature = c(object = "ANY"), 
           function(object, value, catch_rule = "rb", k, ...) {
   catch_rule <- match.arg(catch_rule)
   object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "rb_m"
+  return(object)
 })
 #' @rdname comp_m
-#' @keywords internal
+#' @export
 #' @usage NULL
-
-setMethod(rb_m, 
-          signature = c(object = "numeric"), 
-          function(object, value, catch_rule = "rb", k, ...) {
-  catch_rule <- match.arg(catch_rule)
-  value <- object
-  object <- new(Class = "rb_m")
-  comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
-})
-#' @rdname comp_m
-#' @keywords internal
-#' @usage NULL
-
 setMethod(rb_m, 
           signature = c(object = "missing"), 
           function(object, value, catch_rule = "rb", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- new(Class = "rb_m")
-  comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
+  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+                   k = k, ...)
+  class(object) <- "rb_m"
+  return(object)
 })
-### alias for chr rule
+
+### chr
 #' @rdname comp_m
+#' @export
 setGeneric(name = "chr_m", 
            def = function(object, value, catch_rule = "chr", k, ...) 
              standardGeneric("chr_m"),
            signature = c("object"))
 #' @rdname comp_m
-#' @keywords internal
+#' @export
 #' @usage NULL
-
 setMethod(chr_m, 
-          signature = c(object = "comp_m"), 
+          signature = c(object = "ANY"), 
           function(object, value, catch_rule = "chr", k, ...) {
   catch_rule <- match.arg(catch_rule)
   object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "chr_m"
+  return(object)
 })
 #' @rdname comp_m
-#' @keywords internal
+#' @export
 #' @usage NULL
-
-setMethod(chr_m, 
-          signature = c(object = "numeric"), 
-          function(object, value, catch_rule = "chr", k, ...) {
-  catch_rule <- match.arg(catch_rule)
-  value <- object
-  object <- new(Class = "chr_m")
-  comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
-})
-#' @rdname comp_m
-#' @keywords internal
-#' @usage NULL
-
 setMethod(chr_m, 
           signature = c(object = "missing"), 
           function(object, value, catch_rule = "chr", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- new(Class = "chr_m")
-  comp_m(object = object, value = value, catch_rule = catch_rule, k = k, ...)
+  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+                   k = k, ...)
+  class(object) <- "chr_m"
+  return(object)
 })
 
 ### ------------------------------------------------------------------------ ###
@@ -391,21 +364,24 @@ setValidity("comp_m", function(object) {
 ### ------------------------------------------------------------------------ ###
 ### comp_m convience methods ####
 ### ------------------------------------------------------------------------ ###
-### value of object
-setGeneric(name = "value", 
-           def = function(object)  standardGeneric("value"))
+#' @rdname value
+#' @export
 setMethod(f = "value", signature = "comp_m", 
           definition = function(object) {
             return(object@value)
 })
 
 ### print to screen
+#' @rdname show
+#' @export
 setMethod(f = "show", signature = "comp_m", 
           definition = function(object) {
             cat(paste0(object@value, "\n"))
 })
 
 ### summary
+#' @rdname summary
+#' @export
 setMethod(
   f = "summary", signature = "comp_m",
   definition = function(object) {

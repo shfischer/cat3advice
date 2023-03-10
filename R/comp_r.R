@@ -110,16 +110,16 @@ setGeneric(name = "comp_r",
            signature = c("object"))
 
 ### FLQuant -> convert to data.frame
-#' @rdname comp_r
-setMethod(comp_r, 
-          signature = c(object = "FLQuant"), 
-          function(object, n0, n1, n2, units, catch_rule, ...) {
-  ### convert FLQuant into data.frame
-  idx <- as.data.frame(object)[, c("year", "data")]
-  names(idx)[2] <- "index"
-  comp_r(idx, n0 = n0, n1 = n1, n2 = n2, units = units, catch_rule = catch_rule,
-         ...)
-})
+# #' @rdname comp_r
+# setMethod(comp_r, 
+#           signature = c(object = "FLQuant"), 
+#           function(object, n0, n1, n2, units, catch_rule, ...) {
+#   ### convert FLQuant into data.frame
+#   idx <- as.data.frame(object)[, c("year", "data")]
+#   names(idx)[2] <- "index"
+#   comp_r(idx, n0 = n0, n1 = n1, n2 = n2, units = units, catch_rule = catch_rule,
+#          ...)
+# })
 ### data.frame -> use as index
 #' @rdname comp_r
 setMethod(comp_r, 
@@ -172,13 +172,50 @@ setMethod(comp_r,
   comp_r_calc(object, n0, n1, n2, units, catch_rule, ...)
 })
 
-### alias for rfb and rb rule
+### ------------------------------------------------------------------------ ###
+### aliases ####
+### ------------------------------------------------------------------------ ###
+### define aliases rfb_r and rb_r for comp_r
+### set object signature to ANY and let comp_r deal with method dispatch
+
+### rfb_r
 #' @rdname comp_r
 #' @export
-rfb_r <- comp_r
+setGeneric(name = "rfb_r", 
+           def = function(object, n0, n1, n2, units, catch_rule = "rfb", ...) 
+             standardGeneric("rfb_r"),
+           signature = c("object"))
+#' @rdname comp_r
+#' @usage NULL
+#' @export
+setMethod(rfb_r, 
+          signature = c(object = "ANY"),
+          function(object, n0, n1, n2, units, catch_rule = "rfb", ...) {
+  catch_rule <- match.arg(catch_rule)
+  object <- comp_r(object = object, n0 = n0, n1 = n1, n2 = n2, units = units,
+                   catch_rule = catch_rule, ... = ...)
+  class(object) <- "rfb_r"
+  return(object)
+})
+### rb_r
 #' @rdname comp_r
 #' @export
-rb_r <- comp_r
+setGeneric(name = "rb_r", 
+           def = function(object, n0, n1, n2, units, catch_rule = "rb", ...) 
+             standardGeneric("rb_r"),
+           signature = c("object"))
+#' @rdname comp_r
+#' @usage NULL
+#' @export
+setMethod(rb_r, 
+          signature = c(object = "ANY"),
+          function(object, n0, n1, n2, units, catch_rule = "rb", ...) {
+  catch_rule <- match.arg(catch_rule)
+  object <- comp_r(object = object, n0 = n0, n1 = n1, n2 = n2, units = units,
+                   catch_rule = catch_rule, ... = ...)
+  class(object) <- "rb_r"
+  return(object)
+})
 
 ### ------------------------------------------------------------------------ ###
 ### validity checks ####
@@ -249,10 +286,14 @@ comp_r_calc <- function(object, idx, n0, n1, n2, units, catch_rule) {
 ### ------------------------------------------------------------------------ ###
 
 ### print to screen
+#' @rdname show
+#' @export
 setMethod(f = "show", signature = "comp_r", 
   definition = function(object) {
     cat(paste0(object@value, "\n"))
 })
+#' @rdname summary
+#' @export
 setMethod(f = "summary", signature = "comp_r", 
   definition = function(object) {
     txt <- (paste0(paste(rep("-", 50), collapse = ""), "\n",
@@ -270,7 +311,8 @@ setMethod(f = "summary", signature = "comp_r",
                paste0(paste(rep("-", 50), collapse = ""))))
     cat(txt)
 })
-
+#' @rdname value
+#' @export
 setMethod(f = "value", signature = "comp_r", 
           definition = function(object) {
   return(object@value)

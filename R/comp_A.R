@@ -281,8 +281,15 @@ comp_A_calc <- function(object, value, units, catch_rule, data, avg_years,
   
 }
 
+### ------------------------------------------------------------------------ ###
+### alias ####
+### ------------------------------------------------------------------------ ###
+### define aliases rfb_A, rb_A, and chr_A for comp_A
+### set object signature to ANY and let comp_A deal with method dispatch
+
 ### alias for rfb rule
 #' @rdname comp_A
+#' @export
 setGeneric(
   name = "rfb_A",
   def = function(object, value, units, catch_rule = "rfb", data, avg_years,
@@ -293,7 +300,7 @@ setGeneric(
 )
 #' @rdname comp_A
 #' @usage NULL
-#' @keywords internal
+#' @export
 setMethod(rfb_A,
   signature = c(object = "ANY"),
   function(object, value, units, catch_rule = "rfb", data, avg_years,
@@ -311,6 +318,7 @@ setMethod(rfb_A,
 
 ### alias for rb rule
 #' @rdname comp_A
+#' @export
 setGeneric(
   name = "rb_A",
   def = function(object, value, units, catch_rule = "rb", data, avg_years, 
@@ -321,7 +329,7 @@ setGeneric(
 )
 #' @rdname comp_A
 #' @usage NULL
-#' @keywords internal
+#' @export
 setMethod(rb_A,
   signature = c(object = "ANY"),
   function(object, value, units, catch_rule = "rb", data, avg_years,
@@ -339,6 +347,7 @@ setMethod(rb_A,
 
 ### alias for chr rule
 #' @rdname comp_A
+#' @export
 setGeneric(
   name = "chr_A",
   def = function(object, value, units, catch_rule = "chr", data, avg_years,
@@ -348,8 +357,8 @@ setGeneric(
   signature = c("object")
 )
 #' @rdname comp_A
-#' @keywords internal
 #' @usage NULL
+#' @export
 setMethod(chr_A,
   signature = c(object = "ANY"),
   function(object, value, catch_rule = "chr", data, avg_years,

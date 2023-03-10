@@ -173,6 +173,9 @@ setMethod(comp_f,
 ### ------------------------------------------------------------------------ ###
 ### aliases ####
 ### ------------------------------------------------------------------------ ###
+### define aliases rfb_f
+### set object signature to ANY and let comp_f deal with method dispatch
+
 ### rfb_f
 #' @rdname comp_f
 #' @usage NULL
@@ -188,38 +191,35 @@ setGeneric(
 #' @usage NULL
 #' @export
 setMethod(rfb_f,
-          signature = c(object = "missing", Lmean = "Lmean", Lref = "Lref"),
+          signature = c(object = "missing", Lmean = "ANY", Lref = "ANY"),
           function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
-            
-  comp_f(object = object, Lmean = Lmean, Lref = Lref, units = units, 
-         catch_rule = catch_rule, ... = ...)
-            
+  catch_rule <- match.arg(catch_rule)
+  object <- comp_f(object = object, Lmean = Lmean, Lref = Lref, units = units, 
+                   catch_rule = catch_rule, ... = ...)
+  class(object) <- "rfb_f"
+  return(object)
 })
 ### comp_f -> check validity
 #' @rdname comp_f
 #' @usage NULL
 #' @export
 setMethod(rfb_f,
-          signature = c(object = "comp_f", Lmean = "missing", Lref = "missing"),
+          signature = c(object = "ANY", Lmean = "missing", Lref = "missing"),
           function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
-            
-  validObject(object)
+  catch_rule <- match.arg(catch_rule)
+  object <- comp_f(object = object, Lmean = Lmean, Lref = Lref, units = units,
+                   catch_rule = catch_rule, ... = ...)
+  class(object) <- "rfb_f"
   return(object)
-  
 })
-
-### alias for rfb and rb rule
-#' @rdname comp_r
-#' @export
-# rfb_r <- comp_r
-#' @rdname comp_r
-#' @export
-# rb_r <- comp_r
 
 ### ------------------------------------------------------------------------ ###
 ### comp_f validity ####
 ### ------------------------------------------------------------------------ ###
 ### validity checks
+
+### TO DO
+
 # setValidity("comp_r", function(object) {
 #   if (any(c(length(object@n0), length(object@n0), length(object@n0)) != 1)) {
 #     "n0, n1, and n2 must each be of length 1"
@@ -237,12 +237,16 @@ setMethod(rfb_f,
 ### ------------------------------------------------------------------------ ###
 
 ### print to screen
+#' @rdname show
+#' @export
 setMethod(
   f = "show", signature = "comp_f",
   definition = function(object) {
     cat(paste0(object@value, "\n"))
   }
 )
+#' @rdname summary
+#' @export
 setMethod(
   f = "summary", signature = "comp_f",
   definition = function(object) {
@@ -264,10 +268,8 @@ setMethod(
     cat(txt)
   }
 )
-setGeneric(
-  name = "value",
-  def = function(object) standardGeneric("value")
-)
+#' @rdname value
+#' @export
 setMethod(
   f = "value", signature = "comp_f",
   definition = function(object) {
