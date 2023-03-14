@@ -3,14 +3,17 @@
 #' @include comp_b.R
 #' @include comp_m.R
 #' @include comp_A.R
+#' @importFrom icesAdvice icesRound
+#' @importFrom utils capture.output tail
+NULL
 
 ### ------------------------------------------------------------------------ ###
 ### rfb class ####
 ### ------------------------------------------------------------------------ ###
 
-#' An S4 class to represent the rfb rule.
+#' @title An S4 class to represent the rfb rule.
 #'
-#' This class contains the components of the rfb rule (\code{rfb_A},
+#' @description This class contains the components of the rfb rule (\code{rfb_A},
 #' \code(rfb_r), \code(rfb_f), \code(rfb_b), \code(rfb_m))
 #'
 #' @slot advice The value of the catch advice.
@@ -104,7 +107,7 @@ setClass(
 #'  
 #' @section Warning:
 #' For application in ICES, do not change the default parameters (frequency, 
-#' uncertainty cap, etc) unless the changes are supported by case-specific
+#' stability clause, etc) unless the changes are supported by case-specific
 #' simulations.
 #'
 #' @references 
@@ -131,15 +134,89 @@ NULL
 #' @rdname rfb
 #' @export
 setGeneric(name = "rfb", 
-           def = function(object, A, r, f, b, m, cap, 
-                          cap_upper, cap_lower, years, frequency,
-                          discard_rate,
+           def = function(object, A, r, f, b, m, cap = "conditional", 
+                          cap_upper = 20, cap_lower = -30, years, 
+                          frequency = "biennial",
+                          discard_rate = NA,
                           ...) 
              standardGeneric("rfb"),
            signature = c("object", "A", "r", "f", "b", "m"))
-#' @rdname 
+### object = missing, A/r/f/b/m = comp_A/r/f/b/m
+#' @rdname rfb
 #' @usage NULL
 #' @export
+setMethod(rfb,
+          signature = c(object = "missing", 
+                        A = "comp_A", r = "comp_r", f = "comp_f", b = "comp_b",
+                        m = "comp_m"),
+          function(A, r, f, b, m,
+                   cap,
+                   cap_upper, cap_lower,
+                   years, frequency,
+                   discard_rate = NA,
+                   ...) {#browser()
+  object <- rfb_calc(A = A, r = r, f = f, b = b, m = m,
+                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                     year = years, frequency = frequency, 
+                     discard_rate = discard_rate, ... = ...)
+  return(object)
+})
+### object = rfb, A/r/f/b/m = missing -> check validity
+#' @rdname rfb
+#' @usage NULL
+#' @export
+setMethod(rfb,
+          signature = c(object = "rfb", 
+                        A = "missing", r = "missing", f = "missing", 
+                        b = "missing", m = "missing"),
+          function(object, 
+                   A = object@A, r = object@r, f = object@f, 
+                   b = object@b, m = object@m,
+                   cap = "conditional",
+                   cap_upper = 20, cap_lower = -30,
+                   years, frequency = "biennial",
+                   discard_rate = NA,
+                   ...) {
+  ### check validity
+  validObject(object)
+  ### update object if arguments provided
+  object <- rfb_calc(object = object,
+                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                     year = years, frequency = frequency, 
+                     discard_rate = discard_rate, ... = ...)
+  return(object)
+  
+})
+### object = rfb, A/r/f/b/m = comp_A/r/f/b/m -> check validity & update
+#' @rdname rfb
+#' @usage NULL
+#' @export
+setMethod(rfb,
+          signature = c(object = "rfb", 
+                        A = "comp_A", r = "comp_r", f = "comp_f", 
+                        b = "comp_b", m = "comp_m"),
+          function(object, 
+                   A = object@A, r = object@r, f = object@f, 
+                   b = object@b, m = object@m,
+                   cap = "conditional",
+                   cap_upper = 20, cap_lower = -30,
+                   years, frequency = "biennial",
+                   discard_rate = NA,
+                   ...) {
+  ### check validity
+  validObject(object)
+  ### update object
+  object <- rfb_calc(object = object,
+                     A = A, r = r, f = f, b = b, m = m,
+                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                     year = years, frequency = frequency, 
+                     discard_rate = discard_rate, ... = ...)
+  return(object)
+})
+
+### ------------------------------------------------------------------------ ###
+### rfb calculation ####
+### ------------------------------------------------------------------------ ###
 rfb_calc <- function(object = new("rfb"), 
                      A = object@A, r = object@r, f = object@f, 
                      b = object@b, m = object@m,
@@ -147,8 +224,8 @@ rfb_calc <- function(object = new("rfb"),
                      cap_upper = 20,
                      cap_lower = -30,
                      years,
-                     frequency = c("biennial", "annual", "triennial"),
-                     discard_rate,
+                     frequency = "biennial",
+                     discard_rate = NA,
                      ...) {
   #browser()
 
@@ -159,12 +236,18 @@ rfb_calc <- function(object = new("rfb"),
   if (!missing(b)) object@b <- rfb_b(b)
   if (!missing(m)) {
     object@m <- comp_m(m)
-  } else {
+  } else if (is.na(object@m@value)) {
     ### use default multiplier if missing
     object@m <- rfb_m()
   }
   if (!missing(cap_upper)) object@cap_upper <- cap_upper
   if (!missing(cap_lower)) object@cap_lower <- cap_lower
+  ### check arguments
+  if (!missing(frequency)) 
+    frequency <- match.arg(arg = frequency, 
+                           choices = c("biennial", "annual", "triennial"))
+  if (!missing(cap)) 
+    cap <- match.arg(arg = cap, choices = c("conditional", TRUE, FALSE))
 
   ### calculate r*f*b*m
   factor <- object@r@value * object@f@value * object@b@value * object@m@value
@@ -280,8 +363,8 @@ setMethod(
     cap_val2 <- ifelse(object@cap, object@advice/object@A@value, "")
     txt_cap <- paste0(format(cap_txt1, width = 48), " | \n",
                       format(cap_txt2, width = 48), " | ",
-                      format(cap_val1, width = 18, justify = "right"), " | ",
-                      format(cap_val2, width = 8, justfify = "right"), "\n")
+                      format(cap_val1, width = 13, justify = "right"), " | ",
+                      format(cap_val2, width = 13, justfify = "right"), "\n")
     ### catch advice
     catch_adv_txt1 <- paste0("Catch advice for ", 
                              paste0(object@years, collapse = " and "))
