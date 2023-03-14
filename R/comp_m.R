@@ -1,9 +1,14 @@
 #' @include generics.R
+#' @importFrom icesAdvice icesRound
+#' @importFrom methods callNextMethod is new validObject
+NULL
 
 ### ------------------------------------------------------------------------ ###
 ### comp_m class ####
 ### ------------------------------------------------------------------------ ###
-#' An S4 class to represent component m (the multiplier) of the rfb, rb, and 
+#' @title comp_m-class
+
+#' @description An S4 class to represent component m (the multiplier) of the rfb, rb, and 
 #' chr rules.
 #' 
 #' The classes \code{rfb_m}, \code{rb_m}, and \code{chr_m} inherit from 
@@ -14,7 +19,7 @@
 #' @slot catch_rule The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @slot k Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).
 #' 
-#' @rdname comp_m-class
+#' @name comp_m-class
 #' @export
 setClass(Class = "comp_m", 
          slots = c(value = "numeric",

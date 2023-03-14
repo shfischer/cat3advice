@@ -1,9 +1,12 @@
 #' @include generics.R
+NULL
 
 ### ------------------------------------------------------------------------ ###
 ### comp_A class ####
 ### ------------------------------------------------------------------------ ###
-#' An S4 class to represent component Ay (the last advice or reference catch) 
+#' @title comp_A-class
+#' 
+#' @description An S4 class to represent component Ay (the last advice or reference catch) 
 #' of the rfb, rb, and chr rules.
 #' 
 #' The classes \code{rfb_A}, \code{rb_A}, and \code{chr_A} inherit from 
@@ -17,7 +20,7 @@
 #' @slot basis Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch
 #' @slot advice_metric Advice metric, 'catch' or 'landings'.
 #' 
-#' @rdname comp_A-class
+#' @name comp_A-class
 #' @export
 setClass(
   Class = "comp_A",

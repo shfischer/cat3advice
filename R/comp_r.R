@@ -1,10 +1,14 @@
 #' @include generics.R
+#' @importFrom icesAdvice icesRound
+NULL
 
 ### ------------------------------------------------------------------------ ###
 ### comp_r class ####
 ### ------------------------------------------------------------------------ ###
 
-#' An S4 class to represent component r of the rfb and rb rules.
+#' @title comp_r-class
+#' 
+#' @description  An S4 class to represent component r of the rfb and rb rules.
 #' 
 #' This class (\code{comp_r}) stores the input for component r (the index ratio
 #' ) as well as the resulting r value. 

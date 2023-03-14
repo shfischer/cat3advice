@@ -1,9 +1,13 @@
 #' @include generics.R
+#' @importFrom icesAdvice icesRound
+NULL
 
 ### ------------------------------------------------------------------------ ###
 ### comp_b class ####
 ### ------------------------------------------------------------------------ ###
-#' An S4 class to represent component b of the rfb/rb/chr rules.
+#' @title comp_b-class
+#' 
+#' @description  An S4 class to represent component b of the rfb/rb/chr rules.
 #' 
 #' This class (\code{comp_b}) stores the input for component b (the biomass
 #' safeguard) as well as the resulting b value. 
@@ -24,7 +28,7 @@
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot catch_rule \code{factor}. The catch rule for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.
 #' 
-#' @rdname comp_b-class
+#' @name comp_b-class
 #' @export
 setClass(Class = "comp_b", 
          slots = c(value = "numeric",
