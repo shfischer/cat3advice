@@ -1,4 +1,9 @@
 #' @include generics.R
+#' @importFrom ggplot2 ggplot geom_ribbon geom_line geom_vline aes coord_cartesian labs theme theme_bw element_text element_blank unit scale_linetype_manual scale_colour_manual scale_fill_manual facet_wrap
+#' @importFrom scales parse_format
+#' @importFrom dplyr select mutate bind_rows
+#' @importFrom tidyr pivot_longer
+NULL
 
 #' Plot elements of the rfb/rb/chr rule
 #'
@@ -72,35 +77,35 @@ setMethod(f = "plot", signature = c(x = "comp_r"),
   
   
   ### create plot
-  p <- ggplot()
+  p <- ggplot2::ggplot()
   
   ### add shaded area if high/low exist
   if (all(c("low", "high") %in% names(object@idx))) {
     idx_max_high <- max(object@idx$high, na.rm = TRUE)
     if (isTRUE(idx_max_high > idx_max)) idx_max <- idx_max_high
     p <- p +
-      geom_ribbon(data = object@idx,
-                  aes(x = year, ymin = low, ymax = high),
+      ggplot2::geom_ribbon(data = object@idx,
+                  ggplot2::aes(x = year, ymin = low, ymax = high),
                   fill = "#077c6c", alpha = 0.7, show.legend = FALSE)
   }
   p <- p +
-    geom_line(data = object@idx,
-              aes(x = year, y = index),
+    ggplot2::geom_line(data = object@idx,
+                       ggplot2::aes(x = year, y = index),
               color = "#077c6c") +
-    geom_line(data = df_mean,
-              aes(x = year, y = value),
+    ggplot2::geom_line(data = df_mean,
+                       ggplot2::aes(x = year, y = value),
               colour = "#ed6028") +
-    coord_cartesian(ylim = c(0, idx_max * 1.1), 
+    ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1), 
                     xlim = c(yr_min - 1, yr_max + 1), 
                     expand = FALSE) +
-    labs(x = "", y = y_label, 
+    ggplot2::labs(x = "", y = y_label, 
          title = "Biomass Index") +
-    theme_bw(base_size = 8) +
-    theme(axis.title.y = element_text(face = "bold"),
-          axis.title.x = element_blank(),
+    ggplot2::theme_bw(base_size = 8) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+          axis.title.x = ggplot2::element_blank(),
           legend.position = "bottom",
-          legend.key.height = unit(0.5, "lines"),
-          plot.title = element_text(face = "bold", colour = "#097e6e"))
+          legend.key.height = ggplot2::unit(0.5, "lines"),
+          plot.title = ggplot2::element_text(face = "bold", colour = "#097e6e"))
   return(p)
 })
 
@@ -133,42 +138,42 @@ setMethod(f = "plot", signature = c(x = "comp_b"),
   b_refs$name <- factor(b_refs$name)
   
   ### create plot
-  p <- ggplot()
+  p <- ggplot2::ggplot()
   
   ### add shaded area if high/low exist
   if (all(c("low", "high") %in% names(object@idx))) {
     idx_max_high <- max(object@idx$high, na.rm = TRUE)
     if (isTRUE(idx_max_high > idx_max)) idx_max <- idx_max_high
     p <- p +
-      geom_ribbon(data = object@idx,
-                  aes(x = year, ymin = low, ymax = high),
+      ggplot2::geom_ribbon(data = object@idx,
+                           ggplot2::aes(x = year, ymin = low, ymax = high),
                   fill = "#077c6c", alpha = 0.7, show.legend = FALSE)
   }
   p <- p +
-    geom_line(data = object@idx,
-              aes(x = year, y = index),
+    ggplot2::geom_line(data = object@idx,
+                       ggplot2::aes(x = year, y = index),
               color = "#077c6c") +
-    geom_hline(data = b_refs, 
-               aes(yintercept = value, linetype = name, colour = name)) +
-    scale_linetype_manual("", 
+    ggplot2::geom_hline(data = b_refs, 
+               ggplot2::aes(yintercept = value, linetype = name, colour = name)) +
+    ggplot2::scale_linetype_manual("", 
                           values = c("I[loss]" = "dotted", 
                                      "I[trigger]" = "solid"),
                           labels = scales::parse_format()) + 
-    scale_colour_manual("",
+    ggplot2::scale_colour_manual("",
                         values = c("I[loss]" = "#679dfe",
                                    "I[trigger]" = "#679dfe"),
                         labels = scales::parse_format()) +
-    coord_cartesian(ylim = c(0, idx_max * 1.1), 
+    ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1), 
                     xlim = c(yr_min - 1, yr_max + 1), 
                     expand = FALSE) +
-    labs(x = "", y = y_label, 
+    ggplot2::labs(x = "", y = y_label, 
          title = "Biomass Index") +
-    theme_bw(base_size = 8) +
-    theme(axis.title.y = element_text(face = "bold"),
-          axis.title.x = element_blank(),
+    ggplot2::theme_bw(base_size = 8) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+          axis.title.x = ggplot2::element_blank(),
           legend.position = "bottom",
-          legend.key.height = unit(0.5, "lines"),
-          plot.title = element_text(face = "bold", colour = "#097e6e"))
+          legend.key.height = ggplot2::unit(0.5, "lines"),
+          plot.title = ggplot2::element_text(face = "bold", colour = "#097e6e"))
   return(p)
 })
 
@@ -223,45 +228,45 @@ setMethod(f = "plot", signature = c(x = "comp_r", y = "comp_b"),
   
   
   ### create plot
-  p <- ggplot()
+  p <- ggplot2::ggplot()
   
   ### add shaded area if high/low exist
   if (all(c("low", "high") %in% names(object@idx))) {
     idx_max_high <- max(object@idx$high, na.rm = TRUE)
     if (isTRUE(idx_max_high > idx_max)) idx_max <- idx_max_high
     p <- p +
-      geom_ribbon(data = object@idx,
-                  aes(x = year, ymin = low, ymax = high),
+      ggplot2::geom_ribbon(data = object@idx,
+                           ggplot2::aes(x = year, ymin = low, ymax = high),
                   fill = "#077c6c", alpha = 0.7, show.legend = FALSE)
   }
   p <- p +
-    geom_line(data = object@idx,
-              aes(x = year, y = index),
+    ggplot2::geom_line(data = object@idx,
+                       ggplot2::aes(x = year, y = index),
               color = "#077c6c") +
-    geom_line(data = df_mean,
-              aes(x = year, y = value),
+    ggplot2::geom_line(data = df_mean,
+              ggplot2::aes(x = year, y = value),
               colour = "#ed6028") +
-    geom_hline(data = b_refs, 
-               aes(yintercept = value, linetype = name, colour = name)) +
-    scale_linetype_manual("", 
+    ggplot2::geom_hline(data = b_refs, 
+               ggplot2::aes(yintercept = value, linetype = name, colour = name)) +
+    ggplot2::scale_linetype_manual("", 
                           values = c("I[loss]" = "dotted", 
                                      "I[trigger]" = "solid"),
                           labels = scales::parse_format()) + 
-    scale_colour_manual("",
+    ggplot2::scale_colour_manual("",
                         values = c("I[loss]" = "#679dfe",
                                    "I[trigger]" = "#679dfe"),
                         labels = scales::parse_format()) +
-    coord_cartesian(ylim = c(0, idx_max * 1.1), 
+    ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1), 
                     xlim = c(yr_min - 1, yr_max + 1), 
                     expand = FALSE) +
-    labs(x = "", y = y_label, 
+    ggplot2::labs(x = "", y = y_label, 
          title = "Biomass Index") +
-    theme_bw(base_size = 8) +
-    theme(axis.title.y = element_text(face = "bold"),
-          axis.title.x = element_blank(),
+    ggplot2::theme_bw(base_size = 8) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+          axis.title.x = ggplot2::element_blank(),
           legend.position = "bottom",
-          legend.key.height = unit(0.5, "lines"),
-          plot.title = element_text(face = "bold", colour = "#097e6e"))
+          legend.key.height = ggplot2::unit(0.5, "lines"),
+          plot.title = ggplot2::element_text(face = "bold", colour = "#097e6e"))
   return(p)
 })
 
@@ -299,29 +304,29 @@ setMethod(f = "plot", signature = c(x = "comp_f"),
   Lref_df <- data.frame(name = "L[F==M]", value = x@Lref@value)
   
   ### create plot
-  p <- ggplot()
+  p <- ggplot2::ggplot()
   
   p <- p +
-    geom_line(data = object@indicator,
-              aes(x = year, y = Lmean),
+    ggplot2::geom_line(data = object@indicator,
+                       ggplot2::aes(x = year, y = Lmean),
               color = "#ed6028") +
-    geom_hline(data = Lref_df, 
-               aes(yintercept = value, colour = name)) +
-    scale_colour_manual("",
+    ggplot2::geom_hline(data = Lref_df, 
+                        ggplot2::aes(yintercept = value, colour = name)) +
+    ggplot2::scale_colour_manual("",
                         values = c("L[F==M]" = "#679dfe"),
                         labels = scales::parse_format()) +
-    scale_x_continuous(breaks = scales::pretty_breaks()) +
-    coord_cartesian(ylim = c(0, idx_max * 1.1),
+    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+    ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1),
                     xlim = c(yr_min - 1, yr_max + 1),
                     expand = FALSE) +
-    labs(x = "", y = y_label, 
+    ggplot2::labs(x = "", y = y_label, 
          title = "Length indicator") +
-    theme_bw(base_size = 8) +
-    theme(axis.title.y = element_text(face = "bold"),
-          axis.title.x = element_blank(),
+    ggplot2::theme_bw(base_size = 8) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+          axis.title.x = ggplot2::element_blank(),
           legend.position = "bottom",
-          legend.key.height = unit(0.5, "lines"),
-          plot.title = element_text(face = "bold", colour = "#ed6028"))
+          legend.key.height = ggplot2::unit(0.5, "lines"),
+          plot.title = ggplot2::element_text(face = "bold", colour = "#ed6028"))
   return(p)
 })
 
@@ -352,9 +357,9 @@ setMethod(f = "plot", signature = c(x = "Lc"),
     x@summary$year <- "pooled data"
             
   p <- x@data %>%
-    ggplot(aes(x = length, y = numbers)) +
-    geom_col() +
-    geom_col(
+    ggplot2::ggplot(aes(x = length, y = numbers)) +
+    ggplot2::geom_col() +
+    ggplot2::geom_col(
       data = dplyr::bind_rows(
         x@summary |> ### modal length
           dplyr::select(year, L = Lmode, N = Nmode) |>
@@ -372,10 +377,10 @@ setMethod(f = "plot", signature = c(x = "Lc"),
           levels = c("c", "mode"),
           labels = c("Lc", "mode")
         )),
-      aes(x = L, y = N, fill = source)
+      ggplot2::aes(x = L, y = N, fill = source)
     ) +
-    scale_fill_manual("Length", values = c("Lc" = "red", "mode" = "black")) +
-    geom_hline(
+    ggplot2::scale_fill_manual("Length", values = c("Lc" = "red", "mode" = "black")) +
+    ggplot2::geom_hline(
       data = x@summary |>
         dplyr::select(year, mode = Nmode) |>
         dplyr::mutate("mode/2" = mode / 2) |>
@@ -383,26 +388,26 @@ setMethod(f = "plot", signature = c(x = "Lc"),
         dplyr::mutate(name = factor(name,
           levels = c("mode", "mode/2")
         )),
-      aes(yintercept = value, linetype = name),
+      ggplot2::aes(yintercept = value, linetype = name),
       size = 0.4
     ) +
-    scale_linetype("Numbers") +
-    coord_cartesian(xlim = c(0, NA), ylim = c(0, NA)) +
-    facet_wrap(~year) +
-    labs(x = paste0("Length", 
+    ggplot2::scale_linetype("Numbers") +
+    ggplot2::coord_cartesian(xlim = c(0, NA), ylim = c(0, NA)) +
+    ggplot2::facet_wrap(~year) +
+    ggplot2::labs(x = paste0("Length", 
                     ifelse(length(x@units) > 0, 
                            paste0(" (", x@units, ")"),
                            "")), 
          y = "Numbers") +
-    theme_bw()
+    ggplot2::theme_bw()
   
   ### add average Lc line if provided
   if (isTRUE(x@averaged)) {
     p <- p + 
-      geom_vline(data = data.frame(length = x@value, colour = "Lc (average)"),
+      ggplot2::geom_vline(data = data.frame(length = x@value, colour = "Lc (average)"),
                  aes(xintercept = length, colour = colour),
                  linetype = "dashed") +
-      scale_colour_manual("", values = c("Lc (average)" = "red"))
+      ggplot2::scale_colour_manual("", values = c("Lc (average)" = "red"))
   }
   
   return(p)
@@ -422,25 +427,25 @@ setMethod(
     }
 
     p <- x@data %>%
-      ggplot(aes(x = length, y = numbers)) +
-      geom_col() +
-      geom_vline(data = x@summary |>
+      ggplot2::ggplot(aes(x = length, y = numbers)) +
+      ggplot2::geom_col() +
+      ggplot2::geom_vline(data = x@summary |>
                    tidyr::pivot_longer(c(Lc, Lmean)) |>
-                   mutate(name = factor(name, 
+                   dplyr::mutate(name = factor(name, 
                                         levels = c("Lc", "Lmean"),
                                         labels = c("L[c]", "L[mean]"))),
-                 aes(xintercept = value, colour = name, linetype = name)) +
-      scale_linetype_manual("", 
+                   ggplot2::aes(xintercept = value, colour = name, linetype = name)) +
+      ggplot2::scale_linetype_manual("", 
                             values = c("L[c]" = "dashed", 
                                        "L[mean]" = "solid"), 
                             labels = scales::parse_format()) +
-      scale_colour_manual("", 
+      ggplot2::scale_colour_manual("", 
                           values = c("L[c]" = "grey", 
                                      "L[mean]" = "red"), 
                           labels = scales::parse_format()) +
-      coord_cartesian(xlim = c(0, NA), ylim = c(0, NA)) +
-      facet_wrap(~year) +
-      labs(
+      ggplot2::coord_cartesian(xlim = c(0, NA), ylim = c(0, NA)) +
+      ggplot2::facet_wrap(~year) +
+      ggplot2::labs(
         x = paste0(
           "Length",
           ifelse(length(x@units) > 0,
@@ -450,8 +455,8 @@ setMethod(
         ),
         y = "Numbers"
       ) +
-      theme_bw() +
-      theme(legend.text.align = 0)
+      ggplot2::theme_bw() +
+      ggplot2::theme(legend.text.align = 0)
     
     return(p)
   }

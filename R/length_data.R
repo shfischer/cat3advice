@@ -1,3 +1,7 @@
+#' @importFrom dplyr filter group_by ungroup summarise
+#' @importFrom stats weighted.mean
+NULL
+
 ### ------------------------------------------------------------------------ ###
 ### Length at first capture Lc ####
 ### ------------------------------------------------------------------------ ###
@@ -97,6 +101,7 @@ setClass(
 #' @param rounding Optional. The method used to round length classes when using
 #'                 \code{lstep}. Defaults to \code{floor}, can also be
 #'                 \code{ceiling} or \code{round}.
+#' @param units Units of length data, e.g. "cm".
 #' @param ... Additional arguments. Not currently used.
 #'
 #' @section Warning:
@@ -205,7 +210,7 @@ setMethod(Lc,
     ### find Lc per year (first length class where numbers >= half of mode)
     smry <- data |>
       dplyr::group_by(year) |>
-      summarise(
+      dplyr::summarise(
         Lmode = length[numbers == max(numbers)],
         Nmode = max(numbers),
         Lc = min(length[numbers >= max(numbers) / 2], na.rm = TRUE),
@@ -348,6 +353,7 @@ setClass(
 #' @param rounding Optional. The method used to round length classes when using
 #'                 \code{lstep}. Defaults to \code{floor}, can also be
 #'                 \code{ceiling} or \code{round}.
+#' @param units Units of length data, e.g. "cm".
 #' @param ... Additional arguments. Not currently used.
 #'
 #'
@@ -506,7 +512,7 @@ setMethod(Lmean,
       dplyr::ungroup(length) |>
       dplyr::filter(length >= Lc) |>
       ### mean of length classes, weighted by catch numbers at length
-      dplyr::summarise(Lmean = weighted.mean(x = length, w = numbers),
+      dplyr::summarise(Lmean = stats::weighted.mean(x = length, w = numbers),
                        .groups = "keep")
     
     object@value <- object@summary$Lmean
@@ -608,9 +614,8 @@ setClass(
 #' The ratio M/k can be set directly with the argument \code{Mk} or indirectly
 #' with \code{theta} which defaults to \code{1/Mk}.
 #' 
-#' @section Warning
-#' Changing the default parameters is discouraged. Any change to the default
-#' parameters should be well justified.
+#' @section Warning: Changing the default parameters is discouraged. 
+#' Any change to the default parameters should be well justified.
 #' 
 #' The reference length is usually set once the first time the rfb rule is 
 #' applied and should then be kept constant unless there a substantial changes
