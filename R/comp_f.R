@@ -1,10 +1,14 @@
 #' @include generics.R
 #' @include length_data.R
+#' @importFrom icesAdvice icesRound
+NULL
 
 ### ------------------------------------------------------------------------ ###
 ### comp_f class ####
 ### ------------------------------------------------------------------------ ###
-#' An S4 class to represent component f of the rfb rule.
+#' @title comp_f-class
+#' 
+#' @description  An S4 class to represent component f of the rfb rule.
 #'
 #' This class (\code{comp_f}) stores the input for component f (the length 
 #' indicator as well as the resulting f value.
@@ -18,7 +22,7 @@
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot catch_rule \code{factor}. The catch rule for which component f is used (rfb).
 #'
-#' @rdname comp_f-class
+#' @name comp_f-class
 #' @export
 setClass(
   Class = "comp_f",
@@ -30,7 +34,7 @@ setClass(
     Lmean = "Lmean",
     Lref = "Lref",
     units = "character",
-    catch_rule = "factor"
+    catch_rule = "character"
   ),
   prototype = list(
     value = NA_real_,
@@ -45,18 +49,15 @@ setClass(
     Lmean = new("Lmean"),
     Lref = new("Lref"),
     units = NA_character_,
-    catch_rule = factor(NA_character_,
-      levels = c("rfb")
-    )
+    catch_rule = NA_character_
   )
 )
 #' @rdname comp_f-class
 setClass(
   Class = "rfb_f",
   contains = "comp_f",
-  prototype = list(catch_rule = factor("rfb",
-    levels = c("rfb")
-  ))
+  prototype = list(catch_rule = "rfb"
+  )
 )
 
 ### ------------------------------------------------------------------------ ###
@@ -71,6 +72,7 @@ setClass(
 #' \code{rfb_f()} is an alias for
 #' \code{comp_f()} with identical arguments and functionality.
 #'
+#' @param object Optional. An object of class \code{comp_f}.
 #' @param Lmean The mean catch length. Either a \code{data.frame} with columns
 #'              'year' and 'Lmean' or an object of class \code{Lmean}.
 #' @param Lref The reference length. Either a \code{numeric} with the value or 
@@ -194,7 +196,8 @@ setMethod(rfb_f,
           signature = c(object = "missing", Lmean = "ANY", Lref = "ANY"),
           function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- comp_f(object = object, Lmean = Lmean, Lref = Lref, units = units, 
+  ### ignore object because it is missing
+  object <- comp_f(Lmean = Lmean, Lref = Lref, units = units, 
                    catch_rule = catch_rule, ... = ...)
   class(object) <- "rfb_f"
   return(object)
@@ -204,10 +207,11 @@ setMethod(rfb_f,
 #' @usage NULL
 #' @export
 setMethod(rfb_f,
-          signature = c(object = "ANY", Lmean = "missing", Lref = "missing"),
+          signature = c(object = "comp_f", Lmean = "missing", Lref = "missing"),
           function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- comp_f(object = object, Lmean = Lmean, Lref = Lref, units = units,
+  ### ignore Lmean & Lref becuase they are missing
+  object <- comp_f(object = object, units = units,
                    catch_rule = catch_rule, ... = ...)
   class(object) <- "rfb_f"
   return(object)
