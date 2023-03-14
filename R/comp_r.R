@@ -20,9 +20,10 @@ NULL
 #' @slot n1_mean,n2_mean \code{numeric}. The mean index values over \code{n1_yrs} and \code{n2_yrs}.
 #' @slot idx \code{data.frame}. A \code{data.frame} with the index values.
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
-#' @slot catch_rule \code{factor}. The catch rule for which the biomass safeguard is used. One of 'rfb' or 'rb'.
+#' @slot catch_rule \code{character}. The catch rule for which the biomass safeguard is used. One of 'rfb' or 'rb'.
 #' 
 #' @name comp_r-class
+#' @title comp_r
 #' @export
 setClass(Class = "comp_r", 
          slots = c(value = "numeric",
@@ -34,24 +35,21 @@ setClass(Class = "comp_r",
                    n2_mean = "numeric",
                    idx = "data.frame",
                    units = "character",
-                   catch_rule = "factor"),
+                   catch_rule = "character"),
          prototype = list(value = NA_real_, 
                           n0 = 0, n1 = 2, n2 = 3,
                           n1_yrs = NA_real_, n2_yrs = NA_real_,
                           n1_mean = NA_real_, n2_mean = NA_real_,
                           units = NA_character_,
-                          catch_rule = factor(NA_character_, 
-                                              levels = c("rfb", "rb"))))
+                          catch_rule = NA_character_))
 #' @rdname comp_r-class
 setClass(Class = "rfb_r", 
          contains = "comp_r",
-         prototype = list(catch_rule = factor("rfb", 
-                                              levels = c("rfb", "rb"))))
+         prototype = list(catch_rule = "rfb"))
 #' @rdname comp_r-class
 setClass(Class = "rb_r", 
          contains = "comp_r",
-         prototype = list(catch_rule = factor("rb", 
-                                              levels = c("rfb", "rb"))))
+         prototype = list(catch_rule = "rb"))
 ### ------------------------------------------------------------------------ ###
 ### comp_r methods ####
 ### ------------------------------------------------------------------------ ###
@@ -126,6 +124,8 @@ setGeneric(name = "comp_r",
 # })
 ### data.frame -> use as index
 #' @rdname comp_r
+#' @usage NULL
+#' @export
 setMethod(comp_r, 
           signature = c(object = "data.frame"),
           function(object, n0, n1, n2, units, catch_rule, ...) {
@@ -148,6 +148,8 @@ setMethod(comp_r,
 })
 ### numeric -> use as ratio
 #' @rdname comp_r
+#' @usage NULL
+#' @export
 setMethod(comp_r, 
           signature = c(object = "numeric"), 
           function(object, ...) {
@@ -167,6 +169,8 @@ setMethod(comp_r,
 })
 ### comp_r -> check validity and update values if necessary
 #' @rdname comp_r
+#' @usage NULL
+#' @export
 setMethod(comp_r, 
           signature = c(object = "comp_r"), 
           function(object, n0, n1, n2, units, catch_rule, ...) {
@@ -243,7 +247,10 @@ setValidity("comp_r", function(object) {
 comp_r_calc <- function(object, idx, n0, n1, n2, units, catch_rule) {
   ### create empty rfb_r object, if missing
   if (missing(object)) object <- new("rfb_r")
-  if (!missing(catch_rule)) object@catch_rule <- catch_rule
+  if (!missing(catch_rule)) {
+    catch_rule <- match.arg(catch_rule, choices = c("rfb", "rb"))
+    object@catch_rule <- catch_rule
+  }
   
   ### add/update index, if provided
   if (!missing(idx)) object@idx <- idx
