@@ -14,7 +14,11 @@ Encoding: UTF-8
 LazyData: true
 Imports:
     methods,
-    foreach,
+    dplyr,
+    tidyr,
+    ggplot2,
+    scales,
+    icesAdvice,
     stats,
     utils
 Depends:
