@@ -71,6 +71,7 @@ setClass(Class = "chr_m",
 #' @param object Optional. A multiplier m value, if known, or an existing \code{comp_m} object.
 #' @param catch_rule The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @param k Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).
+#' @param ... Additional arguments. Not used.
 #'  
 #' @section Warning:
 #' For application in ICES, do not change the default multiplier unless the
@@ -253,7 +254,7 @@ comp_m_calc <- function(object, value, catch_rule, k, ...) {
 #' @rdname comp_m
 #' @export
 setGeneric(name = "rfb_m", 
-           def = function(object, value, catch_rule = "rfb", k, ...) 
+           def = function(object, catch_rule = "rfb", k, ...) 
              standardGeneric("rfb_m"),
            signature = c("object"))
 #' @rdname comp_m
@@ -261,8 +262,9 @@ setGeneric(name = "rfb_m",
 #' @usage NULL
 setMethod(rfb_m, 
           signature = c(object = "ANY"), 
-          function(object, value, catch_rule = "rfb", k, ...) {
+          function(object, catch_rule = "rfb", k, ...) {
   catch_rule <- match.arg(catch_rule)
+  if (is.numeric(object)) value <- object
   object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "rfb_m"
@@ -273,9 +275,9 @@ setMethod(rfb_m,
 #' @usage NULL
 setMethod(rfb_m, 
           signature = c(object = "missing"), 
-          function(object, value, catch_rule = "rfb", k, ...) {
+          function(object, catch_rule = "rfb", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+  object <- comp_m(catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "rfb_m"
   return(object)
@@ -285,7 +287,7 @@ setMethod(rfb_m,
 #' @rdname comp_m
 #' @export
 setGeneric(name = "rb_m", 
-           def = function(object, value, catch_rule = "rb", k, ...) 
+           def = function(object, catch_rule = "rb", k, ...) 
              standardGeneric("rb_m"),
            signature = c("object"))
 #' @rdname comp_m
@@ -293,8 +295,9 @@ setGeneric(name = "rb_m",
 #' @usage NULL
 setMethod(rb_m, 
           signature = c(object = "ANY"), 
-          function(object, value, catch_rule = "rb", k, ...) {
+          function(object, catch_rule = "rb", k, ...) {
   catch_rule <- match.arg(catch_rule)
+  if (is.numeric(object)) value <- object
   object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "rb_m"
@@ -305,9 +308,9 @@ setMethod(rb_m,
 #' @usage NULL
 setMethod(rb_m, 
           signature = c(object = "missing"), 
-          function(object, value, catch_rule = "rb", k, ...) {
+          function(object, catch_rule = "rb", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+  object <- comp_m(catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "rb_m"
   return(object)
@@ -317,7 +320,7 @@ setMethod(rb_m,
 #' @rdname comp_m
 #' @export
 setGeneric(name = "chr_m", 
-           def = function(object, value, catch_rule = "chr", k, ...) 
+           def = function(object, catch_rule = "chr", k, ...) 
              standardGeneric("chr_m"),
            signature = c("object"))
 #' @rdname comp_m
@@ -325,8 +328,9 @@ setGeneric(name = "chr_m",
 #' @usage NULL
 setMethod(chr_m, 
           signature = c(object = "ANY"), 
-          function(object, value, catch_rule = "chr", k, ...) {
+          function(object, catch_rule = "chr", k, ...) {
   catch_rule <- match.arg(catch_rule)
+  if (is.numeric(object)) value <- object
   object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "chr_m"
@@ -337,9 +341,9 @@ setMethod(chr_m,
 #' @usage NULL
 setMethod(chr_m, 
           signature = c(object = "missing"), 
-          function(object, value, catch_rule = "chr", k, ...) {
+          function(object, catch_rule = "chr", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+  object <- comp_m(catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "chr_m"
   return(object)
