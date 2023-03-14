@@ -12,6 +12,8 @@
 comp_f(object, Lmean, Lref, units, catch_rule, ...)
 }
 \arguments{
+\item{object}{Optional. An object of class \code{comp_f}.}
+
 \item{Lmean}{The mean catch length. Either a \code{data.frame} with columns
 'year' and 'Lmean' or an object of class \code{Lmean}.}
 

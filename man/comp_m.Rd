@@ -18,11 +18,11 @@
 \usage{
 comp_m(object, catch_rule, k, ...)
 
-rfb_m(object, value, catch_rule = "rfb", k, ...)
+rfb_m(object, catch_rule = "rfb", k, ...)
 
-rb_m(object, value, catch_rule = "rb", k, ...)
+rb_m(object, catch_rule = "rb", k, ...)
 
-chr_m(object, value, catch_rule = "chr", k, ...)
+chr_m(object, catch_rule = "chr", k, ...)
 }
 \arguments{
 \item{object}{Optional. A multiplier m value, if known, or an existing \code{comp_m} object.}
@@ -30,6 +30,8 @@ chr_m(object, value, catch_rule = "chr", k, ...)
 \item{catch_rule}{The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
 
 \item{k}{Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).}
+
+\item{...}{Additional arguments. Not used.}
 }
 \value{
 An object of class \code{comp_m}

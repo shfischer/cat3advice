@@ -46,6 +46,15 @@ assumes \code{theta = 2/3}, i.e. that \code{M/k = 1.5} and that
 The ratio M/k can be set directly with the argument \code{Mk} or indirectly
 with \code{theta} which defaults to \code{1/Mk}.
 }
+\section{Warning}{
+ Changing the default parameters is discouraged. 
+Any change to the default parameters should be well justified.
+
+The reference length is usually set once the first time the rfb rule is 
+applied and should then be kept constant unless there a substantial changes
+in the fishery or fishery selectivity.
+}
+
 \examples{
 # calculate MSY proxy LF=M
 Lref(Lc = 26.4, Linf = 58.5)

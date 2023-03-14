@@ -13,12 +13,6 @@
 \usage{
 comp_r(object, n0, n1, n2, units, catch_rule, ...)
 
-\S4method{comp_r}{data.frame}(object, n0, n1, n2, units, catch_rule, ...)
-
-\S4method{comp_r}{numeric}(object, n0, n1, n2, units, catch_rule, ...)
-
-\S4method{comp_r}{comp_r}(object, n0, n1, n2, units, catch_rule, ...)
-
 rfb_r(object, n0, n1, n2, units, catch_rule = "rfb", ...)
 
 rb_r(object, n0, n1, n2, units, catch_rule = "rb", ...)

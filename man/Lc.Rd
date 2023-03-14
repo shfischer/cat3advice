@@ -77,6 +77,8 @@ classes into larger length classes. (see details below)}
 \code{lstep}. Defaults to \code{floor}, can also be
 \code{ceiling} or \code{round}.}
 
+\item{units}{Units of length data, e.g. "cm".}
+
 \item{...}{Additional arguments. Not currently used.}
 }
 \value{

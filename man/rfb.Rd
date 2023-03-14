@@ -2,6 +2,7 @@
 % Please edit documentation in R/rfb.R
 \name{rfb}
 \alias{rfb}
+\alias{rfb_calc}
 \title{rfb rule}
 \usage{
 rfb(
