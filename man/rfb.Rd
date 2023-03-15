@@ -2,7 +2,9 @@
 % Please edit documentation in R/rfb.R
 \name{rfb}
 \alias{rfb}
-\alias{rfb_calc}
+\alias{rfb,missing,comp_A,comp_r,comp_f,comp_b,comp_m-method}
+\alias{rfb,rfb,missing,missing,missing,missing,missing-method}
+\alias{rfb,rfb,comp_A,comp_r,comp_f,comp_b,comp_m-method}
 \title{rfb rule}
 \usage{
 rfb(
@@ -12,12 +14,12 @@ rfb(
   f,
   b,
   m,
-  cap,
-  cap_upper,
-  cap_lower,
+  cap = "conditional",
+  cap_upper = 20,
+  cap_lower = -30,
   years,
-  frequency,
-  discard_rate,
+  frequency = "biennial",
+  discard_rate = NA,
   ...
 )
 }
@@ -63,7 +65,7 @@ b (the biomass safeguard) and m (the multiplier). See the [comp_A()],
 \section{Warning}{
 
 For application in ICES, do not change the default parameters (frequency, 
-uncertainty cap, etc) unless the changes are supported by case-specific
+stability clause, etc) unless the changes are supported by case-specific
 simulations.
 }
 
