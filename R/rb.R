@@ -1,5 +1,4 @@
 #' @include comp_r.R
-#' @include comp_f.R
 #' @include comp_b.R
 #' @include comp_m.R
 #' @include comp_A.R
@@ -8,13 +7,13 @@
 NULL
 
 ### ------------------------------------------------------------------------ ###
-### rfb class ####
+### rb class ####
 ### ------------------------------------------------------------------------ ###
 
-#' @title An S4 class to represent the rfb rule.
+#' @title An S4 class to represent the rb rule.
 #'
-#' @description This class contains the components of the rfb rule (\code{rfb_A},
-#' \code(rfb_r), \code(rfb_f), \code(rfb_b), \code(rfb_m))
+#' @description This class contains the components of the rb rule (\code{rb_A},
+#' \code(rb_r), \code(rb_b), \code(rb_m))
 #'
 #' @slot advice The value of the catch advice.
 #' @slot advice_landings Landings corresponding to the catch advice.
@@ -25,17 +24,16 @@ NULL
 #' @slot years The years for which the advice is valid.
 #' @slot A Component A (the reference catch).
 #' @slot r Component r (the biomass index ratio).
-#' @slot f Component f (the fishing pressure proxy).
 #' @slot b Component b (the biomass safeguard).
 #' @slot m Component m (the multiplier).
 #' @slot cap Uncertainty cap (restricts changes in advice).
 #' @slot advice_change Change in advice compared to previous advice.
 #' @slot discard_rate Discard rate (%).
 #'
-#' @rdname rfb-class
+#' @rdname rb-class
 #' @export
 setClass(
-  Class = "rfb",
+  Class = "rb",
   slots = c(
     advice = "numeric",
     advice_landings = "numeric",
@@ -46,7 +44,6 @@ setClass(
     years = "numeric",
     A = "comp_A",
     r = "comp_r",
-    f = "comp_f",
     b = "comp_b",
     m = "comp_m",
     cap = "logical",
@@ -64,11 +61,10 @@ setClass(
     advice_metric = NA_character_,
     frequency = "biennial",
     years = NA_real_,
-    A = new("rfb_A"),
-    r = new("rfb_r"),
-    f = new("rfb_f"),
-    b = new("rfb_b"),
-    m = new("rfb_m"),
+    A = new("rb_A"),
+    r = new("rb_r"),
+    b = new("rb_b"),
+    m = new("rb_m"),
     cap = NA,
     cap_lower = -30,
     cap_upper = 20,
@@ -80,21 +76,20 @@ setClass(
 
 
 ### ------------------------------------------------------------------------ ###
-### rfb calculation ####
+### rb calculation ####
 ### ------------------------------------------------------------------------ ###
-#' rfb rule
+#' rb rule
 #'
-#' This function applies the rfb rule.
+#' This function applies the rb rule.
 #' 
-#' The function requires the elements of the rfb rule: A (the reference)
+#' The function requires the elements of the rb rule: A (the reference)
 #' catch, r (the biomass index ratio), f (the fising pressure proxy), 
 #' b (the biomass safeguard) and m (the multiplier). See the [comp_A()], 
-#' [comp_r()], [comp_f()], [comp_b()], and [comp_m()] help files for details.
+#' [comp_r()], [comp_b()], and [comp_m()] help files for details.
 #' 
-#' @param object Optional. An object of class \code{rfb}.
+#' @param object Optional. An object of class \code{rb}.
 #' @param A The reference catch. Should be an object of class \code{comp_A}, see [comp_A()].
 #' @param r The biomass index ratio. Should be an object of class \code{comp_r}, see [comp_r()].
-#' @param f The fishing pressure proxy. Should be an object of class \code{comp_f}, see [comp_f()].
 #' @param b The biomass safeguard. Should be an object of class \code{comp_b}, see [comp_b()].
 #' @param m The multiplier. Should be an object of class \code{comp_m}, see [comp_m()].
 #' @param cap \code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}
@@ -107,7 +102,7 @@ setClass(
 #'  
 #' @section Warning:
 #' For application in ICES, do not change the default parameters (frequency, 
-#' stability, etc) unless the changes are supported by case-specific
+#' stability clause, etc) unless the changes are supported by case-specific
 #' simulations.
 #'
 #' @references 
@@ -122,55 +117,55 @@ setClass(
 #' Fischer, S. H., De Oliveira, J. A. A., and Kell, L. T. 2020. Linking the performance of a data-limited empirical catch rule to life-history traits. ICES Journal of Marine Science, 77: 1914--1926. \url{https://doi.org/10.1093/icesjms/fsaa054}.
 #'
 #'
-#' @return An object of class \code{rfb}.
+#' @return An object of class \code{rb}.
 #'
 #' @examples
 #' # to do
 #' 
-#' @name rfb
+#' @name rb
 #' @export
 NULL
 
-#' @rdname rfb
+#' @rdname rb
 #' @export
-setGeneric(name = "rfb", 
-           def = function(object, A, r, f, b, m, cap = "conditional", 
+setGeneric(name = "rb", 
+           def = function(object, A, r, b, m, cap = "conditional", 
                           cap_upper = 20, cap_lower = -30, years, 
                           frequency = "biennial",
                           discard_rate = NA,
                           ...) 
-             standardGeneric("rfb"),
-           signature = c("object", "A", "r", "f", "b", "m"))
-### object = missing, A/r/f/b/m = comp_A/r/f/b/m
-#' @rdname rfb
+             standardGeneric("rb"),
+           signature = c("object", "A", "r", "b", "m"))
+### object = missing, A/r/b/m = comp_A/r/b/m
+#' @rdname rb
 #' @usage NULL
 #' @export
-setMethod(rfb,
+setMethod(rb,
           signature = c(object = "missing", 
-                        A = "comp_A", r = "comp_r", f = "comp_f", b = "comp_b",
+                        A = "comp_A", r = "comp_r", b = "comp_b",
                         m = "comp_m"),
-          function(A, r, f, b, m,
+          function(A, r, b, m,
                    cap,
                    cap_upper, cap_lower,
                    years, frequency,
                    discard_rate = NA,
                    ...) {#browser()
-  object <- rfb_calc(A = A, r = r, f = f, b = b, m = m,
-                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-                     year = years, frequency = frequency, 
-                     discard_rate = discard_rate, ... = ...)
+  object <- rb_calc(A = A, r = r, b = b, m = m,
+                    cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                    year = years, frequency = frequency, 
+                    discard_rate = discard_rate, ... = ...)
   return(object)
 })
-### object = rfb, A/r/f/b/m = missing -> check validity
-#' @rdname rfb
+### object = rb, A/r/b/m = missing -> check validity
+#' @rdname rb
 #' @usage NULL
 #' @export
-setMethod(rfb,
-          signature = c(object = "rfb", 
-                        A = "missing", r = "missing", f = "missing", 
+setMethod(rb,
+          signature = c(object = "rb", 
+                        A = "missing", r = "missing", 
                         b = "missing", m = "missing"),
           function(object, 
-                   A = object@A, r = object@r, f = object@f, 
+                   A = object@A, r = object@r, 
                    b = object@b, m = object@m,
                    cap = "conditional",
                    cap_upper = 20, cap_lower = -30,
@@ -180,23 +175,23 @@ setMethod(rfb,
   ### check validity
   validObject(object)
   ### update object if arguments provided
-  object <- rfb_calc(object = object,
+  object <- rb_calc(object = object,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
                      year = years, frequency = frequency, 
                      discard_rate = discard_rate, ... = ...)
   return(object)
   
 })
-### object = rfb, A/r/f/b/m = comp_A/r/f/b/m -> check validity & update
-#' @rdname rfb
+### object = rb, A/r/b/m = comp_A/r/b/m -> check validity & update
+#' @rdname rb
 #' @usage NULL
 #' @export
-setMethod(rfb,
-          signature = c(object = "rfb", 
-                        A = "comp_A", r = "comp_r", f = "comp_f", 
+setMethod(rb,
+          signature = c(object = "rb", 
+                        A = "comp_A", r = "comp_r", 
                         b = "comp_b", m = "comp_m"),
           function(object, 
-                   A = object@A, r = object@r, f = object@f, 
+                   A = object@A, r = object@r, 
                    b = object@b, m = object@m,
                    cap = "conditional",
                    cap_upper = 20, cap_lower = -30,
@@ -206,8 +201,8 @@ setMethod(rfb,
   ### check validity
   validObject(object)
   ### update object
-  object <- rfb_calc(object = object,
-                     A = A, r = r, f = f, b = b, m = m,
+  object <- rb_calc(object = object,
+                     A = A, r = r, b = b, m = m,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
                      year = years, frequency = frequency, 
                      discard_rate = discard_rate, ... = ...)
@@ -215,30 +210,29 @@ setMethod(rfb,
 })
 
 ### ------------------------------------------------------------------------ ###
-### rfb calculation ####
+### rb calculation ####
 ### ------------------------------------------------------------------------ ###
-rfb_calc <- function(object = new("rfb"), 
-                     A = object@A, r = object@r, f = object@f, 
-                     b = object@b, m = object@m,
-                     cap = "conditional",
-                     cap_upper = 20,
-                     cap_lower = -30,
-                     years,
-                     frequency = "biennial",
-                     discard_rate = NA,
-                     ...) {
+rb_calc <- function(object = new("rb"), 
+                    A = object@A, r = object@r, 
+                    b = object@b, m = object@m,
+                    cap = "conditional",
+                    cap_upper = 20,
+                    cap_lower = -30,
+                    years,
+                    frequency = "biennial",
+                    discard_rate = NA,
+                    ...) {
   #browser()
 
   ### convert all components into corresponding classes and check validity
-  if (!missing(A)) object@A <- rfb_A(A, catch_rule = "rfb")
-  if (!missing(r)) object@r <- rfb_r(r)
-  if (!missing(f)) object@f <- rfb_f(f)
-  if (!missing(b)) object@b <- rfb_b(b)
+  if (!missing(A)) object@A <- rb_A(A, catch_rule = "rb")
+  if (!missing(r)) object@r <- rb_r(r)
+  if (!missing(b)) object@b <- rb_b(b)
   if (!missing(m)) {
     object@m <- comp_m(m)
   } else if (is.na(object@m@value)) {
     ### use default multiplier if missing
-    object@m <- rfb_m()
+    object@m <- rb_m()
   }
   if (!missing(cap_upper)) object@cap_upper <- cap_upper
   if (!missing(cap_lower)) object@cap_lower <- cap_lower
@@ -250,7 +244,7 @@ rfb_calc <- function(object = new("rfb"),
     cap <- match.arg(arg = cap, choices = c("conditional", TRUE, FALSE))
 
   ### calculate r*f*b*m
-  factor <- object@r@value * object@f@value * object@b@value * object@m@value
+  factor <- object@r@value * object@b@value * object@m@value
 
   ### calculate new catch advice
   object@advice_uncapped <- object@advice <- object@A@value * factor
@@ -315,16 +309,16 @@ rfb_calc <- function(object = new("rfb"),
 }
 
 ### ------------------------------------------------------------------------ ###
-### rfb convenience methods ####
+### rb convenience methods ####
 ### ------------------------------------------------------------------------ ###
 ### print to screen
-setMethod(f = "show", signature = "rfb", 
+setMethod(f = "show", signature = "rb", 
           definition = function(object) {
             cat(paste0(object@advice, "\n"))
 })
 
 ### value
-setMethod(f = "value", signature = "rfb", 
+setMethod(f = "value", signature = "rb", 
           definition = function(object) {
             return(object@advice)
 })
@@ -336,25 +330,24 @@ setMethod(f = "value", signature = "rfb",
 #' @usage NULL
 #' @export
 setMethod(
-  f = "advice", signature = "rfb",
+  f = "advice", signature = "rb",
   definition = function(object) {
     
-    ### rfb rule components
+    ### rb rule components
     txt_A <- paste0(capture.output(advice(object@A)), collapse = "\n")
     txt_r <- paste0(capture.output(advice(object@r)), collapse = "\n")
-    txt_f <- paste0(capture.output(advice(object@f)), collapse = "\n")
     txt_b <- paste0(capture.output(advice(object@b)), collapse = "\n")
     txt_m <- paste0(capture.output(advice(object@m)), collapse = "\n")
 
     object@units <- ifelse(!is.na(object@A@units), 
                            paste0(" ", object@A@units), "")
-    ### rfb calculation (uncapped advice)
-    rfb_txt <- "RFB calculation (r*f*b*m)"
-    rfb_val <- paste0(icesAdvice::icesRound(object@advice_uncapped), 
-                      object@units)
-    txt_rfb <- paste0(
-      format(rfb_txt, width = 48), " | ",
-      format(rfb_val, width = 29, justify = "right"), "\n")
+    ### rb calculation (uncapped advice)
+    rb_txt <- "RB calculation (r*b*m)"
+    rb_val <- paste0(icesAdvice::icesRound(object@advice_uncapped), 
+                     object@units)
+    txt_rb <- paste0(
+      format(rb_txt, width = 48), " | ",
+      format(rb_val, width = 29, justify = "right"), "\n")
     ### stability clause (uncertainty cap)
     cap_txt1 <- paste0("Stability clause (+", object@cap_upper, "%/",
                        object@cap_lower, "% compared to Ay,")
@@ -370,7 +363,7 @@ setMethod(
                              paste0(object@years, collapse = " and "))
     catch_adv_txt2 <- ifelse(isTRUE(object@cap),
                              "   (Ay * stability clause)",
-                             "   (Ay * r * f * b * m")
+                             "   (Ay * r * b * m)")
     catch_adv_val <- paste0(icesAdvice::icesRound(object@advice), object@units)
     txt_catch_adv <- paste0(format(catch_adv_txt1, width = 48), " | \n",
                             format(catch_adv_txt2, width = 48), " | ",
@@ -395,14 +388,14 @@ setMethod(
     }
     ### advice change
     change_txt <- "% advice change"
-    change_val <- paste0(object@change, "%")
+    change_val <- paste0(icesAdvice::icesRound(object@change), "%")
     txt_change <- paste0(format(change_txt, width = 48), " | ",
                          format(change_val, width = 29, 
                                 justify = "right"), "\n")
     
     txt <- paste0(
-      txt_A, "\n", txt_r, "\n", txt_f, "\n", txt_b, "\n", txt_m, "\n",
-      txt_rfb,
+      txt_A, "\n", txt_r, "\n", txt_b, "\n", txt_m, "\n",
+      txt_rb,
       txt_cap,
       txt_catch_adv,
       txt_disc_land,
