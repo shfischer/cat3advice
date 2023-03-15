@@ -155,8 +155,6 @@ setMethod(comp_f,
   }
 )
 
-
-
 ### comp_f -> check validity
 #' @rdname comp_f
 #' @usage NULL
@@ -171,6 +169,23 @@ setMethod(comp_f,
     return(object)
   }
 )
+
+### numeric -> use as value
+#' @rdname comp_f
+#' @usage NULL
+#' @export
+setMethod(comp_f,
+          signature = c(object = "numeric", Lmean = "missing", Lref = "missing"),
+          function(object, Lmean = object@Lmean, Lref = object@Lmean, 
+                   units, catch_rule, ...) {
+  ### empty object with value
+  value <- object
+  object <- new("comp_f")
+  object@value <- value
+  if (!missing(units)) object@units <- units
+  if (!missing(catch_rule)) object@catch_rule <- catch_rule
+  return(object)
+})
 
 ### ------------------------------------------------------------------------ ###
 ### aliases ####
@@ -207,7 +222,7 @@ setMethod(rfb_f,
 #' @usage NULL
 #' @export
 setMethod(rfb_f,
-          signature = c(object = "comp_f", Lmean = "missing", Lref = "missing"),
+          signature = c(object = "ANY", Lmean = "missing", Lref = "missing"),
           function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
   catch_rule <- match.arg(catch_rule)
   ### ignore Lmean & Lref becuase they are missing
