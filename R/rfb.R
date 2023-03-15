@@ -370,7 +370,7 @@ setMethod(
                              paste0(object@years, collapse = " and "))
     catch_adv_txt2 <- ifelse(isTRUE(object@cap),
                              "   (Ay * stability clause)",
-                             "   (Ay * r * f * b * m")
+                             "   (Ay * r * f * b * m)")
     catch_adv_val <- paste0(icesAdvice::icesRound(object@advice), object@units)
     txt_catch_adv <- paste0(format(catch_adv_txt1, width = 48), " | \n",
                             format(catch_adv_txt2, width = 48), " | ",
@@ -395,7 +395,7 @@ setMethod(
     }
     ### advice change
     change_txt <- "% advice change"
-    change_val <- paste0(object@change, "%")
+    change_val <- paste0(icesAdvice::icesRound(object@change), "%")
     txt_change <- paste0(format(change_txt, width = 48), " | ",
                          format(change_val, width = 29, 
                                 justify = "right"), "\n")
