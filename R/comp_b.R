@@ -26,7 +26,7 @@ NULL
 #' @slot n0 Time lag between the last index year and the last year to be used.
 #' @slot idx \code{data.frame}. A \code{data.frame} with the index values.
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
-#' @slot catch_rule \code{factor}. The catch rule for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.
+#' @slot catch_rule \code{character}. The catch rule for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.
 #' 
 #' @name comp_b-class
 #' @export
@@ -41,7 +41,7 @@ setClass(Class = "comp_b",
                    n0 = "numeric",
                    idx = "data.frame",
                    units = "character",
-                   catch_rule = "factor"),
+                   catch_rule = "character"),
          prototype = list(value = NA_real_,
                           idx_value = NA_real_,
                           Itrigger = NA_real_,
@@ -52,24 +52,20 @@ setClass(Class = "comp_b",
                           n0 = 0,
                           idx = data.frame(year = NULL, index = NULL),
                           units = NA_character_,
-                          catch_rule = factor(NA_character_, 
-                                              levels = c("rfb", "rb", "chr"))))
+                          catch_rule = NA_character_))
 
 #' @rdname comp_b-class
 setClass(Class = "rfb_b", 
          contains = "comp_b",
-         prototype = list(catch_rule = factor("rfb", 
-                                              levels = c("rfb", "rb", "chr"))))
+         prototype = list(catch_rule = "rfb"))
 #' @rdname comp_b-class
 setClass(Class = "rb_b", 
          contains = "comp_b",
-         prototype = list(catch_rule = factor("rb", 
-                                              levels = c("rfb", "rb", "chr"))))
+         prototype = list(catch_rule = "rb"))
 #' @rdname comp_b-class
 setClass(Class = "chr_b", 
          contains = "comp_b",
-         prototype = list(catch_rule = factor("chr", 
-                                              levels = c("rfb", "rb", "chr"))))
+         prototype = list(catch_rule = "chr"))
 
 ### ------------------------------------------------------------------------ ###
 ### comp_b methods ####
@@ -406,10 +402,8 @@ comp_b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
 ### ------------------------------------------------------------------------ ###
 ### convenience methods ####
 ### ------------------------------------------------------------------------ ###
-setMethod(f = "show", signature = "comp_b", 
-          definition = function(object) {
-  cat(paste0(object@value, "\n"))
-})
+#' @rdname summary
+#' @export
 setMethod(f = "summary", signature = "comp_b", 
           definition = function(object) {
   txt <- (paste0(paste(rep("-", 50), collapse = ""), "\n",
