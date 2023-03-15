@@ -375,12 +375,22 @@ setMethod(f = "value", signature = "comp_m",
             return(object@value)
 })
 
-### print to screen
+### print
+#' @rdname print
+#' @export
+setMethod(f = "print", signature = "comp_m", 
+          definition = function(x) {
+            cat(paste0("An object of class \"", class(x), "\".\n",
+                       "Value: ", x@value, "\n"))
+})
+
+### show
 #' @rdname show
 #' @export
 setMethod(f = "show", signature = "comp_m", 
           definition = function(object) {
-            cat(paste0(object@value, "\n"))
+            cat(paste0("An object of class \"", class(object), "\".\n",
+                       "Value: ", object@value, "\n"))
 })
 
 ### summary

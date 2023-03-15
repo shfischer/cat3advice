@@ -296,13 +296,6 @@ comp_r_calc <- function(object, idx, n0, n1, n2, units, catch_rule) {
 ### convenience methods ####
 ### ------------------------------------------------------------------------ ###
 
-### print to screen
-#' @rdname show
-#' @export
-setMethod(f = "show", signature = "comp_r", 
-  definition = function(object) {
-    cat(paste0(object@value, "\n"))
-})
 #' @rdname summary
 #' @export
 setMethod(f = "summary", signature = "comp_r", 
@@ -322,11 +315,30 @@ setMethod(f = "summary", signature = "comp_r",
                paste0(paste(rep("-", 50), collapse = ""))))
     cat(txt)
 })
+
 #' @rdname value
 #' @export
 setMethod(f = "value", signature = "comp_r", 
           definition = function(object) {
   return(object@value)
+})
+
+### print
+#' @rdname print
+#' @export
+setMethod(f = "print", signature = "comp_r", 
+          definition = function(x) {
+            cat(paste0("An object of class \"", class(x), "\".\n",
+                       "Value: ", x@value, "\n"))
+})
+
+### show
+#' @rdname show
+#' @export
+setMethod(f = "show", signature = "comp_r", 
+          definition = function(object) {
+            cat(paste0("An object of class \"", class(object), "\".\n",
+                       "Value: ", object@value, "\n"))
 })
 
 # 

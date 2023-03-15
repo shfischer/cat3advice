@@ -255,15 +255,6 @@ setMethod(rfb_f,
 ### comp_f convenience methods ####
 ### ------------------------------------------------------------------------ ###
 
-### print to screen
-#' @rdname show
-#' @export
-setMethod(
-  f = "show", signature = "comp_f",
-  definition = function(object) {
-    cat(paste0(object@value, "\n"))
-  }
-)
 #' @rdname summary
 #' @export
 setMethod(
@@ -287,6 +278,7 @@ setMethod(
     cat(txt)
   }
 )
+
 #' @rdname value
 #' @export
 setMethod(
@@ -295,6 +287,24 @@ setMethod(
     return(object@value)
   }
 )
+
+### print
+#' @rdname print
+#' @export
+setMethod(f = "print", signature = "comp_f", 
+          definition = function(x) {
+            cat(paste0("An object of class \"", class(x), "\".\n",
+                       "Value: ", x@value, "\n"))
+})
+
+### show
+#' @rdname show
+#' @export
+setMethod(f = "show", signature = "comp_f", 
+          definition = function(object) {
+            cat(paste0("An object of class \"", class(object), "\".\n",
+                       "Value: ", object@value, "\n"))
+})
 
 #
 # ### shows which methods are used (sequentially if neccessary)

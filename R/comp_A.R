@@ -380,11 +380,7 @@ setMethod(chr_A,
 ### ------------------------------------------------------------------------ ###
 ### convenience methods ####
 ### ------------------------------------------------------------------------ ###
-### value of object
-setGeneric(
-  name = "value",
-  def = function(object) standardGeneric("value")
-)
+### value
 setMethod(
   f = "value", signature = "comp_A",
   definition = function(object) {
@@ -392,13 +388,23 @@ setMethod(
   }
 )
 
-### print to screen
-setMethod(
-  f = "show", signature = "comp_A",
-  definition = function(object) {
-    cat(paste0(object@value, "\n"))
-  }
-)
+### print
+#' @rdname print
+#' @export
+setMethod(f = "print", signature = "comp_A", 
+          definition = function(x) {
+            cat(paste0("An object of class \"", class(x), "\".\n",
+                       "Value: ", x@value, "\n"))
+})
+
+### show
+#' @rdname show
+#' @export
+setMethod(f = "show", signature = "comp_A", 
+          definition = function(object) {
+            cat(paste0("An object of class \"", class(object), "\".\n",
+                       "Value: ", object@value, "\n"))
+})
 
 ### detailed summary
 setMethod(

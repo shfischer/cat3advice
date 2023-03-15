@@ -431,11 +431,31 @@ setMethod(f = "summary", signature = "comp_b",
                  paste0(paste(rep("-", 50), collapse = ""))))
   cat(txt)
 })
-setGeneric(name = "value", 
-           def = function(object)  standardGeneric("value"))
+
+### value
+#' @rdname value
+#' @export
 setMethod(f = "value", signature = "comp_b", 
           definition = function(object) {
   return(object@value)
+})
+
+### print
+#' @rdname print
+#' @export
+setMethod(f = "print", signature = "comp_b", 
+          definition = function(x) {
+            cat(paste0("An object of class \"", class(x), "\".\n",
+                       "Value: ", x@value, "\n"))
+})
+
+### show
+#' @rdname show
+#' @export
+setMethod(f = "show", signature = "comp_b", 
+          definition = function(object) {
+            cat(paste0("An object of class \"", class(object), "\".\n",
+                       "Value: ", object@value, "\n"))
 })
 
 ### ------------------------------------------------------------------------ ###

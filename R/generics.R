@@ -43,5 +43,12 @@ setGeneric(name = "value",
 ### show ####
 ### ------------------------------------------------------------------------ ###
 #' @export
-setGeneric(name = "show", 
-           def = function(object)  standardGeneric("show"))
+# setGeneric(name = "show",
+#            def = function(object)  standardGeneric("show"))
+
+### ------------------------------------------------------------------------ ###
+### print ####
+### ------------------------------------------------------------------------ ###
+#' @export
+# setGeneric(name = "print",
+#            def = function(x)  standardGeneric("print"))
