@@ -264,8 +264,8 @@ setMethod(rfb_m,
           signature = c(object = "ANY"), 
           function(object, catch_rule = "rfb", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  if (is.numeric(object)) value <- object
-  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+  #if (is.numeric(object)) value <- object
+  object <- comp_m(object = object, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "rfb_m"
   return(object)
@@ -277,8 +277,7 @@ setMethod(rfb_m,
           signature = c(object = "missing"), 
           function(object, catch_rule = "rfb", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- comp_m(catch_rule = catch_rule, 
-                   k = k, ...)
+  object <- comp_m(catch_rule = catch_rule, k = k, ...)
   class(object) <- "rfb_m"
   return(object)
 })
@@ -297,8 +296,7 @@ setMethod(rb_m,
           signature = c(object = "ANY"), 
           function(object, catch_rule = "rb", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  if (is.numeric(object)) value <- object
-  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+  object <- comp_m(object = object, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "rb_m"
   return(object)
@@ -310,8 +308,7 @@ setMethod(rb_m,
           signature = c(object = "missing"), 
           function(object, catch_rule = "rb", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- comp_m(catch_rule = catch_rule, 
-                   k = k, ...)
+  object <- comp_m(catch_rule = catch_rule, k = k, ...)
   class(object) <- "rb_m"
   return(object)
 })
@@ -330,8 +327,7 @@ setMethod(chr_m,
           signature = c(object = "ANY"), 
           function(object, catch_rule = "chr", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  if (is.numeric(object)) value <- object
-  object <- comp_m(object = object, value = value, catch_rule = catch_rule, 
+  object <- comp_m(object = object, catch_rule = catch_rule, 
                    k = k, ...)
   class(object) <- "chr_m"
   return(object)
@@ -343,8 +339,7 @@ setMethod(chr_m,
           signature = c(object = "missing"), 
           function(object, catch_rule = "chr", k, ...) {
   catch_rule <- match.arg(catch_rule)
-  object <- comp_m(catch_rule = catch_rule, 
-                   k = k, ...)
+  object <- comp_m(catch_rule = catch_rule, k = k, ...)
   class(object) <- "chr_m"
   return(object)
 })
