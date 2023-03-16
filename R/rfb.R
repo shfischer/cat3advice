@@ -161,6 +161,26 @@ setMethod(rfb,
                      discard_rate = discard_rate, ... = ...)
   return(object)
 })
+### object = missing, A/r/f/b/m = numeric
+#' @rdname rfb
+#' @usage NULL
+#' @export
+setMethod(rfb,
+          signature = c(object = "missing", 
+                        A = "numeric", r = "numeric", f = "numeric", 
+                        b = "numeric", m = "numeric"),
+          function(A, r, f, b, m,
+                   cap,
+                   cap_upper, cap_lower,
+                   years, frequency,
+                   discard_rate = NA,
+                   ...) {#browser()
+  object <- rfb_calc(A = A, r = r, f = f, b = b, m = m,
+                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                     year = years, frequency = frequency, 
+                     discard_rate = discard_rate, ... = ...)
+  return(object)
+})
 ### object = rfb, A/r/f/b/m = missing -> check validity
 #' @rdname rfb
 #' @usage NULL
