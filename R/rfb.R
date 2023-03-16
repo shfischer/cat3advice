@@ -285,7 +285,7 @@ rfb_calc <- function(object = new("rfb"),
     ### check if cap needs to be applied
     cap_consider <- cap
     if (identical(cap, "conditional"))
-      cap_consider <- ifelse(b@value < 1, FALSE, TRUE)
+      cap_consider <- ifelse(object@b@value < 1, FALSE, TRUE)
     if (isFALSE(cap_consider %in% c(TRUE, FALSE, "conditional")))
       stop("unknown uncertainty cap condition")
 
