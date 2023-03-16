@@ -337,16 +337,27 @@ rfb_calc <- function(object = new("rfb"),
 ### ------------------------------------------------------------------------ ###
 ### rfb convenience methods ####
 ### ------------------------------------------------------------------------ ###
-### print to screen
-setMethod(f = "show", signature = "rfb", 
-          definition = function(object) {
-            cat(paste0(object@advice, "\n"))
-})
 
 ### value
+#' @rdname value
+#' @export
 setMethod(f = "value", signature = "rfb", 
           definition = function(object) {
             return(object@advice)
+})
+
+### print
+setMethod(f = "print", signature = "rfb", 
+          definition = function(x) {
+            cat(paste0("An object of class \"", class(x), "\".\n",
+                       "Value: ", x@advice, "\n"))
+})
+
+### show
+setMethod(f = "show", signature = "rfb", 
+          definition = function(object) {
+            cat(paste0("An object of class \"", class(object), "\".\n",
+                       "Value: ", object@advice, "\n"))
 })
 
 ### ------------------------------------------------------------------------ ###

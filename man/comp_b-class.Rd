@@ -40,6 +40,6 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 
 \item{\code{units}}{\code{character}. The units of the biomass index, e.g. 'kg/hr'.}
 
-\item{\code{catch_rule}}{\code{factor}. The catch rule for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.}
+\item{\code{catch_rule}}{\code{character}. The catch rule for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.}
 }}
 

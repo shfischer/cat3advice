@@ -376,8 +376,6 @@ setMethod(f = "value", signature = "comp_m",
 })
 
 ### print
-#' @rdname print
-#' @export
 setMethod(f = "print", signature = "comp_m", 
           definition = function(x) {
             cat(paste0("An object of class \"", class(x), "\".\n",
@@ -385,8 +383,6 @@ setMethod(f = "print", signature = "comp_m",
 })
 
 ### show
-#' @rdname show
-#' @export
 setMethod(f = "show", signature = "comp_m", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",

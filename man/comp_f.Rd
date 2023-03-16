@@ -4,9 +4,10 @@
 \alias{comp_f}
 \alias{comp_f,missing,Lmean,Lref-method}
 \alias{comp_f,comp_f,missing,missing-method}
+\alias{comp_f,numeric,missing,missing-method}
 \alias{rfb_f}
 \alias{rfb_f,missing,ANY,ANY-method}
-\alias{rfb_f,comp_f,missing,missing-method}
+\alias{rfb_f,ANY,missing,missing-method}
 \title{rfb rule - component f (fishing pressure proxy, length indicator)}
 \usage{
 comp_f(object, Lmean, Lref, units, catch_rule, ...)

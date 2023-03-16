@@ -3,6 +3,7 @@
 \name{rfb}
 \alias{rfb}
 \alias{rfb,missing,comp_A,comp_r,comp_f,comp_b,comp_m-method}
+\alias{rfb,missing,numeric,numeric,numeric,numeric,numeric-method}
 \alias{rfb,rfb,missing,missing,missing,missing,missing-method}
 \alias{rfb,rfb,comp_A,comp_r,comp_f,comp_b,comp_m-method}
 \title{rfb rule}

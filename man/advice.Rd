@@ -30,8 +30,3 @@ control rules. The argument passed to the function can either be a single
 component of any rules (components r, f, b, ...) or the output from applying
 any of the rules (rfb, rb, chr).
 }
-\examples{
-# multiplier for the rfb rule with known k
-# advice(rfb_m(k = 0.1))
-
-}
