@@ -28,6 +28,7 @@ RoxygenNote: 7.1.2
 Collate: 
     'generics.R'
     'comp_A.R'
+    'comp_I.R'
     'comp_b.R'
     'length_data.R'
     'comp_f.R'
