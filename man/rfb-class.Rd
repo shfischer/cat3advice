@@ -6,7 +6,7 @@
 \title{An S4 class to represent the rfb rule.}
 \description{
 This class contains the components of the rfb rule (\code{rfb_A},
-\code(rfb_r), \code(rfb_f), \code(rfb_b), \code(rfb_m))
+\code{rfb_r}, \code{rfb_f}, \code{rfb_b}, \code{rfb_m}).
 }
 \section{Slots}{
 
@@ -35,10 +35,16 @@ This class contains the components of the rfb rule (\code{rfb_A},
 
 \item{\code{m}}{Component m (the multiplier).}
 
-\item{\code{cap}}{Uncertainty cap (restricts changes in advice).}
+\item{\code{cap}}{Uncertainty cap (stability clause, restricts changes in advice).}
 
-\item{\code{advice_change}}{Change in advice compared to previous advice.}
+\item{\code{cap_lower}}{Maximum allowed reduction in advice in \%, e.g. -30.}
 
-\item{\code{discard_rate}}{Discard rate (%).}
+\item{\code{cap_upper}}{Maximum allowed increase in advice in \%, e.g. 20.}
+
+\item{\code{change}}{Change in advice compared to previous advice.}
+
+\item{\code{change_uncapped}}{Change in advice compared to previous advice before application of the uncertainty cap.}
+
+\item{\code{discard_rate}}{Discard rate (\%).}
 }}
 

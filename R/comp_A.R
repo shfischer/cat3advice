@@ -121,8 +121,6 @@ setValidity("comp_A", function(object) {
 #'
 #'
 #' @return An object of class \code{comp_A}
-#'
-#' @examples
 #' 
 #' @name comp_A
 #' @export

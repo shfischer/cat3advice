@@ -5,6 +5,8 @@
 \alias{Lref-class}
 \title{An S4 class to represent the reference catch length}
 \arguments{
+\item{value}{The reference catch length.}
+
 \item{basis}{The basis for the calculation, defaults to "LF=M".}
 
 \item{Lc}{The length at first capture.}
@@ -19,16 +21,10 @@ to set the proxy for MSY (see details).}
 \item{theta}{Alternative option to link M and k.}
 
 \item{years}{Years, if annual values provided.}
+
+\item{units}{The units for length data (e.g. cm)}
 }
 \description{
 This class (\code{Lref}) stores the value of the reference catch length, 
 e.g. LF=M.
 }
-\section{Slots}{
-
-\describe{
-\item{\code{value}}{The reference catch length.}
-
-\item{\code{units}}{The units for length data (e.g. cm)}
-}}
-

@@ -78,9 +78,6 @@ classes outside this range. \code{lstep} can be used to combine the length
 into broader length classes. This can be useful if data are noisy with
 several local minima/maxima and to smooth the length distribution.
 }
-\examples{
-
-}
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 }

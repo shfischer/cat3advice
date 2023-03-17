@@ -102,9 +102,6 @@ Usually, the reference catch is the previous advised catch. Alternatively,
 if the rfb/rb/chr rule is applied the first time, it can be based on an
 average of historical catches.
 }
-\examples{
-
-}
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 }

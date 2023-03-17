@@ -14,7 +14,7 @@ NULL
 #' @title An S4 class to represent the rfb rule.
 #'
 #' @description This class contains the components of the rfb rule (\code{rfb_A},
-#' \code(rfb_r), \code(rfb_f), \code(rfb_b), \code(rfb_m))
+#' \code{rfb_r}, \code{rfb_f}, \code{rfb_b}, \code{rfb_m}).
 #'
 #' @slot advice The value of the catch advice.
 #' @slot advice_landings Landings corresponding to the catch advice.
@@ -28,9 +28,12 @@ NULL
 #' @slot f Component f (the fishing pressure proxy).
 #' @slot b Component b (the biomass safeguard).
 #' @slot m Component m (the multiplier).
-#' @slot cap Uncertainty cap (restricts changes in advice).
-#' @slot advice_change Change in advice compared to previous advice.
-#' @slot discard_rate Discard rate (%).
+#' @slot cap Uncertainty cap (stability clause, restricts changes in advice).
+#' @slot cap_lower Maximum allowed reduction in advice in \%, e.g. -30.
+#' @slot cap_upper Maximum allowed increase in advice in \%, e.g. 20.
+#' @slot change Change in advice compared to previous advice.
+#' @slot change_uncapped Change in advice compared to previous advice before application of the uncertainty cap.
+#' @slot discard_rate Discard rate (\%).
 #'
 #' @rdname rfb-class
 #' @export
@@ -98,11 +101,11 @@ setClass(
 #' @param b The biomass safeguard. Should be an object of class \code{comp_b}, see [comp_b()].
 #' @param m The multiplier. Should be an object of class \code{comp_m}, see [comp_m()].
 #' @param cap \code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}
-#' @param cap_upper Optional. The maximum allowed increase in the catch advice in %. Default to +20.
-#' @param cap_lower Optional. The maximum allowed decrease in the catch advice in %. Default to -20.
-#' @param years Optional. The years for which the advice should be given.
-#' @param frequency Optional. The frequency of the advice (annual/biennial/triennial). Defaults to "biennial".
-#' @param  discard_rate Optional. The discard rate for the advice. If provided, advice values for catch and landings are given.
+#' @param cap_upper Optional. \code{numeric}. The maximum allowed increase in the catch advice in \%. Default to +20.
+#' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.
+#' @param years Optional. \code{numeric}. The years for which the advice should be given.
+#' @param frequency Optional. The frequency of the advice ('annual'/'biennial'/'triennial'). Defaults to 'biennial'.
+#' @param  discard_rate Optional. The discard rate for the advice (\code{numeric}). If provided, advice values for catch and landings are given.
 #' @param ... Additional parameters. Not used.
 #'  
 #' @section Warning:
@@ -124,8 +127,6 @@ setClass(
 #'
 #' @return An object of class \code{rfb}.
 #'
-#' @examples
-#' # to do
 #' 
 #' @name rfb
 #' @export

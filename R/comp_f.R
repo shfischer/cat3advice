@@ -101,8 +101,6 @@ setClass(
 #'
 #'
 #' @return An object of class \code{comp_f} with the length indicator value(s).
-#'
-#' @examples
 #' 
 #' @export
 setGeneric(

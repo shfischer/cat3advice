@@ -112,7 +112,6 @@ setClass(
 #'
 #' @return An object of class \code{Lc}
 #'
-#' @examples
 #' 
 #' @export
 setGeneric(
@@ -245,16 +244,18 @@ setMethod(
     print(object@value)
   }
 )
+#' @rdname summary
+#' @usage NULL
+#' @export
 setMethod(
   f = "summary", signature = "Lc",
   definition = function(object) {
     print(object@summary)
   }
 )
-setGeneric(
-  name = "value",
-  def = function(object) standardGeneric("value")
-)
+#' @rdname value
+#' @usage NULL
+#' @export
 setMethod(
   f = "value", signature = "Lc",
   definition = function(object) {
@@ -362,10 +363,8 @@ setClass(
 #'
 #' @return An object of class \code{Lc}
 #'
-#' @examples
 #' 
 #' @export
-
 setGeneric(
   name = "Lmean",
   def = function(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...) {
@@ -529,16 +528,18 @@ setMethod(
     print(object@value)
   }
 )
+#' @rdname summary
+#' @usage NULL
+#' @export
 setMethod(
   f = "summary", signature = "Lmean",
   definition = function(object) {
     print(object@summary)
   }
 )
-setGeneric(
-  name = "value",
-  def = function(object) standardGeneric("value")
-)
+#' @rdname value
+#' @usage NULL
+#' @export
 setMethod(
   f = "value", signature = "Lmean",
   definition = function(object) {
@@ -555,7 +556,7 @@ setMethod(
 #' This class (\code{Lref}) stores the value of the reference catch length, 
 #' e.g. LF=M.
 #'
-#' @slot value The reference catch length.
+#' @param value The reference catch length.
 #' @param basis The basis for the calculation, defaults to "LF=M".
 #' @param Lc The length at first capture.
 #' @param Linf The asymptotic length from a von Bertalanffy growth model.
@@ -564,7 +565,7 @@ setMethod(
 #'              to set the proxy for MSY (see details).
 #' @param theta Alternative option to link M and k.
 #' @param years Years, if annual values provided.
-#' @slot units The units for length data (e.g. cm)
+#' @param units The units for length data (e.g. cm)
 #'
 #' @rdname Lref-class
 #' @export
@@ -684,6 +685,9 @@ setMethod(
     print(object@value)
   }
 )
+#' @rdname value
+#' @usage NULL
+#' @export
 setMethod(
   f = "value", signature = "Lref",
   definition = function(object) {

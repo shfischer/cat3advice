@@ -27,22 +27,25 @@ NULL
 #' df_idx <- data.frame(year = 2017:2021,
 #'                      index = c(1.33, 1.13, 0.84, 0.60, 1.03))
 #' b <- rfb_b(df_idx)
-#' plot(b, y = "Biomass index in kg/hr")
+#' plot(b, y_label = "Biomass index in kg/hr")
 #'
 #' # Component r
 #' r <- rfb_r(df_idx)
-#' plot(r, y = "Biomass index in kg/hr")
+#' plot(r, y_label = "Biomass index in kg/hr")
 #'
 #' # Components r and b combined
 #' plot(r, b)
-#'
 #' 
 #' @export
+#' @name rfb_plot
+setGeneric(name = "plot",
+           def = function(x, y, y_label, ...)  standardGeneric("plot"))
 
 ### rfb_r ####
 #' @rdname rfb_plot
-setMethod(f = "plot", signature = c(x = "comp_r"), 
-          definition = function(x, y_label, ...) {
+#' @export
+setMethod(f = "plot", signature = c(x = "comp_r", y = "missing"), 
+          definition = function(x, y, y_label, ...) {
             
   object <- x
   
@@ -111,8 +114,8 @@ setMethod(f = "plot", signature = c(x = "comp_r"),
 
 ### rfb_b ####
 #' @rdname rfb_plot
-setMethod(f = "plot", signature = c(x = "comp_b"), 
-          definition = function(x, y_label, ...) {
+setMethod(f = "plot", signature = c(x = "comp_b", y = "missing"), 
+          definition = function(x, y, y_label, ...) {
             
   object <- x
   
@@ -181,6 +184,7 @@ setMethod(f = "plot", signature = c(x = "comp_b"),
 ### set S3 plot() as generic so that it can be used with S4 methods
 # setGeneric("plot")
 #' @rdname rfb_plot
+#' @export
 setMethod(f = "plot", signature = c(x = "comp_r", y = "comp_b"), 
           definition = function(x, y, y_label, ...) {
   
@@ -272,6 +276,7 @@ setMethod(f = "plot", signature = c(x = "comp_r", y = "comp_b"),
 
 ### comp_r and comp_b - but order reversed ####
 #' @rdname rfb_plot
+#' @export
 setMethod(f = "plot", signature = c(x = "comp_b", y = "comp_r"), 
           definition = function(x, y, y_label, ...) {
   plot(x = y, y = x, y_label = y_label, ...)
@@ -279,8 +284,8 @@ setMethod(f = "plot", signature = c(x = "comp_b", y = "comp_r"),
 
 ### rfb_f ####
 #' @rdname rfb_plot
-setMethod(f = "plot", signature = c(x = "comp_f"), 
-          definition = function(x, y_label, ...) {
+setMethod(f = "plot", signature = c(x = "comp_f", y = "missing"), 
+          definition = function(x, y, y_label, ...) {
             
   object <- x
   
@@ -345,9 +350,8 @@ setMethod(f = "plot", signature = c(x = "comp_f"),
 #' @examples
 #' 
 #' @export
-
-### Lc
 #' @rdname length_freq_plot
+### Lc
 setMethod(f = "plot", signature = c(x = "Lc"), 
           definition = function(x, ...) {
   

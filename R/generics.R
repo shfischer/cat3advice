@@ -27,6 +27,7 @@ setGeneric(
 #' @title value
 #' @description This function returns the value of any component or the advice
 #' for the empirical harvest control rules
+#' @param object The object from which the value is extracted.
 #' @export
 setGeneric(name = "value", 
            def = function(object)  standardGeneric("value"))
@@ -49,6 +50,17 @@ setGeneric(name = "print",
 #' @title summary
 #' @description This function returns a summary of any component or the advice
 #' for the empirical harvest control rules
+#' @param object The object to be plotted.
+#' @param ... Additional arguments. Not used.
 #' @export
 setGeneric(name = "summary",
-           def = function(object)  standardGeneric("summary"))
+           def = function(object, ...)  standardGeneric("summary"))
+
+### ------------------------------------------------------------------------ ###
+### plot ####
+### ------------------------------------------------------------------------ ###
+# #' @rdname rfb_plot
+# #' @usage NULL
+# #' @export
+# setGeneric(name = "plot",
+#            def = function(x, y, y_label, ...)  standardGeneric("plot"))

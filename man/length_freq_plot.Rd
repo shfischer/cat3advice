@@ -5,9 +5,9 @@
 \alias{plot,Lmean,ANY-method}
 \title{Plot length frequencies}
 \usage{
-\S4method{plot}{Lc,ANY}(x, y, ...)
+\S4method{plot}{Lc,ANY}(x, y, y_label, ...)
 
-\S4method{plot}{Lmean,ANY}(x, y, ...)
+\S4method{plot}{Lmean,ANY}(x, y, y_label, ...)
 }
 \arguments{
 \item{x}{An object of class \code{Lc}, \code{Lmean}, ...}
