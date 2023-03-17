@@ -66,7 +66,7 @@ chr_b(
 )
 }
 \arguments{
-\item{object}{The biomass index. Can be a \code{data.frame} with columns 'data' and 'index' or an \code{FLQuant} object defined by \code{FLCore}.}
+\item{object}{The biomass index. Can be a \code{data.frame} with columns 'data' and 'index'.}
 
 \item{idx_value}{Optional. The current index value. Only used if no index time series is supplied.}
 
@@ -95,9 +95,20 @@ This function calculates component b (the biomass safeguard) of the rb, rfb,
 and chr rule. The index needs to be a biomass index without age structure.
 }
 \details{
-The biomass safeguard compares the last index value to an index trigger 
-value. If the current index value is below the trigger, the biomass safeguard
-reduces the catch advice. See ICES (2022) for the definition.
+The biomass safeguard compares the last index value (\out{<i>I</i>}) to an index trigger value (\out{<i>I</i><sub>trigger</sub>}). If the current index value is below the trigger, the biomass safeguard reduces the catch advice:
+
+\out{<i>b</i> = min{1, <i>I</i> / <i>I</i><sub>trigger</sub>}}
+
+
+, where \out{<i>I</i><sub>trigger</sub>} is usually derived from the lowest observed biomass index value (\out{<i>I</i><sub>loss</sub>}) as:
+
+\out{<i>I</i><sub>trigger</sub> = w * <i>I</i><sub>loss</sub>}
+
+with 
+
+\out{<i>w</i> = 1.4}
+
+See ICES (2022) for the full definition definition.
 
 Usually, this method is used by providing only a biomass index, e.g. 
 as a \code{data.frame}. The method uses this index, searches for the lowest
@@ -113,6 +124,7 @@ The biomass safeguard is identical in the rfb, rb, and chr rules.
 }
 \section{Warning}{
 
+Please note that \out{<i>I</i><sub>trigger</sub>} should only be defined once the first time the empirical harvest control rule is applied. In the following years, the same value should be used for \out{<i>I</i><sub>trigger</sub>}.
 For application in ICES, do not change the defaults unless the change is supported by stock-specific simulations.
 }
 
@@ -120,6 +132,7 @@ For application in ICES, do not change the defaults unless the change is support
 # If the value of the biomass safeguard is known
 comp_b(1)
 
+# First application of the biomass safeguard
 # Use a data.frame with index values
 df_idx <- data.frame(year = 2017:2021,
                      index = c(1.33, 1.13, 0.84, 0.60, 1.03))
@@ -127,6 +140,11 @@ comp_b(df_idx)
 
 # plot
 plot(comp_b(df_idx, units = "kg/hr"))
+
+# Use of the biomass safeguard in a following year without updating Itrigger
+df_idx <- data.frame(year = 2017:2022,
+                     index = c(1.33, 1.13, 0.84, 0.60, 1.03, 0.5))
+comp_b(df_idx, yr_ref = 2020)
 
 }
 \references{

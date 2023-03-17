@@ -124,10 +124,8 @@ setClass(
 #' 
 #' Fischer, S. H., De Oliveira, J. A. A., and Kell, L. T. 2020. Linking the performance of a data-limited empirical catch rule to life-history traits. ICES Journal of Marine Science, 77: 1914--1926. \url{https://doi.org/10.1093/icesjms/fsaa054}.
 #'
-#'
 #' @return An object of class \code{rfb}.
 #'
-#' 
 #' @name rfb
 #' @export
 NULL
