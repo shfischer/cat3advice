@@ -6,6 +6,7 @@
 \alias{value,comp_f-method}
 \alias{value,comp_m-method}
 \alias{value,comp_r-method}
+\alias{value,comp_b-method}
 \alias{value,rb-method}
 \alias{value,rfb-method}
 \title{value}
@@ -17,6 +18,8 @@ value(object)
 \S4method{value}{comp_m}(object)
 
 \S4method{value}{comp_r}(object)
+
+\S4method{value}{comp_b}(object)
 
 \S4method{value}{rb}(object)
 

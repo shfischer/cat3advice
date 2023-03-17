@@ -323,6 +323,13 @@ setMethod(f = "value", signature = "comp_r",
   return(object@value)
 })
 
+#' @rdname value
+#' @export
+setMethod(f = "value", signature = "comp_b", 
+          definition = function(object) {
+            return(object@value)
+          })
+
 ### print
 setMethod(f = "print", signature = "comp_r", 
           definition = function(x) {

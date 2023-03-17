@@ -432,13 +432,15 @@ setMethod(f = "summary", signature = "comp_b",
   cat(txt)
 })
 
-### value
+
+### weird bug - method definition moved to comp_r.R, 
+### other method is not found ...
 # #' @rdname value
 # #' @export
-setMethod(f = "value", signature = "comp_b",
-          definition = function(object) {
-            return(object@value)
-})
+# setMethod(f = "value", signature = "comp_b", 
+#           definition = function(object) {
+#             return(object@value)
+#           })
 
 ### print
 setMethod(f = "print", signature = "comp_b", 
