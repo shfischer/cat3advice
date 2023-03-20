@@ -16,18 +16,18 @@
 \alias{chr_m,missing-method}
 \title{rfb/rb/chr rule - component m (multiplier)}
 \usage{
-comp_m(object, catch_rule, k, ...)
+comp_m(object, hcr, k, ...)
 
-rfb_m(object, catch_rule = "rfb", k, ...)
+rfb_m(object, hcr = "rfb", k, ...)
 
-rb_m(object, catch_rule = "rb", k, ...)
+rb_m(object, hcr = "rb", k, ...)
 
-chr_m(object, catch_rule = "chr", k, ...)
+chr_m(object, hcr = "chr", k, ...)
 }
 \arguments{
 \item{object}{Optional. A multiplier m value, if known, or an existing \code{comp_m} object.}
 
-\item{catch_rule}{The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
+\item{hcr}{The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
 
 \item{k}{Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).}
 
@@ -41,7 +41,7 @@ This function returns the default multiplier for the rfb, rb, and chr rules.
 }
 \details{
 \code{rfb_m()}, \code{rb_m()}, and \code{chr_m()} are aliases for
-\code{comp_m()} in which the \code{catch_rule} argument is already set to 
+\code{comp_m()} in which the \code{hcr} argument is already set to 
 'rfb', 'rb', or 'chr'.
 
 The multiplier is set following ICES (2022).
@@ -67,20 +67,20 @@ For application in ICES, do not change the default multiplier unless the
 \examples{
 # rfb rule with known k
 rfb_m(k = 0.1) # 0.95
-comp_m(catch_rule = "rfb", k = 0.1) # 0.95
+comp_m(hcr = "rfb", k = 0.1) # 0.95
 rfb_m(k = 0.25) # 0.90
-comp_m(catch_rule = "rfb", k = 0.25) # 0.90
+comp_m(hcr = "rfb", k = 0.25) # 0.90
 # rfb rule with unknown k
 rfb_m() # 0.90
-comp_m(catch_rule = "rfb") # 0.90
+comp_m(hcr = "rfb") # 0.90
 
 # rb rule
 rb_m() # 0.5
-comp_m(catch_rule = "rb") # 0.5
+comp_m(hcr = "rb") # 0.5
 
 # chr rule
 chr_m() # 0.5
-comp_m(catch_rule = "chr") # 0.5
+comp_m(hcr = "chr") # 0.5
 
 }
 \references{

@@ -29,6 +29,6 @@ This class (\code{comp_r}) stores the input for component r (the index ratio
 
 \item{\code{units}}{\code{character}. The units of the biomass index, e.g. 'kg/hr'.}
 
-\item{\code{catch_rule}}{\code{character}. The catch rule for which the biomass safeguard is used. One of 'rfb' or 'rb'.}
+\item{\code{hcr}}{\code{character}. The harvest control rule (hcr) for which the biomass safeguard is used. One of 'rfb' or 'rb'.}
 }}
 

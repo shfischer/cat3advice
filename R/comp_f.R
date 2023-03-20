@@ -20,7 +20,7 @@ NULL
 #' @slot Lmean Mean catch length.
 #' @slot Lref Reference catch length.
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
-#' @slot catch_rule \code{factor}. The catch rule for which component f is used (rfb).
+#' @slot hcr \code{factor}. The harvest control rule (hcr) for which component f is used (rfb).
 #'
 #' @name comp_f-class
 #' @export
@@ -34,7 +34,7 @@ setClass(
     Lmean = "Lmean",
     Lref = "Lref",
     units = "character",
-    catch_rule = "character"
+    hcr = "character"
   ),
   prototype = list(
     value = NA_real_,
@@ -49,14 +49,14 @@ setClass(
     Lmean = new("Lmean"),
     Lref = new("Lref"),
     units = NA_character_,
-    catch_rule = NA_character_
+    hcr = NA_character_
   )
 )
 #' @rdname comp_f-class
 setClass(
   Class = "rfb_f",
   contains = "comp_f",
-  prototype = list(catch_rule = "rfb"
+  prototype = list(hcr = "rfb"
   )
 )
 
@@ -81,7 +81,7 @@ setClass(
 #' ...
 #'
 #' @param units Optional. The units of the length dat, e.g. 'cm'. Only used for plotting.
-#' @param catch_rule Optional. Defaults to 'rfb'.
+#' @param hcr Optional. Defaults to 'rfb'.
 #' @param ... Additional arguments. Not currently used.
 #'
 #' @section Note:
@@ -105,7 +105,7 @@ setClass(
 #' @export
 setGeneric(
   name = "comp_f",
-  def = function(object, Lmean, Lref, units, catch_rule, ...) {
+  def = function(object, Lmean, Lref, units, hcr, ...) {
     standardGeneric("comp_f")
   },
   signature = c("object", "Lmean", "Lref")
@@ -123,13 +123,13 @@ setGeneric(
 #' @export
 setMethod(comp_f,
   signature = c(object = "missing", Lmean = "Lmean", Lref = "Lref"),
-  function(object, Lmean, Lref, units, catch_rule, ...) {
+  function(object, Lmean, Lref, units, hcr, ...) {
     
     object <- new("comp_f")
     object@Lmean <- Lmean
     object@Lref <- Lref
     if (!missing(units)) object@units <- units
-    if (!missing(catch_rule)) object@catch_rule <- catch_rule
+    if (!missing(hcr)) object@hcr <- hcr
     
     ### get mean length data
     object@indicator <- Lmean@summary
@@ -160,7 +160,7 @@ setMethod(comp_f,
 setMethod(comp_f,
   signature = c(object = "comp_f", Lmean = "missing", Lref = "missing"),
   function(object, Lmean = object@Lmean, Lref = object@Lmean, 
-           units, catch_rule, ...) {
+           units, hcr, ...) {
     ### check validity
     validObject(object)
     
@@ -175,13 +175,13 @@ setMethod(comp_f,
 setMethod(comp_f,
           signature = c(object = "numeric", Lmean = "missing", Lref = "missing"),
           function(object, Lmean = object@Lmean, Lref = object@Lmean, 
-                   units, catch_rule, ...) {
+                   units, hcr, ...) {
   ### empty object with value
   value <- object
   object <- new("comp_f")
   object@value <- value
   if (!missing(units)) object@units <- units
-  if (!missing(catch_rule)) object@catch_rule <- catch_rule
+  if (!missing(hcr)) object@hcr <- hcr
   return(object)
 })
 
@@ -197,7 +197,7 @@ setMethod(comp_f,
 #' @export
 setGeneric(
   name = "rfb_f",
-  def = function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
+  def = function(object, Lmean, Lref, units, hcr = "rfb", ...) {
     standardGeneric("rfb_f")
   },
   signature = c("object", "Lmean", "Lref")
@@ -207,11 +207,11 @@ setGeneric(
 #' @export
 setMethod(rfb_f,
           signature = c(object = "missing", Lmean = "ANY", Lref = "ANY"),
-          function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
-  catch_rule <- match.arg(catch_rule)
+          function(object, Lmean, Lref, units, hcr = "rfb", ...) {
+  hcr <- match.arg(hcr)
   ### ignore object because it is missing
   object <- comp_f(Lmean = Lmean, Lref = Lref, units = units, 
-                   catch_rule = catch_rule, ... = ...)
+                   hcr = hcr, ... = ...)
   class(object) <- "rfb_f"
   return(object)
 })
@@ -221,11 +221,11 @@ setMethod(rfb_f,
 #' @export
 setMethod(rfb_f,
           signature = c(object = "ANY", Lmean = "missing", Lref = "missing"),
-          function(object, Lmean, Lref, units, catch_rule = "rfb", ...) {
-  catch_rule <- match.arg(catch_rule)
+          function(object, Lmean, Lref, units, hcr = "rfb", ...) {
+  hcr <- match.arg(hcr)
   ### ignore Lmean & Lref becuase they are missing
   object <- comp_f(object = object, units = units,
-                   catch_rule = catch_rule, ... = ...)
+                   hcr = hcr, ... = ...)
   class(object) <- "rfb_f"
   return(object)
 })

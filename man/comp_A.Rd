@@ -17,7 +17,7 @@ comp_A(
   object,
   value,
   units,
-  catch_rule,
+  hcr,
   data,
   avg_years,
   basis = "advice",
@@ -29,7 +29,7 @@ rfb_A(
   object,
   value,
   units,
-  catch_rule = "rfb",
+  hcr = "rfb",
   data,
   avg_years,
   basis = "advice",
@@ -41,7 +41,7 @@ rb_A(
   object,
   value,
   units,
-  catch_rule = "rb",
+  hcr = "rb",
   data,
   avg_years,
   basis = "advice",
@@ -53,7 +53,7 @@ chr_A(
   object,
   value,
   units,
-  catch_rule = "chr",
+  hcr = "chr",
   data,
   avg_years,
   basis = "advice",
@@ -66,7 +66,7 @@ chr_A(
 
 \item{units}{[Optional] The units of the reference catch, e.g. "tonnes".}
 
-\item{catch_rule}{[Optional] The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
+\item{hcr}{[Optional] The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
 
 \item{data}{[Internal] Data used for calculating reference catch.}
 
@@ -93,7 +93,7 @@ The function accepts as its first argument (`object`):
 - an object of class `comp_A`
 
 \code{rfb_A()}, \code{rb_A()}, and \code{chr_A()} are aliases for
-\code{comp_A()} in which the \code{catch_rule} argument is already set to 
+\code{comp_A()} in which the \code{hcr} argument is already set to 
 'rfb', 'rb', or 'chr'.
 
 The reference catch is set following ICES (2022).

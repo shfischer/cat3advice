@@ -9,9 +9,9 @@
 \alias{chr_I,ANY-method}
 \title{chr rule - component I (biomass index value)}
 \usage{
-comp_I(object, lag = 0, n_yrs = 1, units, catch_rule = "chr", ...)
+comp_I(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...)
 
-chr_I(object, lag = 0, n_yrs = 1, units, catch_rule = "chr", ...)
+chr_I(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...)
 }
 \arguments{
 \item{object}{The biomass index. Can be a \code{data.frame} with columns 'data' and 'index', a vector, or a single value.}
@@ -22,7 +22,7 @@ chr_I(object, lag = 0, n_yrs = 1, units, catch_rule = "chr", ...)
 
 \item{units}{Optional. The units of the biomass index, e.g. 'kg/hr'. Only used for plotting.}
 
-\item{catch_rule}{Optional. Should be 'chr'.}
+\item{hcr}{Optional. Should be 'chr'.}
 
 \item{...}{Additional arguments. Not used.}
 }

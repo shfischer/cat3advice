@@ -20,7 +20,7 @@ NULL
 #' @slot idx \code{data.frame}. A \code{data.frame} with the index values.
 #' @slot yr_last \code{numeric}. The last year with index data.
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
-#' @slot catch_rule \code{character}. The catch rule for which the index is used. Only applicable to 'chr'.
+#' @slot hcr \code{character}. The harvest control rule (hcr) for which the index is used. Only applicable to 'chr'.
 #' 
 #' @name comp_I-class
 #' @title comp_I
@@ -34,7 +34,7 @@ setClass(
     idx = "data.frame",
     yr_last = "numeric",
     units = "character",
-    catch_rule = "character"
+    hcr = "character"
   ),
   prototype = list(
     value = NA_real_,
@@ -47,7 +47,7 @@ setClass(
     )),
     yr_last = NA_real_,
     units = NA_character_,
-    catch_rule = "chr"
+    hcr = "chr"
   )
 )
 
@@ -55,7 +55,7 @@ setClass(
 #' @rdname comp_I-class
 setClass(Class = "chr_I", 
          contains = "comp_I",
-         prototype = list(catch_rule = "chr"))
+         prototype = list(hcr = "chr"))
 
 ### ------------------------------------------------------------------------ ###
 ### comp_I methods ####
@@ -74,7 +74,7 @@ setClass(Class = "chr_I",
 #' @param lag Optional. The time lag (in years) between the last available index value and the value to be used. Defaults to 0 (the last value is used).
 #' @param n_yrs Optional. The number of years if an average index value is used. Defaults to 1 (use last year's value only).
 #' @param units Optional. The units of the biomass index, e.g. 'kg/hr'. Only used for plotting.
-#' @param catch_rule Optional. Should be 'chr'.
+#' @param hcr Optional. Should be 'chr'.
 #' @param ... Additional arguments. Not used.
 #'  
 #' @section Warning:
@@ -102,7 +102,7 @@ setClass(Class = "chr_I",
 #' @export
 setGeneric(name = "comp_I", 
            def = function(object, lag = 0, n_yrs = 1, units, 
-                          catch_rule = "chr", ...) 
+                          hcr = "chr", ...) 
              standardGeneric("comp_I"),
            signature = c("object"))
 
@@ -112,7 +112,7 @@ setGeneric(name = "comp_I",
 #' @export
 setMethod(comp_I, 
           signature = c(object = "data.frame"),
-          function(object, lag = 0, n_yrs = 1, units, catch_rule = "chr", ...) {
+          function(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...) {
   idx <- object
   names(idx) <- tolower(names(idx))
   ### check if "index" column exists
@@ -128,7 +128,7 @@ setMethod(comp_I,
   if (isFALSE("year" %in% names(idx)))
     idx$years <- seq_along(idx$index)
   comp_I_calc(idx = idx, lag = lag, n_yrs = n_yrs, units = units, 
-              catch_rule = catch_rule, ...)
+              hcr = hcr, ...)
 })
 
 ### vector -> use as index
@@ -137,14 +137,14 @@ setMethod(comp_I,
 #' @export
 setMethod(comp_I, 
           signature = c(object = "vector"),
-          function(object, lag = 0, n_yrs = 1, units, catch_rule = "chr", ...) {
+          function(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...) {
   idx <- data.frame(index = object, years = NA)
   ### use names, if provided
   if (!is.null(names(object)))
     idx$years <- names(object)
   ### pass to data.frame method
   comp_I(object = idx, lag = lag, n_yrs = n_yrs, units = units, 
-         catch_rule = catch_rule, ... = ...)
+         hcr = hcr, ... = ...)
 })
 
 ### comp_I -> validate & update
@@ -153,29 +153,29 @@ setMethod(comp_I,
 #' @export
 setMethod(comp_I, 
           signature = c(object = "comp_I"),
-          function(object, lag = 0, n_yrs = 1, units, catch_rule = "chr", ...) {
+          function(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...) {
   validObject(object)
   ### update slots, if provided
   if (!missing(lag)) object@lag <- lag
   if (!missing(n_yrs)) object@n_yrs <- n_yrs
   if (!missing(units)) object@units <- units
-  if (!missing(catch_rule)) object@catch_rule <- catch_rule
+  if (!missing(hcr)) object@hcr <- hcr
   ### pass to function
   comp_I_calc(object = object, idx = object@idx, lag = object@lag, 
          n_yrs = object@n_yrs, units = object@units, 
-         catch_rule = object@catch_rule, ... = ...)
+         hcr = object@hcr, ... = ...)
 })
 
 ### ------------------------------------------------------------------------ ###
 ### comp_I calculation ####
 ### ------------------------------------------------------------------------ ###
 comp_I_calc <- function(object, idx, lag = 0, n_yrs = 1, units, 
-                        catch_rule = "chr", ...) {
+                        hcr = "chr", ...) {
   ### create empty comp_I object, if missing
   if (missing(object)) object <- new("comp_I")
-  if (!missing(catch_rule)) {
-    catch_rule <- match.arg(catch_rule, choices = c("chr"))
-    object@catch_rule <- catch_rule
+  if (!missing(hcr)) {
+    hcr <- match.arg(hcr, choices = c("chr"))
+    object@hcr <- hcr
   }
   
   ### add/update index, if provided
@@ -219,7 +219,7 @@ comp_I_calc <- function(object, idx, lag = 0, n_yrs = 1, units,
 #' @export
 setGeneric(name = "chr_I", 
            def = function(object, lag = 0, n_yrs = 1, units, 
-                          catch_rule = "chr", ...) 
+                          hcr = "chr", ...) 
              standardGeneric("chr_I"),
            signature = c("object"))
 #' @rdname comp_I
@@ -228,11 +228,11 @@ setGeneric(name = "chr_I",
 setMethod(chr_I, 
           signature = c(object = "ANY"),
           function(object, lag = 0, n_yrs = 1, units, 
-                   catch_rule = "chr", ...) {
-  catch_rule <- match.arg(catch_rule)
+                   hcr = "chr", ...) {
+  hcr <- match.arg(hcr)
   object <- comp_I(object = object, 
                    lag = lag, n_yrs = n_yrs, 
-                   units = units, catch_rule = catch_rule, ... = ...)
+                   units = units, hcr = hcr, ... = ...)
   class(object) <- "chr_I"
   return(object)
 })
@@ -254,8 +254,8 @@ setValidity("comp_I", function(object) {
     "slot yr_last must be of length 1"
   } else if (!identical(length(object@units), 1L)) {
     "slot units must be of length 1"
-  } else if (!identical(length(object@catch_rule), 1L)) {
-    "slot catch_rule must be of length 1"
+  } else if (!identical(length(object@hcr), 1L)) {
+    "slot hcr must be of length 1"
   } else {
     TRUE
   }

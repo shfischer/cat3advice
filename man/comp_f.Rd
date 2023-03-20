@@ -10,7 +10,7 @@
 \alias{rfb_f,ANY,missing,missing-method}
 \title{rfb rule - component f (fishing pressure proxy, length indicator)}
 \usage{
-comp_f(object, Lmean, Lref, units, catch_rule, ...)
+comp_f(object, Lmean, Lref, units, hcr, ...)
 }
 \arguments{
 \item{object}{Optional. An object of class \code{comp_f}.}
@@ -25,7 +25,7 @@ comp_f(object, Lmean, Lref, units, catch_rule, ...)
 
 \item{units}{Optional. The units of the length dat, e.g. 'cm'. Only used for plotting.}
 
-\item{catch_rule}{Optional. Defaults to 'rfb'.}
+\item{hcr}{Optional. Defaults to 'rfb'.}
 
 \item{...}{Additional arguments. Not currently used.}
 }

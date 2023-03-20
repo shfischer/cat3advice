@@ -14,7 +14,7 @@ This class (\code{comp_b}) stores the input for component b (the biomass
 safeguard) as well as the resulting b value. 
 
 The classes \code{rfb_b}, \code{rb_b}, and \code{chr_b} inherit from 
-\code{comp_b} and their only difference is that the slot \code{catch_rule}
+\code{comp_b} and their only difference is that the slot \code{hcr}
 is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 }
 \section{Slots}{
@@ -40,6 +40,6 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 
 \item{\code{units}}{\code{character}. The units of the biomass index, e.g. 'kg/hr'.}
 
-\item{\code{catch_rule}}{\code{character}. The catch rule for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.}
+\item{\code{hcr}}{\code{character}. The harvest control rule (hcr) for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.}
 }}
 

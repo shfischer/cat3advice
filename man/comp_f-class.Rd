@@ -28,6 +28,6 @@ indicator as well as the resulting f value.
 
 \item{\code{units}}{\code{character}. The units of the biomass index, e.g. 'kg/hr'.}
 
-\item{\code{catch_rule}}{\code{factor}. The catch rule for which component f is used (rfb).}
+\item{\code{hcr}}{\code{factor}. The harvest control rule (hcr) for which component f is used (rfb).}
 }}
 

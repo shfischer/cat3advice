@@ -13,18 +13,7 @@
 \alias{chr_b,ANY-method}
 \title{rb/rfb/chr rule - component b (biomass safeguard)}
 \usage{
-comp_b(
-  object,
-  idx_value,
-  Itrigger,
-  Iloss,
-  w,
-  yr_ref,
-  n0,
-  units,
-  catch_rule,
-  ...
-)
+comp_b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, hcr, ...)
 
 rfb_b(
   object,
@@ -35,22 +24,11 @@ rfb_b(
   yr_ref,
   n0,
   units,
-  catch_rule = "rfb",
+  hcr = "rfb",
   ...
 )
 
-rb_b(
-  object,
-  idx_value,
-  Itrigger,
-  Iloss,
-  w,
-  yr_ref,
-  n0,
-  units,
-  catch_rule = "rb",
-  ...
-)
+rb_b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, hcr = "rb", ...)
 
 chr_b(
   object,
@@ -61,7 +39,7 @@ chr_b(
   yr_ref,
   n0,
   units,
-  catch_rule = "chr",
+  hcr = "chr",
   ...
 )
 }
@@ -82,7 +60,7 @@ chr_b(
 
 \item{units}{Optional. The units of the biomass index, e.g. 'kg/hr'. Only used for plotting.}
 
-\item{catch_rule}{Optional. One of 'rfb', 'rb', or 'chr'.}
+\item{hcr}{Optional. One of 'rfb', 'rb', or 'chr'.}
 
 \item{...}{Additional arguments. Not used.}
 }

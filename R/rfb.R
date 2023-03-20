@@ -249,7 +249,7 @@ rfb_calc <- function(object = new("rfb"),
   #browser()
 
   ### convert all components into corresponding classes and check validity
-  if (!missing(A)) object@A <- rfb_A(A, catch_rule = "rfb")
+  if (!missing(A)) object@A <- rfb_A(A, hcr = "rfb")
   if (!missing(r)) object@r <- rfb_r(r)
   if (!missing(f)) object@f <- rfb_f(f)
   if (!missing(b)) object@b <- rfb_b(b)

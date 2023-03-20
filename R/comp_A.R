@@ -10,11 +10,11 @@ NULL
 #' of the rfb, rb, and chr rules.
 #' 
 #' The classes \code{rfb_A}, \code{rb_A}, and \code{chr_A} inherit from 
-#' \code{comp_A} and their only difference is that the slot \code{catch_rule}
+#' \code{comp_A} and their only difference is that the slot \code{hcr}
 #' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 #' 
 #' @slot value The value of component Ay (reference catch)
-#' @slot catch_rule The catch rule for which Ay is used. One of 'rfb', 'rb', or 'chr'.
+#' @slot hcr The harvest control rule (hcr) for which Ay is used. One of 'rfb', 'rb', or 'chr'.
 #' @slot data Time series of historical catches and/or advice
 #' @slot avg_years Number of years for calculating average catch
 #' @slot basis Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch
@@ -27,7 +27,7 @@ setClass(
   slots = c(
     value = "numeric",
     units = "character",
-    catch_rule = "character",
+    hcr = "character",
     data = "vector",
     avg_years = "numeric",
     basis = "character",
@@ -36,7 +36,7 @@ setClass(
   prototype = list(
     value = NA_real_,
     units = NA_character_,
-    catch_rule = NA_character_,
+    hcr = NA_character_,
     data = data.frame(matrix(
       ncol = 3, nrow = 0,
       dimnames = list(NULL, c("year", "catch", "advice"))
@@ -50,15 +50,15 @@ setClass(
 #' @rdname comp_A-class
 setClass(Class = "rfb_A", 
          contains = "comp_A",
-         prototype = list(catch_rule = "rfb"))
+         prototype = list(hcr = "rfb"))
 #' @rdname comp_A-class
 setClass(Class = "rb_A", 
          contains = "comp_A",
-         prototype = list(catch_rule = "rb"))
+         prototype = list(hcr = "rb"))
 #' @rdname comp_A-class
 setClass(Class = "chr_A", 
          contains = "comp_A",
-         prototype = list(catch_rule = "chr"))
+         prototype = list(hcr = "chr"))
 
 ### validity checks
 setValidity("comp_A", function(object) {
@@ -66,11 +66,11 @@ setValidity("comp_A", function(object) {
     "slot value must be of length 1"
   } else if (!identical(length(object@units), 1L)) {
     "slot units must be of length 1"
-  } else if (isFALSE(object@catch_rule %in% c(NA, "rfb", "rb", "chr"))) {
-    paste0("Unknown catch rule ", object@catch_rule, ". Must be ",
+  } else if (isFALSE(object@hcr %in% c(NA, "rfb", "rb", "chr"))) {
+    paste0("Unknown catch rule ", object@hcr, ". Must be ",
            "rfb, rb, or chr!")
-  } else if (!identical(length(object@catch_rule), 1L)) {
-    "slot catch_rule must be of length 1"
+  } else if (!identical(length(object@hcr), 1L)) {
+    "slot hcr must be of length 1"
   } else if (isFALSE(object@basis %in% c(NA, "advice", "average catch"))) {
     paste0("Unknown catch rule ", object@basis, ". Must be ",
            "'average' or 'average catch'!")
@@ -98,7 +98,7 @@ setValidity("comp_A", function(object) {
 #' - an object of class `comp_A`
 #' 
 #' \code{rfb_A()}, \code{rb_A()}, and \code{chr_A()} are aliases for
-#' \code{comp_A()} in which the \code{catch_rule} argument is already set to 
+#' \code{comp_A()} in which the \code{hcr} argument is already set to 
 #' 'rfb', 'rb', or 'chr'.
 #' 
 #' The reference catch is set following ICES (2022).
@@ -109,7 +109,7 @@ setValidity("comp_A", function(object) {
 #' 
 #' @param object The reference catch. See details
 #' @param units [Optional] The units of the reference catch, e.g. "tonnes".
-#' @param catch_rule [Optional] The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
+#' @param hcr [Optional] The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @param data [Internal] Data used for calculating reference catch.
 #' @param avg_years [Optional] Number of years for calculating average catch or vector years to use
 #' @param basis [Optional] Basis of Ay. Either "advice" for using the previous advice or "average catch" when based on an average of historical catch
@@ -129,7 +129,7 @@ NULL
 #' @rdname comp_A
 setGeneric(
   name = "comp_A",
-  def = function(object, value, units, catch_rule, data, avg_years, 
+  def = function(object, value, units, hcr, data, avg_years, 
                  basis = "advice", advice_metric = "catch", ...) {
     standardGeneric("comp_A")
   },
@@ -142,12 +142,12 @@ setGeneric(
 #' @keywords internal
 setMethod(comp_A,
   signature = c(object = "numeric"),
-  function(object, value, units, catch_rule, data, avg_years, basis,
+  function(object, value, units, hcr, data, avg_years, basis,
            advice_metric, ...) {
     value <- object
     object <- new(Class = "comp_A")
     comp_A_calc(
-      object = object, value = value, units = units, catch_rule = catch_rule, 
+      object = object, value = value, units = units, hcr = hcr, 
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
     )
@@ -160,12 +160,12 @@ setMethod(comp_A,
 #' @keywords internal
 setMethod(comp_A,
   signature = c(object = "data.frame"),
-  function(object, value, units, catch_rule, data, avg_years, basis,
+  function(object, value, units, hcr, data, avg_years, basis,
            advice_metric, ...) {
     data <- object
     object <- new(Class = "comp_A")
     comp_A_calc(
-      object = object, value = value, units = units, catch_rule = catch_rule,
+      object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
     )
@@ -178,11 +178,11 @@ setMethod(comp_A,
 #' @keywords internal
 setMethod(comp_A,
   signature = c(object = "comp_A"),
-  function(object, value, units, catch_rule, data, avg_years, basis, 
+  function(object, value, units, hcr, data, avg_years, basis, 
            advice_metric, ...) {
     validObject(object)
     comp_A_calc(
-      object = object, value = value, units = units, catch_rule = catch_rule,
+      object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
     )
@@ -192,7 +192,7 @@ setMethod(comp_A,
 ### ------------------------------------------------------------------------ ###
 ### comp_A calculation ####
 ### ------------------------------------------------------------------------ ###
-comp_A_calc <- function(object, value, units, catch_rule, data, avg_years, 
+comp_A_calc <- function(object, value, units, hcr, data, avg_years, 
                          basis, advice_metric, ...) {
   
   ### create empty object, if missing
@@ -202,8 +202,8 @@ comp_A_calc <- function(object, value, units, catch_rule, data, avg_years,
   if (!missing(units))
     if (!identical(units, ""))
       object@units <- as.character(units)
-  if (!missing(catch_rule))
-    object@catch_rule <- match.arg(catch_rule, choices = c("rfb", "rb", "chr"))
+  if (!missing(hcr))
+    object@hcr <- match.arg(hcr, choices = c("rfb", "rb", "chr"))
   if (!missing(basis))
     object@basis <- match.arg(basis, choices = c("advice", "average catch"))
   if (!missing(advice_metric))
@@ -293,7 +293,7 @@ comp_A_calc <- function(object, value, units, catch_rule, data, avg_years,
 #' @export
 setGeneric(
   name = "rfb_A",
-  def = function(object, value, units, catch_rule = "rfb", data, avg_years,
+  def = function(object, value, units, hcr = "rfb", data, avg_years,
                  basis = "advice", advice_metric = "advice", ...) {
     standardGeneric("rfb_A")
   },
@@ -304,11 +304,11 @@ setGeneric(
 #' @export
 setMethod(rfb_A,
   signature = c(object = "ANY"),
-  function(object, value, units, catch_rule = "rfb", data, avg_years,
+  function(object, value, units, hcr = "rfb", data, avg_years,
            basis, advice_metric, ...) {
-    catch_rule <- match.arg(catch_rule)
+    hcr <- match.arg(hcr)
     object <- comp_A(
-      object = object, value = value, units = units, catch_rule = catch_rule,
+      object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       ...
     )
@@ -322,7 +322,7 @@ setMethod(rfb_A,
 #' @export
 setGeneric(
   name = "rb_A",
-  def = function(object, value, units, catch_rule = "rb", data, avg_years, 
+  def = function(object, value, units, hcr = "rb", data, avg_years, 
                  basis = "advice", advice_metric = "catch", ...) {
     standardGeneric("rb_A")
   },
@@ -333,11 +333,11 @@ setGeneric(
 #' @export
 setMethod(rb_A,
   signature = c(object = "ANY"),
-  function(object, value, units, catch_rule = "rb", data, avg_years,
+  function(object, value, units, hcr = "rb", data, avg_years,
            basis, ...) {
-    catch_rule <- match.arg(catch_rule)
+    hcr <- match.arg(hcr)
     object <- comp_A(
-      object = object, value = value, units = units, catch_rule = catch_rule,
+      object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       ...
     )
@@ -351,7 +351,7 @@ setMethod(rb_A,
 #' @export
 setGeneric(
   name = "chr_A",
-  def = function(object, value, units, catch_rule = "chr", data, avg_years,
+  def = function(object, value, units, hcr = "chr", data, avg_years,
                  basis = "advice", advice_metric = "catch", ...) {
     standardGeneric("chr_A")
   },
@@ -362,11 +362,11 @@ setGeneric(
 #' @export
 setMethod(chr_A,
   signature = c(object = "ANY"),
-  function(object, value, catch_rule = "chr", data, avg_years,
+  function(object, value, hcr = "chr", data, avg_years,
            basis, ...) {
-    catch_rule <- match.arg(catch_rule)
+    hcr <- match.arg(hcr)
     object <- comp_A(
-      object = object, value = value, units = units, catch_rule = catch_rule,
+      object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       ...
     )

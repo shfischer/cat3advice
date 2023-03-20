@@ -12,36 +12,36 @@ NULL
 #' chr rules.
 #' 
 #' The classes \code{rfb_m}, \code{rb_m}, and \code{chr_m} inherit from 
-#' \code{comp_m} and their only difference is that the slot \code{catch_rule}
+#' \code{comp_m} and their only difference is that the slot \code{hcr}
 #' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 #' 
 #' @slot value The value of component m
-#' @slot catch_rule The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
+#' @slot hcr The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @slot k Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).
 #' 
 #' @name comp_m-class
 #' @export
 setClass(Class = "comp_m", 
          slots = c(value = "numeric",
-                   catch_rule = "character",
+                   hcr = "character",
                    k = "numeric"
                    ),
          prototype = list(value = NA_real_, 
-                          catch_rule = NA_character_,
+                          hcr = NA_character_,
                           k = NA_real_))
 
 #' @rdname comp_m-class
 setClass(Class = "rfb_m", 
          contains = "comp_m",
-         prototype = list(catch_rule = "rfb"))
+         prototype = list(hcr = "rfb"))
 #' @rdname comp_m-class
 setClass(Class = "rb_m", 
          contains = "comp_m",
-         prototype = list(catch_rule = "rb"))
+         prototype = list(hcr = "rb"))
 #' @rdname comp_m-class
 setClass(Class = "chr_m", 
          contains = "comp_m",
-         prototype = list(catch_rule = "chr"))
+         prototype = list(hcr = "chr"))
 
 ### ------------------------------------------------------------------------ ###
 ### comp_m methods ####
@@ -51,7 +51,7 @@ setClass(Class = "chr_m",
 #' This function returns the default multiplier for the rfb, rb, and chr rules.
 #' 
 #' \code{rfb_m()}, \code{rb_m()}, and \code{chr_m()} are aliases for
-#' \code{comp_m()} in which the \code{catch_rule} argument is already set to 
+#' \code{comp_m()} in which the \code{hcr} argument is already set to 
 #' 'rfb', 'rb', or 'chr'.
 #' 
 #' The multiplier is set following ICES (2022).
@@ -69,7 +69,7 @@ setClass(Class = "chr_m",
 #' For the chr rule, the multiplier is set to m=0.50 (ICES, 2022).
 #' 
 #' @param object Optional. A multiplier m value, if known, or an existing \code{comp_m} object.
-#' @param catch_rule The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
+#' @param hcr The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @param k Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).
 #' @param ... Additional arguments. Not used.
 #'  
@@ -86,20 +86,20 @@ setClass(Class = "chr_m",
 #' @examples
 #' # rfb rule with known k
 #' rfb_m(k = 0.1) # 0.95
-#' comp_m(catch_rule = "rfb", k = 0.1) # 0.95
+#' comp_m(hcr = "rfb", k = 0.1) # 0.95
 #' rfb_m(k = 0.25) # 0.90
-#' comp_m(catch_rule = "rfb", k = 0.25) # 0.90
+#' comp_m(hcr = "rfb", k = 0.25) # 0.90
 #' # rfb rule with unknown k
 #' rfb_m() # 0.90
-#' comp_m(catch_rule = "rfb") # 0.90
+#' comp_m(hcr = "rfb") # 0.90
 #' 
 #' # rb rule
 #' rb_m() # 0.5
-#' comp_m(catch_rule = "rb") # 0.5
+#' comp_m(hcr = "rb") # 0.5
 #' 
 #' # chr rule
 #' chr_m() # 0.5
-#' comp_m(catch_rule = "chr") # 0.5
+#' comp_m(hcr = "chr") # 0.5
 #' 
 #' @name comp_m
 #' @export
@@ -108,7 +108,7 @@ NULL
 #' @rdname comp_m
 #' @export
 setGeneric(name = "comp_m", 
-           def = function(object, catch_rule, k, ...) 
+           def = function(object, hcr, k, ...) 
              standardGeneric("comp_m"),
            signature = c("object"))
 
@@ -118,11 +118,11 @@ setGeneric(name = "comp_m",
 #' @export
 setMethod(comp_m, 
           signature = c(object = "numeric"), 
-          function(object, catch_rule, k, ...) {
+          function(object, hcr, k, ...) {
             
   value <- object
   object <- new(Class = "comp_m")
-  comp_m_calc(object = object, value = value, catch_rule = catch_rule, k = k,
+  comp_m_calc(object = object, value = value, hcr = hcr, k = k,
               ...)
     
 })
@@ -132,10 +132,10 @@ setMethod(comp_m,
 #' @export
 setMethod(comp_m, 
           signature = c(object = "comp_m"), 
-          function(object, catch_rule, k, ...) {
+          function(object, hcr, k, ...) {
             
   validObject(object)
-  comp_m_calc(object = object, catch_rule = catch_rule, k = k,
+  comp_m_calc(object = object, hcr = hcr, k = k,
               ...)
 
 })
@@ -146,9 +146,9 @@ setMethod(comp_m,
 #' @export
 setMethod(comp_m, 
           signature = c(object = "missing"), 
-          function(object, catch_rule, k, ...) {
+          function(object, hcr, k, ...) {
             
-  comp_m_calc(object = object, catch_rule = catch_rule, k = k,
+  comp_m_calc(object = object, hcr = hcr, k = k,
               ...)
   
 })
@@ -156,13 +156,13 @@ setMethod(comp_m,
 ### ------------------------------------------------------------------------ ###
 ### comp_m calculation ####
 ### ------------------------------------------------------------------------ ###
-comp_m_calc <- function(object, value, catch_rule, k, ...) {
+comp_m_calc <- function(object, value, hcr, k, ...) {
   
   ### create empty object, if missing
   if (missing(object)) object <- new(Class = "comp_m")
   
-  if (!missing(catch_rule))
-    object@catch_rule <- match.arg(catch_rule, choices = c("rfb", "rb", "chr"))
+  if (!missing(hcr))
+    object@hcr <- match.arg(hcr, choices = c("rfb", "rb", "chr"))
   if (!missing(k))
     object@k <- k
   
@@ -181,7 +181,7 @@ comp_m_calc <- function(object, value, catch_rule, k, ...) {
     }
     
     ### chr rule
-    if (identical(object@catch_rule, "chr")) {
+    if (identical(object@hcr, "chr")) {
       if (!is.na(object@k)) {
         if (object@k < 0.32 | object@k >= 0.45)
           warning(paste0("k=", object@k, "/year is outside the recommended ",
@@ -190,10 +190,10 @@ comp_m_calc <- function(object, value, catch_rule, k, ...) {
       }
       object@value <- 0.5
     ### rb rule
-    } else if (identical(object@catch_rule, "rb")) {
+    } else if (identical(object@hcr, "rb")) {
       object@value <- 0.5
     ### rfb rule
-    } else if (identical(object@catch_rule, "rfb")) {
+    } else if (identical(object@hcr, "rfb")) {
       if (!is.na(object@k)) {
         if (object@k < 0.2) {
           object@value <- 0.95
@@ -254,7 +254,7 @@ comp_m_calc <- function(object, value, catch_rule, k, ...) {
 #' @rdname comp_m
 #' @export
 setGeneric(name = "rfb_m", 
-           def = function(object, catch_rule = "rfb", k, ...) 
+           def = function(object, hcr = "rfb", k, ...) 
              standardGeneric("rfb_m"),
            signature = c("object"))
 #' @rdname comp_m
@@ -262,10 +262,10 @@ setGeneric(name = "rfb_m",
 #' @usage NULL
 setMethod(rfb_m, 
           signature = c(object = "ANY"), 
-          function(object, catch_rule = "rfb", k, ...) {
-  catch_rule <- match.arg(catch_rule)
+          function(object, hcr = "rfb", k, ...) {
+  hcr <- match.arg(hcr)
   #if (is.numeric(object)) value <- object
-  object <- comp_m(object = object, catch_rule = catch_rule, 
+  object <- comp_m(object = object, hcr = hcr, 
                    k = k, ...)
   class(object) <- "rfb_m"
   return(object)
@@ -275,9 +275,9 @@ setMethod(rfb_m,
 #' @usage NULL
 setMethod(rfb_m, 
           signature = c(object = "missing"), 
-          function(object, catch_rule = "rfb", k, ...) {
-  catch_rule <- match.arg(catch_rule)
-  object <- comp_m(catch_rule = catch_rule, k = k, ...)
+          function(object, hcr = "rfb", k, ...) {
+  hcr <- match.arg(hcr)
+  object <- comp_m(hcr = hcr, k = k, ...)
   class(object) <- "rfb_m"
   return(object)
 })
@@ -286,7 +286,7 @@ setMethod(rfb_m,
 #' @rdname comp_m
 #' @export
 setGeneric(name = "rb_m", 
-           def = function(object, catch_rule = "rb", k, ...) 
+           def = function(object, hcr = "rb", k, ...) 
              standardGeneric("rb_m"),
            signature = c("object"))
 #' @rdname comp_m
@@ -294,9 +294,9 @@ setGeneric(name = "rb_m",
 #' @usage NULL
 setMethod(rb_m, 
           signature = c(object = "ANY"), 
-          function(object, catch_rule = "rb", k, ...) {
-  catch_rule <- match.arg(catch_rule)
-  object <- comp_m(object = object, catch_rule = catch_rule, 
+          function(object, hcr = "rb", k, ...) {
+  hcr <- match.arg(hcr)
+  object <- comp_m(object = object, hcr = hcr, 
                    k = k, ...)
   class(object) <- "rb_m"
   return(object)
@@ -306,9 +306,9 @@ setMethod(rb_m,
 #' @usage NULL
 setMethod(rb_m, 
           signature = c(object = "missing"), 
-          function(object, catch_rule = "rb", k, ...) {
-  catch_rule <- match.arg(catch_rule)
-  object <- comp_m(catch_rule = catch_rule, k = k, ...)
+          function(object, hcr = "rb", k, ...) {
+  hcr <- match.arg(hcr)
+  object <- comp_m(hcr = hcr, k = k, ...)
   class(object) <- "rb_m"
   return(object)
 })
@@ -317,7 +317,7 @@ setMethod(rb_m,
 #' @rdname comp_m
 #' @export
 setGeneric(name = "chr_m", 
-           def = function(object, catch_rule = "chr", k, ...) 
+           def = function(object, hcr = "chr", k, ...) 
              standardGeneric("chr_m"),
            signature = c("object"))
 #' @rdname comp_m
@@ -325,9 +325,9 @@ setGeneric(name = "chr_m",
 #' @usage NULL
 setMethod(chr_m, 
           signature = c(object = "ANY"), 
-          function(object, catch_rule = "chr", k, ...) {
-  catch_rule <- match.arg(catch_rule)
-  object <- comp_m(object = object, catch_rule = catch_rule, 
+          function(object, hcr = "chr", k, ...) {
+  hcr <- match.arg(hcr)
+  object <- comp_m(object = object, hcr = hcr, 
                    k = k, ...)
   class(object) <- "chr_m"
   return(object)
@@ -337,9 +337,9 @@ setMethod(chr_m,
 #' @usage NULL
 setMethod(chr_m, 
           signature = c(object = "missing"), 
-          function(object, catch_rule = "chr", k, ...) {
-  catch_rule <- match.arg(catch_rule)
-  object <- comp_m(catch_rule = catch_rule, k = k, ...)
+          function(object, hcr = "chr", k, ...) {
+  hcr <- match.arg(hcr)
+  object <- comp_m(hcr = hcr, k = k, ...)
   class(object) <- "chr_m"
   return(object)
 })
@@ -351,11 +351,11 @@ setMethod(chr_m,
 setValidity("comp_m", function(object) {
   if (!identical(length(object@value), 1L)) {
     "slot value must be of length 1"
-  } else if (isFALSE(object@catch_rule %in% c(NA, "rfb", "rb", "chr"))) {
-    paste0("Unknown catch rule ", object@catch_rule, ". Must be ",
+  } else if (isFALSE(object@hcr %in% c(NA, "rfb", "rb", "chr"))) {
+    paste0("Unknown harvest control rule ", object@hcr, ". Must be ",
            "rfb, rb, or chr!")
-  } else if (!identical(length(object@catch_rule), 1L)) {
-    "slot catch_rule must be of length 1"
+  } else if (!identical(length(object@hcr), 1L)) {
+    "slot hcr must be of length 1"
   } else if (!identical(length(object@k), 1L)) {
     "slot k must be of length 1"
   } else if (!is.na(object@k)) {
@@ -397,10 +397,10 @@ setMethod(
   definition = function(object) {
     txt <- paste0(paste(rep("-", 50), collapse = ""), "\n", 
                   "component m:\n")
-    if (isTRUE(!is.na(object@catch_rule))) {
-      txt <- paste0(txt, paste0("generic multiplier for ", object@catch_rule,
+    if (isTRUE(!is.na(object@hcr))) {
+      txt <- paste0(txt, paste0("generic multiplier for ", object@hcr,
                                 " rule"))
-      if (identical(object@catch_rule, "rfb") & isTRUE(!is.na(object@k))) {
+      if (identical(object@hcr, "rfb") & isTRUE(!is.na(object@k))) {
         txt <- paste0(txt, paste0(" for k=", object@k, "/yr"))
       }
       txt <- paste0(txt, "\n")
@@ -424,13 +424,13 @@ setMethod(
                   "Precautionary multiplier to maintain biomass above Blim ",
                   "with 95% probability\n",
                   paste(rep("-", 80), collapse = ""), "\n")
-    if (is(object, "rfb_m") | identical(object@catch_rule, "rfb") &
+    if (is(object, "rfb_m") | identical(object@hcr, "rfb") &
         isTRUE(object@value %in% c(0.95, 0.9))) {
       generic <- TRUE
-    } else if (is(object, "rb_m") | identical(object@catch_rule, "rb") &
+    } else if (is(object, "rb_m") | identical(object@hcr, "rb") &
                isTRUE(object@value %in% c(0.5))) {
       generic <- TRUE
-    } else if (is(object, "chr_m") | identical(object@catch_rule, "chr") &
+    } else if (is(object, "chr_m") | identical(object@hcr, "chr") &
                isTRUE(object@value %in% c(0.5))) {
       generic <- TRUE
     } else {

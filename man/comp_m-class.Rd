@@ -12,7 +12,7 @@ An S4 class to represent component m (the multiplier) of the rfb, rb, and
 chr rules.
 
 The classes \code{rfb_m}, \code{rb_m}, and \code{chr_m} inherit from 
-\code{comp_m} and their only difference is that the slot \code{catch_rule}
+\code{comp_m} and their only difference is that the slot \code{hcr}
 is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 }
 \section{Slots}{
@@ -20,7 +20,7 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 \describe{
 \item{\code{value}}{The value of component m}
 
-\item{\code{catch_rule}}{The catch rule for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
+\item{\code{hcr}}{The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
 
 \item{\code{k}}{Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).}
 }}

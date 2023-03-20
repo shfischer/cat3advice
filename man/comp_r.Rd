@@ -11,11 +11,11 @@
 \alias{rb_r,ANY-method}
 \title{rfb/rb rule - component r (index ratio)}
 \usage{
-comp_r(object, n0, n1, n2, units, catch_rule, ...)
+comp_r(object, n0, n1, n2, units, hcr, ...)
 
-rfb_r(object, n0, n1, n2, units, catch_rule = "rfb", ...)
+rfb_r(object, n0, n1, n2, units, hcr = "rfb", ...)
 
-rb_r(object, n0, n1, n2, units, catch_rule = "rb", ...)
+rb_r(object, n0, n1, n2, units, hcr = "rb", ...)
 }
 \arguments{
 \item{object}{The biomass index. Can be a \code{data.frame} with columns 'data' and 'index' or an \code{FLQuant} object defined by \code{FLCore}.}
@@ -28,7 +28,7 @@ rb_r(object, n0, n1, n2, units, catch_rule = "rb", ...)
 
 \item{units}{Optional. The units of the biomass index, e.g. 'kg/hr'. Only used for plotting.}
 
-\item{catch_rule}{Optional. One of 'rfb' or 'rb'.}
+\item{hcr}{Optional. One of 'rfb' or 'rb'.}
 
 \item{...}{Additional arguments. Not used.}
 }

@@ -12,7 +12,7 @@ An S4 class to represent component Ay (the last advice or reference catch)
 of the rfb, rb, and chr rules.
 
 The classes \code{rfb_A}, \code{rb_A}, and \code{chr_A} inherit from 
-\code{comp_A} and their only difference is that the slot \code{catch_rule}
+\code{comp_A} and their only difference is that the slot \code{hcr}
 is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 }
 \section{Slots}{
@@ -20,7 +20,7 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 \describe{
 \item{\code{value}}{The value of component Ay (reference catch)}
 
-\item{\code{catch_rule}}{The catch rule for which Ay is used. One of 'rfb', 'rb', or 'chr'.}
+\item{\code{hcr}}{The harvest control rule (hcr) for which Ay is used. One of 'rfb', 'rb', or 'chr'.}
 
 \item{\code{data}}{Time series of historical catches and/or advice}
 

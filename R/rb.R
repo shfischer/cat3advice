@@ -225,7 +225,7 @@ rb_calc <- function(object = new("rb"),
   #browser()
 
   ### convert all components into corresponding classes and check validity
-  if (!missing(A)) object@A <- rb_A(A, catch_rule = "rb")
+  if (!missing(A)) object@A <- rb_A(A, hcr = "rb")
   if (!missing(r)) object@r <- rb_r(r)
   if (!missing(b)) object@b <- rb_b(b)
   if (!missing(m)) {

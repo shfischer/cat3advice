@@ -13,7 +13,7 @@ NULL
 #' safeguard) as well as the resulting b value. 
 #' 
 #' The classes \code{rfb_b}, \code{rb_b}, and \code{chr_b} inherit from 
-#' \code{comp_b} and their only difference is that the slot \code{catch_rule}
+#' \code{comp_b} and their only difference is that the slot \code{hcr}
 #' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 #' 
 #' @slot value The value of component b
@@ -26,7 +26,7 @@ NULL
 #' @slot n0 Time lag between the last index year and the last year to be used.
 #' @slot idx \code{data.frame}. A \code{data.frame} with the index values.
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
-#' @slot catch_rule \code{character}. The catch rule for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.
+#' @slot hcr \code{character}. The harvest control rule (hcr) for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.
 #' 
 #' @name comp_b-class
 #' @export
@@ -41,7 +41,7 @@ setClass(Class = "comp_b",
                    n0 = "numeric",
                    idx = "data.frame",
                    units = "character",
-                   catch_rule = "character"),
+                   hcr = "character"),
          prototype = list(value = NA_real_,
                           idx_value = NA_real_,
                           Itrigger = NA_real_,
@@ -52,20 +52,20 @@ setClass(Class = "comp_b",
                           n0 = 0,
                           idx = data.frame(year = NULL, index = NULL),
                           units = NA_character_,
-                          catch_rule = NA_character_))
+                          hcr = NA_character_))
 
 #' @rdname comp_b-class
 setClass(Class = "rfb_b", 
          contains = "comp_b",
-         prototype = list(catch_rule = "rfb"))
+         prototype = list(hcr = "rfb"))
 #' @rdname comp_b-class
 setClass(Class = "rb_b", 
          contains = "comp_b",
-         prototype = list(catch_rule = "rb"))
+         prototype = list(hcr = "rb"))
 #' @rdname comp_b-class
 setClass(Class = "chr_b", 
          contains = "comp_b",
-         prototype = list(catch_rule = "chr"))
+         prototype = list(hcr = "chr"))
 
 ### ------------------------------------------------------------------------ ###
 ### comp_b methods ####
@@ -111,7 +111,7 @@ setClass(Class = "chr_b",
 #' @param yr_ref Optional. If supplied, this specifies the year in the biomass index which is used as \code{Iloss} and \code{Itrigger} is calculated from this value.
 #' @param n0 Optional. Time lag between the last index year and the last year to be used. By default, the last index year is used (\code{n0=0})
 #' @param units Optional. The units of the biomass index, e.g. 'kg/hr'. Only used for plotting.
-#' @param catch_rule Optional. One of 'rfb', 'rb', or 'chr'.
+#' @param hcr Optional. One of 'rfb', 'rb', or 'chr'.
 #' @param ... Additional arguments. Not used.
 #'  
 #' @section Warning:
@@ -156,7 +156,7 @@ setClass(Class = "chr_b",
 #' @export
 setGeneric(name = "comp_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, catch_rule, ...) 
+                          yr_ref, n0, units, hcr, ...) 
            standardGeneric("comp_b"),
            signature = c("object"))
 
@@ -181,7 +181,7 @@ setGeneric(name = "comp_b",
 setMethod(comp_b, 
           signature = c(object = "data.frame"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, catch_rule, ...) {
+                   yr_ref, n0, units, hcr, ...) {
   idx <- object
   names(idx) <- tolower(names(idx))
   ### check if "year" column exists
@@ -207,11 +207,11 @@ setMethod(comp_b,
 setMethod(comp_b, 
           signature = c(object = "numeric"), 
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, catch_rule, ...) {
+                   yr_ref, n0, units, hcr, ...) {
             
   ### create empty comp_b object
   res <- new("comp_b")
-  if (!missing(catch_rule)) res@catch_rule <- catch_rule
+  if (!missing(hcr)) res@hcr <- hcr
   
   ### remove parameters
   res@w <- NA_real_
@@ -234,7 +234,7 @@ setMethod(comp_b,
 setMethod(comp_b, 
           signature = c(object = "comp_b"), 
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, catch_rule, ...) {
+                   yr_ref, n0, units, hcr, ...) {
   ### check validity
   validObject(object)
   ### run comp_b() to update slots and recalculate if needed
@@ -252,7 +252,7 @@ setMethod(comp_b,
 #' @export
 setGeneric(name = "rfb_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, catch_rule = "rfb", ...) 
+                          yr_ref, n0, units, hcr = "rfb", ...) 
              standardGeneric("rfb_b"),
            signature = c("object"))
 #' @rdname comp_b
@@ -261,11 +261,11 @@ setGeneric(name = "rfb_b",
 setMethod(rfb_b, 
           signature = c(object = "ANY"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, catch_rule = "rfb", ...) {
-  catch_rule <- match.arg(catch_rule)
+                   yr_ref, n0, units, hcr = "rfb", ...) {
+  hcr <- match.arg(hcr)
   object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
                    Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
-                   units = units, catch_rule = catch_rule, ... = ...)
+                   units = units, hcr = hcr, ... = ...)
   class(object) <- "rfb_b"
   return(object)
 })
@@ -274,7 +274,7 @@ setMethod(rfb_b,
 #' @export
 setGeneric(name = "rb_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, catch_rule = "rb", ...) 
+                          yr_ref, n0, units, hcr = "rb", ...) 
              standardGeneric("rb_b"),
            signature = c("object"))
 #' @rdname comp_b
@@ -283,11 +283,11 @@ setGeneric(name = "rb_b",
 setMethod(rb_b, 
           signature = c(object = "ANY"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, catch_rule = "rb", ...) {
-  catch_rule <- match.arg(catch_rule)
+                   yr_ref, n0, units, hcr = "rb", ...) {
+  hcr <- match.arg(hcr)
   object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
                    Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
-                   units = units, catch_rule = catch_rule, ... = ...)
+                   units = units, hcr = hcr, ... = ...)
   class(object) <- "rb_b"
   return(object)
 })
@@ -296,7 +296,7 @@ setMethod(rb_b,
 #' @export
 setGeneric(name = "chr_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, catch_rule = "chr", ...) 
+                          yr_ref, n0, units, hcr = "chr", ...) 
              standardGeneric("chr_b"),
            signature = c("object"))
 #' @rdname comp_b
@@ -305,11 +305,11 @@ setGeneric(name = "chr_b",
 setMethod(chr_b, 
           signature = c(object = "ANY"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, catch_rule = "chr", ...) {
-  catch_rule <- match.arg(catch_rule)
+                   yr_ref, n0, units, hcr = "chr", ...) {
+  hcr <- match.arg(hcr)
   object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
                    Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
-                   units = units, catch_rule = catch_rule, ... = ...)
+                   units = units, hcr = hcr, ... = ...)
   class(object) <- "chr_b"
   return(object)
 })
@@ -349,10 +349,10 @@ setValidity("comp_b", function(object) {
 ### ------------------------------------------------------------------------ ###
 ### function for creating/calculating biomass safeguard
 comp_b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
-                       yr_last, units, catch_rule) {
+                       yr_last, units, hcr) {
   ### create empty comp_b object, if missing
   if (missing(object)) object <- new("comp_b")
-  if (!missing(catch_rule)) object@catch_rule <- catch_rule
+  if (!missing(hcr)) object@hcr <- hcr
   
   ### add/update index, if provided
   if (!missing(idx)) object@idx <- idx
