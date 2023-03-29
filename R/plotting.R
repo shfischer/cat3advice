@@ -1,9 +1,14 @@
 #' @include generics.R
 #' @importFrom ggplot2 ggplot geom_ribbon geom_line geom_vline aes coord_cartesian labs theme theme_bw element_text element_blank unit scale_linetype_manual scale_colour_manual scale_fill_manual facet_wrap
 #' @importFrom scales parse_format
-#' @importFrom dplyr select mutate bind_rows
+#' @importFrom dplyr select mutate bind_rows filter group_by summarise
 #' @importFrom tidyr pivot_longer
+#' @importFrom patchwork plot_layout
 NULL
+
+### ------------------------------------------------------------------------ ###
+### Plot elements of the rfb/rb/chr rule ####
+### ------------------------------------------------------------------------ ###
 
 #' Plot elements of the rfb/rb/chr rule
 #'
@@ -336,6 +341,9 @@ setMethod(f = "plot", signature = c(x = "comp_f", y = "missing"),
 })
 
 
+### ------------------------------------------------------------------------ ###
+### Plot length frequencies ####
+### ------------------------------------------------------------------------ ###
 #' Plot length frequencies
 #'
 #' A convenience function for plotting length frequencies and length reference
@@ -418,7 +426,7 @@ setMethod(f = "plot", signature = c(x = "Lc"),
   
 })
 
-### Lc
+### Lc ####
 #' @rdname length_freq_plot
 setMethod(
   f = "plot", signature = c(x = "Lmean"),
@@ -466,3 +474,138 @@ setMethod(
   }
 )
 
+### ------------------------------------------------------------------------ ###
+### harvest rate ####
+### ------------------------------------------------------------------------ ###
+### HR ####
+#' @rdname HR_plot
+setMethod(f = "plot", signature = c(x = "HR"), 
+          definition = function(x, y_label, 
+                                show.data = TRUE,
+                                ...) {
+  #browser()
+  object <- x
+  
+  ### check validity
+  . <- validObject(object)
+  
+  ### get range of years and index values
+  yr_min <- min(object@data$year[!is.na(object@data$harvest_rate)], 
+                na.rm = TRUE)
+  yr_max <- max(object@data$year[!is.na(object@data$harvest_rate)], 
+                na.rm = TRUE)
+  hr_min <- min(object@data$harvest_rate, na.rm = TRUE)
+  hr_max <- max(object@data$harvest_rate, na.rm = TRUE)
+  
+  
+  
+  
+  ### index units
+  if (missing(y_label)) {
+    y_label <- "Harvest rate"
+    if (!is.na(object@units))
+      y_label <- paste0(y_label, " in ", object@units)
+  }
+  # 
+  # ### data.frame for reference length
+  # Lref_df <- data.frame(name = "L[F==M]", value = x@Lref@value)
+  
+  ### create plot
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_line(data = object@data,
+                       ggplot2::aes(x = year, y = harvest_rate),
+                       color = "#ed6028", 
+                       na.rm = TRUE) +
+    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+    ggplot2::coord_cartesian(ylim = c(0, hr_max * 1.1),
+                             xlim = c(yr_min - 1, yr_max + 1),
+                             expand = FALSE) +
+    ggplot2::labs(x = "", y = y_label, 
+                  title = "Harvest rate (catches / biomass index)") +
+    ggplot2::theme_bw(base_size = 8) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+                   axis.title.x = ggplot2::element_blank(),
+                   legend.position = "bottom",
+                   legend.key.height = ggplot2::unit(0.5, "lines"),
+                   plot.title = ggplot2::element_text(face = "bold", 
+                                                      colour = "#ed6028"))
+  ### add additional plots, if requested
+  if (isTRUE(show.data)) {
+    yr_min_c <- min(object@data$year[!is.na(object@data$catch) |
+                                       !is.na(object@data$index)], 
+                    na.rm = TRUE)
+    yr_max_c <- max(object@data$year[!is.na(object@data$catch) |
+                                       !is.na(object@data$index)], 
+                    na.rm = TRUE)
+      ### select data columns
+      if (all(c("landings", "discards") %in% names(object@data))) {
+        cols_c <- c("year", "landings", "discards")
+        cols_c_colours <- c(landings = "#002b5f", discards = "#28b3e8")
+      } else {
+        cols_c <- c("year", "catch")
+        cols_c_colours <- c(catch = "#002b5f")
+      }
+      
+      ### format for plotting
+      df_catch <- object@data[, cols_c] %>% 
+        tidyr::pivot_longer(cols = -year) %>%
+        dplyr::filter(!is.na(value))
+      ### max catch value
+      c_max <- df_catch %>%
+        dplyr::group_by(year) %>%
+        dplyr::summarise(catch = sum(value)) %>%
+        dplyr::select(catch) %>%
+        max(na.rm = TRUE)
+      ### axis label
+      y_label_catch <- paste0("Catches", 
+                            ifelse(!is.na(object@units_catch),
+                                   paste0(" in ", object@units_catch),
+                                   ""))
+      p_catch <- ggplot2::ggplot() +
+        ggplot2::geom_col(data = df_catch,
+                          ggplot2::aes(x = year, y = value, fill = name),
+                          na.rm = TRUE) +
+        ggplot2::scale_fill_manual("",
+                                     values = cols_c_colours) + 
+        ggplot2::coord_cartesian(ylim = c(0, c_max * 1.1), 
+                                 xlim = c(yr_min_c - 1, yr_max_c + 1), 
+                                 expand = FALSE) +
+        ggplot2::labs(x = "", y = y_label_catch, 
+                      title = "Catches") +
+        ggplot2::theme_bw(base_size = 8) +
+        ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+                       axis.title.x = ggplot2::element_blank(),
+                       legend.position = "bottom",
+                       legend.key.size = ggplot2::unit(0.5, "lines"),
+                       plot.title = ggplot2::element_text(face = "bold", 
+                                                          colour = "#002b5f"))
+
+      idx_max <- max(object@data$index, na.rm = TRUE)
+      y_label_idx <- paste0("Biomass index", 
+                            ifelse(!is.na(object@units_index),
+                                   paste0(" in ", object@units_index),
+                                   ""))
+      p_idx <- ggplot2::ggplot() +
+        ggplot2::geom_line(data = object@data,
+                           ggplot2::aes(x = year, y = index),
+                           color = "#077c6c",
+                           na.rm = TRUE) +
+        ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1), 
+                                 xlim = c(yr_min_c - 1, yr_max_c + 1), 
+                                 expand = FALSE) +
+        ggplot2::labs(x = "", y = y_label_idx, 
+                      title = "Biomass Index") +
+        ggplot2::theme_bw(base_size = 8) +
+        ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+                       axis.title.x = ggplot2::element_blank(),
+                       legend.position = "bottom",
+                       legend.key.height = ggplot2::unit(0.5, "lines"),
+                       plot.title = ggplot2::element_text(face = "bold", 
+                                                          colour = "#097e6e"))
+
+    ### combine figures
+    p <- (p_catch + p_idx)/p + patchwork::plot_layout(heights = c(0.6, 1))
+  }
+  
+  return(p)
+})
