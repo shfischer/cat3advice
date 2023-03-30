@@ -7,6 +7,7 @@
 \alias{plot,comp_r,comp_b-method}
 \alias{plot,comp_b,comp_r-method}
 \alias{plot,comp_f,missing-method}
+\alias{plot,F,missing-method}
 \title{Plot elements of the rfb/rb/chr rule}
 \usage{
 plot(x, y, y_label, ...)
@@ -20,6 +21,8 @@ plot(x, y, y_label, ...)
 \S4method{plot}{comp_b,comp_r}(x, y, y_label, ...)
 
 \S4method{plot}{comp_f,missing}(x, y, y_label, ...)
+
+\S4method{plot}{F,missing}(x, y, y_label, ...)
 }
 \arguments{
 \item{x}{An object of class \code{rfb_r}, \code{rfb_b}, ...}

@@ -340,6 +340,113 @@ setMethod(f = "plot", signature = c(x = "comp_f", y = "missing"),
   return(p)
 })
 
+### F (chr) ####
+#' @rdname rfb_plot
+setMethod(f = "plot", signature = c(x = "F", y = "missing"), 
+          definition = function(x, y, y_label, ...) {
+            
+  object <- x
+  
+  ### check validity
+  . <- validObject(object)
+  
+  if (isTRUE(nrow(object@HR@data) < 2))
+    stop("No harvest rate time series available.")
+  
+  ### get range of years
+  yr_min <- min(c(x@indicator@indicator$year, 
+                  x@HR@data$year[!is.na(x@HR@data$harvest_rate)]), na.rm = TRUE)
+  yr_max <- max(c(x@indicator@indicator$year, 
+                  x@HR@data$year[!is.na(x@HR@data$harvest_rate)]), na.rm = TRUE)
+  
+  ### start with HR plot
+  hr_min <- min(x@HR@data$harvest_rate, na.rm = TRUE)
+  hr_max <- max(x@HR@data$harvest_rate, na.rm = TRUE)
+  ### hr units
+  if (missing(y_label)) {
+    y_label <- "Harvest rate"
+    if (!is.na(object@HR@units))
+      y_label <- paste0(y_label, " in ", object@HR@units)
+  }
+  ### hr target
+  hr_target <- data.frame(y = x@value, type = "F[MSYproxy]")
+  ### create HR plot
+  p <- ggplot2::ggplot() +
+    ggplot2::geom_line(data = object@HR@data,
+                       ggplot2::aes(x = year, y = harvest_rate),
+                       color = "#ed6028", 
+                       na.rm = TRUE) +
+    ggplot2::geom_hline(data = hr_target, 
+                        ggplot2::aes(yintercept = y, linetype = type),
+                        alpha = 0.8, colour = "#679dfe") +
+    ggplot2::scale_linetype_manual("", values = "solid",
+                                   labels = expression(F[MSYproxy])) +
+    ggplot2::geom_point(data = object@data,
+                        ggplot2::aes(x = year, y = harvest_rate,
+                                     shape = "reference years"),
+                        colour = "#ed6028") +
+    ggplot2::scale_shape_manual("", values = 16, ) +
+    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+    ggplot2::coord_cartesian(ylim = c(0, hr_max * 1.1),
+                             xlim = c(yr_min - 1, yr_max + 1),
+                             expand = FALSE) +
+    ggplot2::labs(x = "", y = y_label, 
+                  title = "Harvest rate (catches / biomass index)") +
+    ggplot2::theme_bw(base_size = 8) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+                   axis.title.x = ggplot2::element_blank(),
+                   legend.position = "bottom",
+                   legend.key.height = ggplot2::unit(0.5, "lines"),
+                   plot.title = ggplot2::element_text(face = "bold", 
+                                                      colour = "#ed6028"))
+  p
+  
+  ### length indicator
+  idx_min <- min(object@indicator@indicator$indicator, na.rm = TRUE)
+  idx_max <- max(object@indicator@indicator$indicator, na.rm = TRUE)
+  
+  ### indicator plot
+  if (isTRUE(nrow(object@indicator@indicator) > 1)) {
+    p_indicator <- ggplot2::ggplot() +
+    ggplot2::geom_line(
+      data = object@indicator@indicator,
+      ggplot2::aes(x = year, y = indicator),
+      color = "#ed6028"
+    ) +
+    ggplot2::geom_point(
+      data = object@indicator@indicator[object@indicator@indicator$indicator >= 1, ],
+      ggplot2::aes(x = year, y = indicator),
+      color = "#ed6028", shape = 16
+    ) +
+    ggplot2::geom_hline(
+     yintercept = 1,
+      colour = "#679dfe", alpha = 0.8
+    ) +
+    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+    ggplot2::coord_cartesian(
+      ylim = c(0, idx_max * 1.1),
+      xlim = c(yr_min - 1, yr_max + 1),
+      expand = FALSE
+    ) +
+    ggplot2::labs(
+      x = "", y = "Length-based indicator",
+      title = "Length-based indicator"
+    ) +
+    ggplot2::theme_bw(base_size = 8) +
+    ggplot2::theme(
+      axis.title.y = ggplot2::element_text(face = "bold"),
+      axis.title.x = ggplot2::element_blank(),
+      legend.position = "bottom",
+      legend.key.height = ggplot2::unit(0.5, "lines"),
+      plot.title = ggplot2::element_text(face = "bold", colour = "#ed6028")
+    )
+    p <- p_indicator/p
+  }
+  
+  return(p)
+  
+})
+
 
 ### ------------------------------------------------------------------------ ###
 ### Plot length frequencies ####
