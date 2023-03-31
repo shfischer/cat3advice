@@ -86,153 +86,161 @@ setClass(
 ### ------------------------------------------------------------------------ ###
 ### chr methods ####
 ### ------------------------------------------------------------------------ ###
-# #' rfb rule
-# #'
-# #' This function applies the rfb rule.
-# #' 
-# #' The function requires the elements of the rfb rule: A (the reference)
-# #' catch, r (the biomass index ratio), f (the fising pressure proxy), 
-# #' b (the biomass safeguard) and m (the multiplier). See the [comp_A()], 
-# #' [comp_r()], [comp_f()], [comp_b()], and [comp_m()] help files for details.
-# #' 
-# #' @param object Optional. An object of class \code{rfb}.
-# #' @param A The reference catch. Should be an object of class \code{comp_A}, see [comp_A()].
-# #' @param r The biomass index ratio. Should be an object of class \code{comp_r}, see [comp_r()].
-# #' @param f The fishing pressure proxy. Should be an object of class \code{comp_f}, see [comp_f()].
-# #' @param b The biomass safeguard. Should be an object of class \code{comp_b}, see [comp_b()].
-# #' @param m The multiplier. Should be an object of class \code{comp_m}, see [comp_m()].
-# #' @param cap \code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}
-# #' @param cap_upper Optional. \code{numeric}. The maximum allowed increase in the catch advice in \%. Default to +20.
-# #' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.
-# #' @param years Optional. \code{numeric}. The years for which the advice should be given.
-# #' @param frequency Optional. The frequency of the advice ('annual'/'biennial'/'triennial'). Defaults to 'biennial'.
-# #' @param  discard_rate Optional. The discard rate for the advice (\code{numeric}). If provided, advice values for catch and landings are given.
-# #' @param ... Additional parameters. Not used.
-# #'  
-# #' @section Warning:
-# #' For application in ICES, do not change the default parameters (frequency, 
-# #' stability clause, etc) unless the changes are supported by case-specific
-# #' simulations.
-# #'
-# #' @references 
-# #' ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
-# #' 
-# #' Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2023. Risk equivalence in data‐limited and data‐rich fisheries management: An example based on the ICES advice framework. Fish and Fisheries, 24: 231--247. \url{https://doi.org/10.1111/faf.12722}.
-# #' 
-# #' Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2021. Application of explicit precautionary principles in data-limited fisheries management. ICES Journal of Marine Science, 78: 2931--2942. \url{https://doi.org/10.1093/icesjms/fsab169}.
-# #' 
-# #' Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2021. Using a genetic algorithm to optimize a data-limited catch rule. ICES Journal of Marine Science, 78: 1311--1323. \url{https://doi.org/10.1093/icesjms/fsab018}.
-# #' 
-# #' Fischer, S. H., De Oliveira, J. A. A., and Kell, L. T. 2020. Linking the performance of a data-limited empirical catch rule to life-history traits. ICES Journal of Marine Science, 77: 1914--1926. \url{https://doi.org/10.1093/icesjms/fsaa054}.
-# #'
-# #' @return An object of class \code{rfb}.
-# #'
-# #' @name rfb
-# #' @export
-# NULL
+#' chr rule
+#'
+#' This function applies the chr rule.
+#'
+#' This function applies the chr rule following the ICES technical guidelines (ICES, 2022). The function requires the elements of the chr rule: \out{<i>I</i>} (the biomass index, see \code{\link{chr_I}}), \out{<i>F</i><sub>MSYproxy</sub>} (the target harvest rate, see \code{\link{F}}), \out{<i>b</i>} (the biomass safeguard, see \code{\link{chr_b}}) and \out{<i>m</i>} (the multiplier, see \code{\link{chr_m}}). The catch advice is then calculated as
+#' 
+#' \out{<i>A</i><sub>y+1</sub> = <i>I</i> * <i>F</i><sub>MSYproxy</sub> * <i>b</i> * <i>m</i>}
+#' 
+#' restricted by the stability clause relative to \out{<i>A</i><sub>y</sub>}.
+#' See the help files of the components for their definition (\code{\link{chr_I}}, \code{\link{F}}, \code{\link{chr_b}}, \code{\link{chr_m}})
+#'
+#' @param object Optional. An object of class \code{chr}.
+#' @param A \code{\link{comp_A}}. The reference catch (previous catch advice). Required for calculating change in advice and for the application of the stability clause.
+#' @param I \code{\link{comp_I}}. The biomass index value.
+#' @param F \code{\link{F}}. The harvest rate target.
+#' @param b \code{\link{comp_b}}. The biomass safeguard. 
+#' @param m \code{\link{comp_m}}. The multiplier.
+#' @param cap The uncertainty cap (stability clause). Defaults to 'conditional', i.e. it is only considered when b=1.
+#' @param cap_upper Optional. \code{numeric}. The maximum allowed increase in the catch advice in \%. Default to +20.
+#' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.
+#' @param years Optional. \code{numeric}. The years for which the advice should be given.
+#' @param frequency Optional. The frequency of the advice ('annual'/'biennial'/'triennial'). Defaults to 'annual'.
+#' @param  discard_rate Optional. \code{numeric}. The discard rate for the advice. If provided, advice values for catch and landings are given.
+#' @param ... Additional parameters. Not used.
+#'
+#' @section Warning:
+#' For application in ICES, do not change the default parameters (frequency,
+#' stability clause, etc) unless the changes are supported by case-specific
+#' simulations.
+#'
+#' @references
+#' ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+#'
+#' Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2023. Risk equivalence in data‐limited and data‐rich fisheries management: An example based on the ICES advice framework. Fish and Fisheries, 24: 231--247. \url{https://doi.org/10.1111/faf.12722}.
+#'
+#' Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2022. Exploring a relative harvest rate strategy for moderately data-limited fisheries management. ICES Journal of Marine Science, 79: 1730--1741. \url{https://doi.org/10.1093/icesjms/fsac103}.
+#'
+#' @return An object of class \code{chr}.
+#'
+#' @name chr
+#' @export
+NULL
 
-# #' @rdname rfb
-# #' @export
-# setGeneric(name = "rfb", 
-#            def = function(object, A, r, f, b, m, cap = "conditional", 
-#                           cap_upper = 20, cap_lower = -30, years, 
-#                           frequency = "biennial",
-#                           discard_rate = NA,
-#                           ...) 
-#              standardGeneric("rfb"),
-#            signature = c("object", "A", "r", "f", "b", "m"))
-### object = missing, A/r/f/b/m = comp_A/r/f/b/m
-# #' @rdname rfb
-# #' @usage NULL
-# #' @export
-# setMethod(rfb,
-#           signature = c(object = "missing", 
-#                         A = "comp_A", r = "comp_r", f = "comp_f", b = "comp_b",
-#                         m = "comp_m"),
-#           function(A, r, f, b, m,
-#                    cap,
-#                    cap_upper, cap_lower,
-#                    years, frequency,
-#                    discard_rate = NA,
-#                    ...) {#browser()
-#   object <- rfb_calc(A = A, r = r, f = f, b = b, m = m,
-#                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-#                      year = years, frequency = frequency, 
-#                      discard_rate = discard_rate, ... = ...)
-#   return(object)
-# })
-### object = missing, A/r/f/b/m = numeric
-# #' @rdname rfb
-# #' @usage NULL
-# #' @export
-# setMethod(rfb,
-#           signature = c(object = "missing", 
-#                         A = "numeric", r = "numeric", f = "numeric", 
-#                         b = "numeric", m = "numeric"),
-#           function(A, r, f, b, m,
-#                    cap,
-#                    cap_upper, cap_lower,
-#                    years, frequency,
-#                    discard_rate = NA,
-#                    ...) {#browser()
-#   object <- rfb_calc(A = A, r = r, f = f, b = b, m = m,
-#                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-#                      year = years, frequency = frequency, 
-#                      discard_rate = discard_rate, ... = ...)
-#   return(object)
-# })
-### object = rfb, A/r/f/b/m = missing -> check validity
-# #' @rdname rfb
-# #' @usage NULL
-# #' @export
-# setMethod(rfb,
-#           signature = c(object = "rfb", 
-#                         A = "missing", r = "missing", f = "missing", 
-#                         b = "missing", m = "missing"),
-#           function(object, 
-#                    A = object@A, r = object@r, f = object@f, 
-#                    b = object@b, m = object@m,
-#                    cap = "conditional",
-#                    cap_upper = 20, cap_lower = -30,
-#                    years, frequency = "biennial",
-#                    discard_rate = NA,
-#                    ...) {
-#   ### check validity
-#   validObject(object)
-#   ### update object if arguments provided
-#   object <- rfb_calc(object = object,
-#                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-#                      year = years, frequency = frequency, 
-#                      discard_rate = discard_rate, ... = ...)
-#   return(object)
-#   
-# })
-### object = rfb, A/r/f/b/m = comp_A/r/f/b/m -> check validity & update
-# #' @rdname rfb
-# #' @usage NULL
-# #' @export
-# setMethod(rfb,
-#           signature = c(object = "rfb", 
-#                         A = "comp_A", r = "comp_r", f = "comp_f", 
-#                         b = "comp_b", m = "comp_m"),
-#           function(object, 
-#                    A = object@A, r = object@r, f = object@f, 
-#                    b = object@b, m = object@m,
-#                    cap = "conditional",
-#                    cap_upper = 20, cap_lower = -30,
-#                    years, frequency = "biennial",
-#                    discard_rate = NA,
-#                    ...) {
-#   ### check validity
-#   validObject(object)
-#   ### update object
-#   object <- rfb_calc(object = object,
-#                      A = A, r = r, f = f, b = b, m = m,
-#                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-#                      year = years, frequency = frequency, 
-#                      discard_rate = discard_rate, ... = ...)
-#   return(object)
-# })
+#' @rdname chr
+#' @export
+setGeneric(name = "chr",
+           def = function(object = new("chr"), 
+                          A = object@A,
+                          I = object@I, F = object@F, 
+                          b = object@b, m = object@m,
+                          cap = "conditional",
+                          cap_upper = 20,
+                          cap_lower = -30,
+                          years,
+                          frequency = "annual",
+                          discard_rate = NA,
+                          ...)
+             standardGeneric("chr"),
+           signature = c("object", "A", "I", "F", "b", "m"))
+### object = missing, A/I/F/b/m = comp_A/I/F/b/m
+#' @rdname chr
+#' @usage NULL
+#' @export
+setMethod(chr,
+          signature = c(object = "missing",
+                        A = "comp_A", I = "comp_I", F = "F", b = "comp_b",
+                        m = "comp_m"),
+          function(A, I, F, b, m,
+                   cap = "conditional",
+                   cap_upper = 20, 
+                   cap_lower = -30,
+                   years, frequency = "annual",
+                   discard_rate = NA,
+                   ...) {#browser()
+  object <- chr_calc(A = A, I = I, F = F, b = b, m = m,
+                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                     year = years, frequency = frequency,
+                     discard_rate = discard_rate, ... = ...)
+  return(object)
+})
+### object = missing, A/I/F/b/m = numeric
+#' @rdname chr
+#' @usage NULL
+#' @export
+setMethod(chr,
+          signature = c(object = "missing",
+                        A = "numeric", I = "numeric", F = "numeric", 
+                        b = "numeric", m = "numeric"),
+          function(A, I, F, b, m,
+                   cap = "conditional",
+                   cap_upper = 20, 
+                   cap_lower = -30,
+                   years, frequency = "annual",
+                   discard_rate = NA,
+                   ...) {#browser()
+  object <- chr_calc(A = A, I = I, F = F, b = b, m = m,
+                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                     year = years, frequency = frequency,
+                     discard_rate = discard_rate, ... = ...)
+  return(object)
+})
+### object = chr, A/I/F/b/m = missing -> check validity
+#' @rdname chr
+#' @usage NULL
+#' @export
+setMethod(chr,
+          signature = c(object = "chr",
+                        A = "missing", I = "missing", F = "missing",
+                        b = "missing", m = "missing"),
+          function(object,
+                   A = object@A, I = object@I, F = object@F,
+                   b = object@b, m = object@m,
+                   cap = "conditional",
+                   cap_upper = 20, 
+                   cap_lower = -30,
+                   years, frequency = "annual",
+                   discard_rate = NA,
+                   ...) {
+  ### check validity
+  validObject(object)
+  ### update object if arguments provided
+  object <- chr_calc(object = object,
+                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                     year = years, frequency = frequency,
+                     discard_rate = discard_rate, ... = ...)
+  return(object)
+
+})
+### object = chr, A/I/F/b/m = comp_A/I/F/b/m -> check validity & update
+#' @rdname chr
+#' @usage NULL
+#' @export
+setMethod(chr,
+          signature = c(object = "chr",
+                        A = "comp_A", I = "comp_I", F = "F",
+                        b = "comp_b", m = "comp_m"),
+          function(object,
+                   A = object@A, I = object@I, F = object@F,
+                   b = object@b, m = object@m,
+                   cap = "conditional",
+                   cap_upper = 20, 
+                   cap_lower = -30,
+                   years, frequency = "biennial",
+                   discard_rate = NA,
+                   ...) {
+  ### check validity
+  validObject(object)
+  ### update object
+  object <- chr_calc(object = object,
+                     A = A, I = I, F = F, b = b, m = m,
+                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
+                     year = years, frequency = frequency,
+                     discard_rate = discard_rate, ... = ...)
+  return(object)
+})
 
 ### ------------------------------------------------------------------------ ###
 ### chr calculation ####
@@ -254,7 +262,7 @@ chr_calc <- function(object = new("chr"),
   if (!missing(A)) object@A <- chr_A(A)
   if (!missing(I)) object@I <- chr_I(I)
   if (!missing(F)) object@F <- F(F)
-  if (!missing(b)) object@b <- rfb_b(b)
+  if (!missing(b)) object@b <- chr_b(b)
   if (!missing(m)) {
     object@m <- chr_m(m)
   } else if (is.na(object@m@value)) {
