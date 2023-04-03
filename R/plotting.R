@@ -49,7 +49,7 @@ setGeneric(name = "plot",
 ### rfb_r ####
 #' @rdname rfb_plot
 #' @export
-setMethod(f = "plot", signature = c(x = "comp_r", y = "missing"), 
+setMethod(f = "plot", signature = c(x = "r", y = "missing"), 
           definition = function(x, y, y_label, ...) {
             
   object <- x
@@ -119,7 +119,7 @@ setMethod(f = "plot", signature = c(x = "comp_r", y = "missing"),
 
 ### rfb_b ####
 #' @rdname rfb_plot
-setMethod(f = "plot", signature = c(x = "comp_b", y = "missing"), 
+setMethod(f = "plot", signature = c(x = "b", y = "missing"), 
           definition = function(x, y, y_label, ...) {
             
   object <- x
@@ -185,18 +185,18 @@ setMethod(f = "plot", signature = c(x = "comp_b", y = "missing"),
   return(p)
 })
 
-### comp_r and comp_b ####
+### r and b ####
 ### set S3 plot() as generic so that it can be used with S4 methods
 # setGeneric("plot")
 #' @rdname rfb_plot
 #' @export
-setMethod(f = "plot", signature = c(x = "comp_r", y = "comp_b"), 
+setMethod(f = "plot", signature = c(x = "r", y = "b"), 
           definition = function(x, y, y_label, ...) {
   
   ### check validity
   . <- validObject(x)
   . <- validObject(y)
-  if (is(x, "comp_r")) {
+  if (is(x, "r")) {
     object <- x
     object2 <- y
   } else {
@@ -279,17 +279,17 @@ setMethod(f = "plot", signature = c(x = "comp_r", y = "comp_b"),
   return(p)
 })
 
-### comp_r and comp_b - but order reversed ####
+### r and b - but order reversed ####
 #' @rdname rfb_plot
 #' @export
-setMethod(f = "plot", signature = c(x = "comp_b", y = "comp_r"), 
+setMethod(f = "plot", signature = c(x = "b", y = "r"), 
           definition = function(x, y, y_label, ...) {
   plot(x = y, y = x, y_label = y_label, ...)
 })
 
 ### rfb_f ####
 #' @rdname rfb_plot
-setMethod(f = "plot", signature = c(x = "comp_f", y = "missing"), 
+setMethod(f = "plot", signature = c(x = "f", y = "missing"), 
           definition = function(x, y, y_label, ...) {
             
   object <- x

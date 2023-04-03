@@ -3,15 +3,15 @@
 NULL
 
 ### ------------------------------------------------------------------------ ###
-### comp_I class ####
+### I class ####
 ### ------------------------------------------------------------------------ ###
 
-#' @title comp_I-class
+#' @title I-class
 #' 
 #' @description  An S4 class to represent component I (the current biomass 
 #' index value) of the chr rule.
 #' 
-#' This class (\code{comp_I}) stores the input for component I
+#' This class (\code{I}) stores the input for component I
 #' as well as the resulting I value. 
 #' 
 #' @slot value The value of component I
@@ -22,11 +22,11 @@ NULL
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot hcr \code{character}. The harvest control rule (hcr) for which the index is used. Only applicable to 'chr'.
 #' 
-#' @name comp_I-class
-#' @title comp_I
+#' @name I-class
+#' @title I
 #' @export
 setClass(
-  Class = "comp_I",
+  Class = "I",
   slots = c(
     value = "numeric",
     lag = "numeric",
@@ -52,13 +52,13 @@ setClass(
 )
 
 
-#' @rdname comp_I-class
+#' @rdname I-class
 setClass(Class = "chr_I", 
-         contains = "comp_I",
+         contains = "I",
          prototype = list(hcr = "chr"))
 
 ### ------------------------------------------------------------------------ ###
-### comp_I methods ####
+### I methods ####
 ### ------------------------------------------------------------------------ ###
 #' chr rule - component I (biomass index value)
 #'
@@ -68,7 +68,7 @@ setClass(Class = "chr_I",
 #'
 #' Usually, this method is used by providing only a biomass index, e.g. as a \code{data.frame}. The method uses this index, and takes the last index value.
 #'
-#' \code{chr_I()} is an alias for \code{comp_I()} with identical arguments and functionality.
+#' \code{chr_I()} is an alias for \code{I()} with identical arguments and functionality.
 #'
 #' @param object The biomass index. Can be a \code{data.frame} with columns 'data' and 'index', a vector, or a single value.
 #' @param lag Optional. The time lag (in years) between the last available index value and the value to be used. Defaults to 0 (the last value is used).
@@ -87,30 +87,30 @@ setClass(Class = "chr_I",
 #' 
 #' Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2022. Exploring a relative harvest rate strategy for moderately data-limited fisheries management. ICES Journal of Marine Science, 79: 1730--1741. \url{https://doi.org/10.1093/icesjms/fsac103}.
 #'
-#' @return An object of class \code{comp_I} with the value of the biomass 
+#' @return An object of class \code{I} with the value of the biomass 
 #' index
 #'
 #' @examples
 #' # Use a data.frame with index values
 #' df_idx <- data.frame(year = 2017:2021,
 #'                      index = c(1.33, 1.13, 0.84, 0.60, 1.03))
-#' comp_I(df_idx)
+#' I(df_idx)
 #' 
 #' # If only the value of the last biomass index is known
-#' comp_I(1)
+#' I(1)
 #' 
 #' @export
-setGeneric(name = "comp_I", 
+setGeneric(name = "I", 
            def = function(object, lag = 0, n_yrs = 1, units, 
                           hcr = "chr", ...) 
-             standardGeneric("comp_I"),
+             standardGeneric("I"),
            signature = c("object"))
 
 ### data.frame -> use as index
-#' @rdname comp_I
+#' @rdname I
 #' @usage NULL
 #' @export
-setMethod(comp_I, 
+setMethod(I, 
           signature = c(object = "data.frame"),
           function(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...) {
   idx <- object
@@ -127,15 +127,15 @@ setMethod(comp_I,
   ### check if "year" column exists
   if (isFALSE("year" %in% names(idx)))
     idx$years <- seq_along(idx$index)
-  comp_I_calc(idx = idx, lag = lag, n_yrs = n_yrs, units = units, 
+  I_calc(idx = idx, lag = lag, n_yrs = n_yrs, units = units, 
               hcr = hcr, ...)
 })
 
 ### vector -> use as index
-#' @rdname comp_I
+#' @rdname I
 #' @usage NULL
 #' @export
-setMethod(comp_I, 
+setMethod(I, 
           signature = c(object = "vector"),
           function(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...) {
   idx <- data.frame(index = object, years = NA)
@@ -143,16 +143,16 @@ setMethod(comp_I,
   if (!is.null(names(object)))
     idx$years <- names(object)
   ### pass to data.frame method
-  comp_I(object = idx, lag = lag, n_yrs = n_yrs, units = units, 
+  I(object = idx, lag = lag, n_yrs = n_yrs, units = units, 
          hcr = hcr, ... = ...)
 })
 
-### comp_I -> validate & update
-#' @rdname comp_I
+### I -> validate & update
+#' @rdname I
 #' @usage NULL
 #' @export
-setMethod(comp_I, 
-          signature = c(object = "comp_I"),
+setMethod(I, 
+          signature = c(object = "I"),
           function(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...) {
   validObject(object)
   ### update slots, if provided
@@ -161,18 +161,18 @@ setMethod(comp_I,
   if (!missing(units)) object@units <- units
   if (!missing(hcr)) object@hcr <- hcr
   ### pass to function
-  comp_I_calc(object = object, idx = object@idx, lag = object@lag, 
+  I_calc(object = object, idx = object@idx, lag = object@lag, 
          n_yrs = object@n_yrs, units = object@units, 
          hcr = object@hcr, ... = ...)
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_I calculation ####
+### I calculation ####
 ### ------------------------------------------------------------------------ ###
-comp_I_calc <- function(object, idx, lag = 0, n_yrs = 1, units, 
+I_calc <- function(object, idx, lag = 0, n_yrs = 1, units, 
                         hcr = "chr", ...) {
-  ### create empty comp_I object, if missing
-  if (missing(object)) object <- new("comp_I")
+  ### create empty I object, if missing
+  if (missing(object)) object <- new("I")
   if (!missing(hcr)) {
     hcr <- match.arg(hcr, choices = c("chr"))
     object@hcr <- hcr
@@ -211,18 +211,18 @@ comp_I_calc <- function(object, idx, lag = 0, n_yrs = 1, units,
 }
 
 ### ------------------------------------------------------------------------ ###
-### comp_I aliases ####
+### I aliases ####
 ### ------------------------------------------------------------------------ ###
 
 ### chr
-#' @rdname comp_I
+#' @rdname I
 #' @export
 setGeneric(name = "chr_I", 
            def = function(object, lag = 0, n_yrs = 1, units, 
                           hcr = "chr", ...) 
              standardGeneric("chr_I"),
            signature = c("object"))
-#' @rdname comp_I
+#' @rdname I
 #' @usage NULL
 #' @export
 setMethod(chr_I, 
@@ -230,7 +230,7 @@ setMethod(chr_I,
           function(object, lag = 0, n_yrs = 1, units, 
                    hcr = "chr", ...) {
   hcr <- match.arg(hcr)
-  object <- comp_I(object = object, 
+  object <- I(object = object, 
                    lag = lag, n_yrs = n_yrs, 
                    units = units, hcr = hcr, ... = ...)
   class(object) <- "chr_I"
@@ -238,10 +238,10 @@ setMethod(chr_I,
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_I validity ####
+### I validity ####
 ### ------------------------------------------------------------------------ ###
 ### validity checks
-setValidity("comp_I", function(object) {
+setValidity("I", function(object) {
   if (!identical(length(object@value), 1L)) {
     "slot value must be of length 1"
   } else if (!identical(length(object@lag), 1L)) {
@@ -267,20 +267,20 @@ setValidity("comp_I", function(object) {
 
 #' @rdname value
 #' @export
-setMethod(f = "value", signature = "comp_I",
+setMethod(f = "value", signature = "I",
           definition = function(object) {
             return(object@value)
           })
 
 ### print
-setMethod(f = "print", signature = "comp_I", 
+setMethod(f = "print", signature = "I", 
           definition = function(x) {
             cat(paste0("An object of class \"", class(x), "\".\n",
                        "Value: ", x@value, "\n"))
           })
 
 ### show
-setMethod(f = "show", signature = "comp_I", 
+setMethod(f = "show", signature = "I", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",
                        "Value: ", object@value, "\n"))
@@ -293,7 +293,7 @@ setMethod(f = "show", signature = "comp_I",
 #' @usage NULL
 #' @export
 setMethod(
-  f = "advice", signature = "comp_I",
+  f = "advice", signature = "I",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n",
                   "Biomass index\n",

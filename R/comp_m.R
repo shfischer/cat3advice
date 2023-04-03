@@ -4,24 +4,24 @@
 NULL
 
 ### ------------------------------------------------------------------------ ###
-### comp_m class ####
+### m class ####
 ### ------------------------------------------------------------------------ ###
-#' @title comp_m-class
+#' @title m-class
 
 #' @description An S4 class to represent component m (the multiplier) of the rfb, rb, and 
 #' chr rules.
 #' 
 #' The classes \code{rfb_m}, \code{rb_m}, and \code{chr_m} inherit from 
-#' \code{comp_m} and their only difference is that the slot \code{hcr}
+#' \code{m} and their only difference is that the slot \code{hcr}
 #' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 #' 
 #' @slot value The value of component m
 #' @slot hcr The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @slot k Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).
 #' 
-#' @name comp_m-class
+#' @name m-class
 #' @export
-setClass(Class = "comp_m", 
+setClass(Class = "m", 
          slots = c(value = "numeric",
                    hcr = "character",
                    k = "numeric"
@@ -30,28 +30,28 @@ setClass(Class = "comp_m",
                           hcr = NA_character_,
                           k = NA_real_))
 
-#' @rdname comp_m-class
+#' @rdname m-class
 setClass(Class = "rfb_m", 
-         contains = "comp_m",
+         contains = "m",
          prototype = list(hcr = "rfb"))
-#' @rdname comp_m-class
+#' @rdname m-class
 setClass(Class = "rb_m", 
-         contains = "comp_m",
+         contains = "m",
          prototype = list(hcr = "rb"))
-#' @rdname comp_m-class
+#' @rdname m-class
 setClass(Class = "chr_m", 
-         contains = "comp_m",
+         contains = "m",
          prototype = list(hcr = "chr"))
 
 ### ------------------------------------------------------------------------ ###
-### comp_m methods ####
+### m methods ####
 ### ------------------------------------------------------------------------ ###
 #' rfb/rb/chr rule - component m (multiplier)
 #'
 #' This function returns the default multiplier for the rfb, rb, and chr rules.
 #' 
 #' \code{rfb_m()}, \code{rb_m()}, and \code{chr_m()} are aliases for
-#' \code{comp_m()} in which the \code{hcr} argument is already set to 
+#' \code{m()} in which the \code{hcr} argument is already set to 
 #' 'rfb', 'rb', or 'chr'.
 #' 
 #' The multiplier is set following ICES (2022).
@@ -68,7 +68,7 @@ setClass(Class = "chr_m",
 #' 
 #' For the chr rule, the multiplier is set to m=0.50 (ICES, 2022).
 #' 
-#' @param object Optional. A multiplier m value, if known, or an existing \code{comp_m} object.
+#' @param object Optional. A multiplier m value, if known, or an existing \code{m} object.
 #' @param hcr The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @param k Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).
 #' @param ... Additional arguments. Not used.
@@ -81,85 +81,85 @@ setClass(Class = "chr_m",
 #' ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 #'
 #'
-#' @return An object of class \code{comp_m}
+#' @return An object of class \code{m}
 #'
 #' @examples
 #' # rfb rule with known k
 #' rfb_m(k = 0.1) # 0.95
-#' comp_m(hcr = "rfb", k = 0.1) # 0.95
+#' m(hcr = "rfb", k = 0.1) # 0.95
 #' rfb_m(k = 0.25) # 0.90
-#' comp_m(hcr = "rfb", k = 0.25) # 0.90
+#' m(hcr = "rfb", k = 0.25) # 0.90
 #' # rfb rule with unknown k
 #' rfb_m() # 0.90
-#' comp_m(hcr = "rfb") # 0.90
+#' m(hcr = "rfb") # 0.90
 #' 
 #' # rb rule
 #' rb_m() # 0.5
-#' comp_m(hcr = "rb") # 0.5
+#' m(hcr = "rb") # 0.5
 #' 
 #' # chr rule
 #' chr_m() # 0.5
-#' comp_m(hcr = "chr") # 0.5
+#' m(hcr = "chr") # 0.5
 #' 
-#' @name comp_m
+#' @name m
 #' @export
 NULL
 
-#' @rdname comp_m
+#' @rdname m
 #' @export
-setGeneric(name = "comp_m", 
+setGeneric(name = "m", 
            def = function(object, hcr, k, ...) 
-             standardGeneric("comp_m"),
+             standardGeneric("m"),
            signature = c("object"))
 
 ### numeric -> use as m value
-#' @rdname comp_m
+#' @rdname m
 #' @usage NULL
 #' @export
-setMethod(comp_m, 
+setMethod(m, 
           signature = c(object = "numeric"), 
           function(object, hcr, k, ...) {
             
   value <- object
-  object <- new(Class = "comp_m")
-  comp_m_calc(object = object, value = value, hcr = hcr, k = k,
+  object <- new(Class = "m")
+  m_calc(object = object, value = value, hcr = hcr, k = k,
               ...)
     
 })
-### comp_m -> validate and update if needed
-#' @rdname comp_m
+### m -> validate and update if needed
+#' @rdname m
 #' @usage NULL
 #' @export
-setMethod(comp_m, 
-          signature = c(object = "comp_m"), 
+setMethod(m, 
+          signature = c(object = "m"), 
           function(object, hcr, k, ...) {
             
   validObject(object)
-  comp_m_calc(object = object, hcr = hcr, k = k,
+  m_calc(object = object, hcr = hcr, k = k,
               ...)
 
 })
 
 ### missing -> derive m
-#' @rdname comp_m
+#' @rdname m
 #' @usage NULL
 #' @export
-setMethod(comp_m, 
+setMethod(m, 
           signature = c(object = "missing"), 
           function(object, hcr, k, ...) {
             
-  comp_m_calc(object = object, hcr = hcr, k = k,
+  m_calc(object = object, hcr = hcr, k = k,
               ...)
   
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_m calculation ####
+### m calculation ####
 ### ------------------------------------------------------------------------ ###
-comp_m_calc <- function(object, value, hcr, k, ...) {
+m_calc <- function(object, value, hcr, k, ...) {
   
   ### create empty object, if missing
-  if (missing(object)) object <- new(Class = "comp_m")
+  if (missing(object)) object <- new(Class = "m")
   
   if (!missing(hcr))
     object@hcr <- match.arg(hcr, choices = c("rfb", "rb", "chr"))
@@ -244,20 +244,20 @@ comp_m_calc <- function(object, value, hcr, k, ...) {
 }
 
 ### ------------------------------------------------------------------------ ###
-### comp_m aliases ####
+### m aliases ####
 ### ------------------------------------------------------------------------ ###
-### define aliases rfb_m, rb_m, and chr_m for comp_m
-### set object signature to ANY and let comp_m deal with method dispatch
+### define aliases rfb_m, rb_m, and chr_m for m
+### set object signature to ANY and let m deal with method dispatch
 ### also include signature "missing" because "ANY" does not include it
 
 ### rfb
-#' @rdname comp_m
+#' @rdname m
 #' @export
 setGeneric(name = "rfb_m", 
            def = function(object, hcr = "rfb", k, ...) 
              standardGeneric("rfb_m"),
            signature = c("object"))
-#' @rdname comp_m
+#' @rdname m
 #' @export
 #' @usage NULL
 setMethod(rfb_m, 
@@ -265,90 +265,90 @@ setMethod(rfb_m,
           function(object, hcr = "rfb", k, ...) {
   hcr <- match.arg(hcr)
   #if (is.numeric(object)) value <- object
-  object <- comp_m(object = object, hcr = hcr, 
+  object <- m(object = object, hcr = hcr, 
                    k = k, ...)
   class(object) <- "rfb_m"
   return(object)
 })
-#' @rdname comp_m
+#' @rdname m
 #' @export
 #' @usage NULL
 setMethod(rfb_m, 
           signature = c(object = "missing"), 
           function(object, hcr = "rfb", k, ...) {
   hcr <- match.arg(hcr)
-  object <- comp_m(hcr = hcr, k = k, ...)
+  object <- m(hcr = hcr, k = k, ...)
   class(object) <- "rfb_m"
   return(object)
 })
 
 ### rb
-#' @rdname comp_m
+#' @rdname m
 #' @export
 setGeneric(name = "rb_m", 
            def = function(object, hcr = "rb", k, ...) 
              standardGeneric("rb_m"),
            signature = c("object"))
-#' @rdname comp_m
+#' @rdname m
 #' @export
 #' @usage NULL
 setMethod(rb_m, 
           signature = c(object = "ANY"), 
           function(object, hcr = "rb", k, ...) {
   hcr <- match.arg(hcr)
-  object <- comp_m(object = object, hcr = hcr, 
+  object <- m(object = object, hcr = hcr, 
                    k = k, ...)
   class(object) <- "rb_m"
   return(object)
 })
-#' @rdname comp_m
+#' @rdname m
 #' @export
 #' @usage NULL
 setMethod(rb_m, 
           signature = c(object = "missing"), 
           function(object, hcr = "rb", k, ...) {
   hcr <- match.arg(hcr)
-  object <- comp_m(hcr = hcr, k = k, ...)
+  object <- m(hcr = hcr, k = k, ...)
   class(object) <- "rb_m"
   return(object)
 })
 
 ### chr
-#' @rdname comp_m
+#' @rdname m
 #' @export
 setGeneric(name = "chr_m", 
            def = function(object, hcr = "chr", k, ...) 
              standardGeneric("chr_m"),
            signature = c("object"))
-#' @rdname comp_m
+#' @rdname m
 #' @export
 #' @usage NULL
 setMethod(chr_m, 
           signature = c(object = "ANY"), 
           function(object, hcr = "chr", k, ...) {
   hcr <- match.arg(hcr)
-  object <- comp_m(object = object, hcr = hcr, 
+  object <- m(object = object, hcr = hcr, 
                    k = k, ...)
   class(object) <- "chr_m"
   return(object)
 })
-#' @rdname comp_m
+#' @rdname m
 #' @export
 #' @usage NULL
 setMethod(chr_m, 
           signature = c(object = "missing"), 
           function(object, hcr = "chr", k, ...) {
   hcr <- match.arg(hcr)
-  object <- comp_m(hcr = hcr, k = k, ...)
+  object <- m(hcr = hcr, k = k, ...)
   class(object) <- "chr_m"
   return(object)
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_m validity ####
+### m validity ####
 ### ------------------------------------------------------------------------ ###
 ### validity checks
-setValidity("comp_m", function(object) {
+setValidity("m", function(object) {
   if (!identical(length(object@value), 1L)) {
     "slot value must be of length 1"
   } else if (isFALSE(object@hcr %in% c(NA, "rfb", "rb", "chr"))) {
@@ -366,24 +366,24 @@ setValidity("comp_m", function(object) {
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_m convience methods ####
+### m convience methods ####
 ### ------------------------------------------------------------------------ ###
 #' @rdname value
 #' @export
-setMethod(f = "value", signature = "comp_m", 
+setMethod(f = "value", signature = "m", 
           definition = function(object) {
             return(object@value)
 })
 
 ### print
-setMethod(f = "print", signature = "comp_m", 
+setMethod(f = "print", signature = "m", 
           definition = function(x) {
             cat(paste0("An object of class \"", class(x), "\".\n",
                        "Value: ", x@value, "\n"))
 })
 
 ### show
-setMethod(f = "show", signature = "comp_m", 
+setMethod(f = "show", signature = "m", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",
                        "Value: ", object@value, "\n"))
@@ -393,7 +393,7 @@ setMethod(f = "show", signature = "comp_m",
 #' @rdname summary
 #' @export
 setMethod(
-  f = "summary", signature = "comp_m",
+  f = "summary", signature = "m",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 50), collapse = ""), "\n", 
                   "component m:\n")
@@ -418,7 +418,7 @@ setMethod(
 #' @usage NULL
 #' @export
 setMethod(
-  f = "advice", signature = "comp_m",
+  f = "advice", signature = "m",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n",
                   "Precautionary multiplier to maintain biomass above Blim ",

@@ -3,17 +3,17 @@
 NULL
 
 ### ------------------------------------------------------------------------ ###
-### comp_b class ####
+### b class ####
 ### ------------------------------------------------------------------------ ###
-#' @title comp_b-class
+#' @title b-class
 #' 
 #' @description  An S4 class to represent component b of the rfb/rb/chr rules.
 #' 
-#' This class (\code{comp_b}) stores the input for component b (the biomass
+#' This class (\code{b}) stores the input for component b (the biomass
 #' safeguard) as well as the resulting b value. 
 #' 
 #' The classes \code{rfb_b}, \code{rb_b}, and \code{chr_b} inherit from 
-#' \code{comp_b} and their only difference is that the slot \code{hcr}
+#' \code{b} and their only difference is that the slot \code{hcr}
 #' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 #' 
 #' @slot value The value of component b
@@ -28,9 +28,9 @@ NULL
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot hcr \code{character}. The harvest control rule (hcr) for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.
 #' 
-#' @name comp_b-class
+#' @name b-class
 #' @export
-setClass(Class = "comp_b", 
+setClass(Class = "b", 
          slots = c(value = "numeric",
                    idx_value = "numeric",
                    Itrigger = "numeric", 
@@ -54,21 +54,21 @@ setClass(Class = "comp_b",
                           units = NA_character_,
                           hcr = NA_character_))
 
-#' @rdname comp_b-class
+#' @rdname b-class
 setClass(Class = "rfb_b", 
-         contains = "comp_b",
+         contains = "b",
          prototype = list(hcr = "rfb"))
-#' @rdname comp_b-class
+#' @rdname b-class
 setClass(Class = "rb_b", 
-         contains = "comp_b",
+         contains = "b",
          prototype = list(hcr = "rb"))
-#' @rdname comp_b-class
+#' @rdname b-class
 setClass(Class = "chr_b", 
-         contains = "comp_b",
+         contains = "b",
          prototype = list(hcr = "chr"))
 
 ### ------------------------------------------------------------------------ ###
-### comp_b methods ####
+### b methods ####
 ### ------------------------------------------------------------------------ ###
 #' rb/rfb/chr rule - component b (biomass safeguard)
 #'
@@ -100,7 +100,7 @@ setClass(Class = "chr_b",
 #'
 #' The biomass safeguard is identical in the rfb, rb, and chr rules. 
 #' \code{rfb_b()}, \code{rb_b()} and \code{chr_b()} are aliases for 
-#' \code{comp_b()} with identical arguments and functionality.
+#' \code{b()} with identical arguments and functionality.
 #' 
 #'
 #' @param object The biomass index. Can be a \code{data.frame} with columns 'data' and 'index'.
@@ -132,53 +132,53 @@ setClass(Class = "chr_b",
 #' Fischer, S. H., De Oliveira, J. A. A., and Kell, L. T. 2020. Linking the performance of a data-limited empirical catch rule to life-history traits. ICES Journal of Marine Science, 77: 1914--1926. \url{https://doi.org/10.1093/icesjms/fsaa054}.
 #'
 #'
-#' @return An object of class \code{comp_b} with the value of the biomass 
+#' @return An object of class \code{b} with the value of the biomass 
 #' safeguard
 #'
 #' @examples
 #' # If the value of the biomass safeguard is known
-#' comp_b(1)
+#' b(1)
 #' 
 #' # First application of the biomass safeguard
 #' # Use a data.frame with index values
 #' df_idx <- data.frame(year = 2017:2021,
 #'                      index = c(1.33, 1.13, 0.84, 0.60, 1.03))
-#' comp_b(df_idx)
+#' b(df_idx)
 #' 
 #' # plot
-#' plot(comp_b(df_idx, units = "kg/hr"))
+#' plot(b(df_idx, units = "kg/hr"))
 #' 
 #' # Use of the biomass safeguard in a following year without updating Itrigger
 #' df_idx <- data.frame(year = 2017:2022,
 #'                      index = c(1.33, 1.13, 0.84, 0.60, 1.03, 0.5))
-#' comp_b(df_idx, yr_ref = 2020)
+#' b(df_idx, yr_ref = 2020)
 #' 
 #' @export
-setGeneric(name = "comp_b", 
+setGeneric(name = "b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
                           yr_ref, n0, units, hcr, ...) 
-           standardGeneric("comp_b"),
+           standardGeneric("b"),
            signature = c("object"))
 
 ### FLQuant -> convert to data.frame
-# #' @rdname comp_b
+# #' @rdname b
 # #' @usage NULL
 # #' @export
-# setMethod(comp_b, 
+# setMethod(b, 
 #           signature = c(object = "FLQuant"), 
 #           function(object, idx_value, Itrigger, Iloss, w,
 #                    yr_ref, n0, units, ...) {
 #   ### convert FLQuant into data.frame
 #   idx <- as.data.frame(object)[, c("year", "data")]
 #   names(idx)[2] <- "index"
-#   comp_b(object = idx, idx_value = idx_value, Itrigger = Itrigger, Iloss = Iloss, 
+#   b(object = idx, idx_value = idx_value, Itrigger = Itrigger, Iloss = Iloss, 
 #          w = w, yr_ref = yr_ref, n0 = n0, units = units, ...)
 # })
 ### data.frame -> use as index
-#' @rdname comp_b
+#' @rdname b
 #' @usage NULL
 #' @export
-setMethod(comp_b, 
+setMethod(b, 
           signature = c(object = "data.frame"),
           function(object, idx_value, Itrigger, Iloss, w,
                    yr_ref, n0, units, hcr, ...) {
@@ -196,21 +196,21 @@ setMethod(comp_b,
       stop("Column \"index\" missing in idx")
     }
   }
-  comp_b_calc(idx = idx, idx_value = idx_value, Itrigger = Itrigger, 
+  b_calc(idx = idx, idx_value = idx_value, Itrigger = Itrigger, 
               Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, units = units, 
               ...)
 })
 ### numeric -> use as b
-#' @rdname comp_b
+#' @rdname b
 #' @usage NULL
 #' @export
-setMethod(comp_b, 
+setMethod(b, 
           signature = c(object = "numeric"), 
           function(object, idx_value, Itrigger, Iloss, w,
                    yr_ref, n0, units, hcr, ...) {
             
-  ### create empty comp_b object
-  res <- new("comp_b")
+  ### create empty b object
+  res <- new("b")
   if (!missing(hcr)) res@hcr <- hcr
   
   ### remove parameters
@@ -227,35 +227,35 @@ setMethod(comp_b,
   
   return(res)
 })
-### comp_b -> check validity and update values if necessary
-#' @rdname comp_b
+### b -> check validity and update values if necessary
+#' @rdname b
 #' @usage NULL
 #' @export
-setMethod(comp_b, 
-          signature = c(object = "comp_b"), 
+setMethod(b, 
+          signature = c(object = "b"), 
           function(object, idx_value, Itrigger, Iloss, w,
                    yr_ref, n0, units, hcr, ...) {
   ### check validity
   validObject(object)
-  ### run comp_b() to update slots and recalculate if needed
-  comp_b_calc(object, ...)
+  ### run b() to update slots and recalculate if needed
+  b_calc(object, ...)
 })
 
 ### ------------------------------------------------------------------------ ###
 ### alias ####
 ### ------------------------------------------------------------------------ ###
-### define aliases rfb_b, rb_b, and chr_b for comp_b
-### set object signature to ANY and let comp_b deal with method dispatch
+### define aliases rfb_b, rb_b, and chr_b for b
+### set object signature to ANY and let b deal with method dispatch
 
 ### rfb
-#' @rdname comp_b
+#' @rdname b
 #' @export
 setGeneric(name = "rfb_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
                           yr_ref, n0, units, hcr = "rfb", ...) 
              standardGeneric("rfb_b"),
            signature = c("object"))
-#' @rdname comp_b
+#' @rdname b
 #' @usage NULL
 #' @export
 setMethod(rfb_b, 
@@ -263,21 +263,21 @@ setMethod(rfb_b,
           function(object, idx_value, Itrigger, Iloss, w,
                    yr_ref, n0, units, hcr = "rfb", ...) {
   hcr <- match.arg(hcr)
-  object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
+  object <- b(object = object, idx_value = idx_value, Itrigger = Itrigger,
                    Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
                    units = units, hcr = hcr, ... = ...)
   class(object) <- "rfb_b"
   return(object)
 })
 ### rb
-#' @rdname comp_b
+#' @rdname b
 #' @export
 setGeneric(name = "rb_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
                           yr_ref, n0, units, hcr = "rb", ...) 
              standardGeneric("rb_b"),
            signature = c("object"))
-#' @rdname comp_b
+#' @rdname b
 #' @usage NULL
 #' @export
 setMethod(rb_b, 
@@ -285,21 +285,21 @@ setMethod(rb_b,
           function(object, idx_value, Itrigger, Iloss, w,
                    yr_ref, n0, units, hcr = "rb", ...) {
   hcr <- match.arg(hcr)
-  object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
+  object <- b(object = object, idx_value = idx_value, Itrigger = Itrigger,
                    Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
                    units = units, hcr = hcr, ... = ...)
   class(object) <- "rb_b"
   return(object)
 })
 ### chr
-#' @rdname comp_b
+#' @rdname b
 #' @export
 setGeneric(name = "chr_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
                           yr_ref, n0, units, hcr = "chr", ...) 
              standardGeneric("chr_b"),
            signature = c("object"))
-#' @rdname comp_b
+#' @rdname b
 #' @usage NULL
 #' @export
 setMethod(chr_b, 
@@ -307,7 +307,7 @@ setMethod(chr_b,
           function(object, idx_value, Itrigger, Iloss, w,
                    yr_ref, n0, units, hcr = "chr", ...) {
   hcr <- match.arg(hcr)
-  object <- comp_b(object = object, idx_value = idx_value, Itrigger = Itrigger,
+  object <- b(object = object, idx_value = idx_value, Itrigger = Itrigger,
                    Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
                    units = units, hcr = hcr, ... = ...)
   class(object) <- "chr_b"
@@ -315,10 +315,10 @@ setMethod(chr_b,
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_b validity ####
+### b validity ####
 ### ------------------------------------------------------------------------ ###
 ### validity checks
-setValidity("comp_b", function(object) {
+setValidity("b", function(object) {
   if (!identical(length(object@value), 1L)) {
     "slot value must be of length 1"
   } else if (isTRUE(object@value > 1)) {
@@ -345,13 +345,13 @@ setValidity("comp_b", function(object) {
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_b calculation ####
+### b calculation ####
 ### ------------------------------------------------------------------------ ###
 ### function for creating/calculating biomass safeguard
-comp_b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
+b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
                        yr_last, units, hcr) {
-  ### create empty comp_b object, if missing
-  if (missing(object)) object <- new("comp_b")
+  ### create empty b object, if missing
+  if (missing(object)) object <- new("b")
   if (!missing(hcr)) object@hcr <- hcr
   
   ### add/update index, if provided
@@ -422,7 +422,7 @@ comp_b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
 ### ------------------------------------------------------------------------ ###
 #' @rdname summary
 #' @export
-setMethod(f = "summary", signature = "comp_b", 
+setMethod(f = "summary", signature = "b", 
           definition = function(object) {
   txt <- (paste0(paste(rep("-", 50), collapse = ""), "\n",
                  "component b (biomass safeguard):\n",
@@ -451,24 +451,24 @@ setMethod(f = "summary", signature = "comp_b",
 })
 
 
-### weird bug - method definition moved to comp_r.R, 
+### weird bug - method definition moved to r.R, 
 ### other method is not found ...
 # #' @rdname value
 # #' @export
-# setMethod(f = "value", signature = "comp_b", 
+# setMethod(f = "value", signature = "b", 
 #           definition = function(object) {
 #             return(object@value)
 #           })
 
 ### print
-setMethod(f = "print", signature = "comp_b", 
+setMethod(f = "print", signature = "b", 
           definition = function(x) {
             cat(paste0("An object of class \"", class(x), "\".\n",
                        "Value: ", x@value, "\n"))
 })
 
 ### show
-setMethod(f = "show", signature = "comp_b", 
+setMethod(f = "show", signature = "b", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",
                        "Value: ", object@value, "\n"))
@@ -481,7 +481,7 @@ setMethod(f = "show", signature = "comp_b",
 #' @usage NULL
 #' @export
 setMethod(
-  f = "advice", signature = "comp_b",
+  f = "advice", signature = "b",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n",
                   "Biomass safeguard\n",

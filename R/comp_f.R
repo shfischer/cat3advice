@@ -4,13 +4,13 @@
 NULL
 
 ### ------------------------------------------------------------------------ ###
-### comp_f class ####
+### f class ####
 ### ------------------------------------------------------------------------ ###
-#' @title comp_f-class
+#' @title f-class
 #' 
 #' @description  An S4 class to represent component f of the rfb rule.
 #'
-#' This class (\code{comp_f}) stores the input for component f (the length 
+#' This class (\code{f}) stores the input for component f (the length 
 #' indicator as well as the resulting f value.
 #'
 #' @slot value The value of component f
@@ -22,10 +22,10 @@ NULL
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot hcr \code{factor}. The harvest control rule (hcr) for which component f is used (rfb).
 #'
-#' @name comp_f-class
+#' @name f-class
 #' @export
 setClass(
-  Class = "comp_f",
+  Class = "f",
   slots = c(
     value = "numeric",
     indicator = "data.frame",
@@ -52,16 +52,16 @@ setClass(
     hcr = NA_character_
   )
 )
-#' @rdname comp_f-class
+#' @rdname f-class
 setClass(
   Class = "rfb_f",
-  contains = "comp_f",
+  contains = "f",
   prototype = list(hcr = "rfb"
   )
 )
 
 ### ------------------------------------------------------------------------ ###
-### comp_f methods ####
+### f methods ####
 ### ------------------------------------------------------------------------ ###
 #' rfb rule - component f (fishing pressure proxy, length indicator)
 #'
@@ -70,9 +70,9 @@ setClass(
 #' The value is calculated by comparing the mean catch length (above length of first capture Lc) to a reference length.
 #'
 #' \code{rfb_f()} is an alias for
-#' \code{comp_f()} with identical arguments and functionality.
+#' \code{f()} with identical arguments and functionality.
 #'
-#' @param object Optional. An object of class \code{comp_f}.
+#' @param object Optional. An object of class \code{f}.
 #' @param Lmean The mean catch length. Either a \code{data.frame} with columns
 #'              'year' and 'Lmean' or an object of class \code{Lmean}.
 #' @param Lref The reference length. Either a \code{numeric} with the value or 
@@ -100,13 +100,13 @@ setClass(
 #' Fischer, S. H., De Oliveira, J. A. A., and Kell, L. T. 2020. Linking the performance of a data-limited empirical catch rule to life-history traits. ICES Journal of Marine Science, 77: 1914--1926. \url{https://doi.org/10.1093/icesjms/fsaa054}.
 #'
 #'
-#' @return An object of class \code{comp_f} with the length indicator value(s).
+#' @return An object of class \code{f} with the length indicator value(s).
 #' 
 #' @export
 setGeneric(
-  name = "comp_f",
+  name = "f",
   def = function(object, Lmean, Lref, units, hcr, ...) {
-    standardGeneric("comp_f")
+    standardGeneric("f")
   },
   signature = c("object", "Lmean", "Lref")
 )
@@ -118,14 +118,14 @@ setGeneric(
 ### Lmean = Lmean; Lref = Lref
 
 ### object = missing; Lmean = Lmean; Lref = Lref
-#' @rdname comp_f
+#' @rdname f
 #' @usage NULL
 #' @export
-setMethod(comp_f,
+setMethod(f,
   signature = c(object = "missing", Lmean = "Lmean", Lref = "Lref"),
   function(object, Lmean, Lref, units, hcr, ...) {
     
-    object <- new("comp_f")
+    object <- new("f")
     object@Lmean <- Lmean
     object@Lref <- Lref
     if (!missing(units)) object@units <- units
@@ -153,12 +153,12 @@ setMethod(comp_f,
   }
 )
 
-### comp_f -> check validity
-#' @rdname comp_f
+### f -> check validity
+#' @rdname f
 #' @usage NULL
 #' @export
-setMethod(comp_f,
-  signature = c(object = "comp_f", Lmean = "missing", Lref = "missing"),
+setMethod(f,
+  signature = c(object = "f", Lmean = "missing", Lref = "missing"),
   function(object, Lmean = object@Lmean, Lref = object@Lmean, 
            units, hcr, ...) {
     ### check validity
@@ -169,16 +169,16 @@ setMethod(comp_f,
 )
 
 ### numeric -> use as value
-#' @rdname comp_f
+#' @rdname f
 #' @usage NULL
 #' @export
-setMethod(comp_f,
+setMethod(f,
           signature = c(object = "numeric", Lmean = "missing", Lref = "missing"),
           function(object, Lmean = object@Lmean, Lref = object@Lmean, 
                    units, hcr, ...) {
   ### empty object with value
   value <- object
-  object <- new("comp_f")
+  object <- new("f")
   object@value <- value
   if (!missing(units)) object@units <- units
   if (!missing(hcr)) object@hcr <- hcr
@@ -189,10 +189,10 @@ setMethod(comp_f,
 ### aliases ####
 ### ------------------------------------------------------------------------ ###
 ### define aliases rfb_f
-### set object signature to ANY and let comp_f deal with method dispatch
+### set object signature to ANY and let f deal with method dispatch
 
 ### rfb_f
-#' @rdname comp_f
+#' @rdname f
 #' @usage NULL
 #' @export
 setGeneric(
@@ -202,7 +202,7 @@ setGeneric(
   },
   signature = c("object", "Lmean", "Lref")
 )
-#' @rdname comp_f
+#' @rdname f
 #' @usage NULL
 #' @export
 setMethod(rfb_f,
@@ -210,13 +210,13 @@ setMethod(rfb_f,
           function(object, Lmean, Lref, units, hcr = "rfb", ...) {
   hcr <- match.arg(hcr)
   ### ignore object because it is missing
-  object <- comp_f(Lmean = Lmean, Lref = Lref, units = units, 
+  object <- f(Lmean = Lmean, Lref = Lref, units = units, 
                    hcr = hcr, ... = ...)
   class(object) <- "rfb_f"
   return(object)
 })
-### comp_f -> check validity
-#' @rdname comp_f
+### f -> check validity
+#' @rdname f
 #' @usage NULL
 #' @export
 setMethod(rfb_f,
@@ -224,20 +224,20 @@ setMethod(rfb_f,
           function(object, Lmean, Lref, units, hcr = "rfb", ...) {
   hcr <- match.arg(hcr)
   ### ignore Lmean & Lref becuase they are missing
-  object <- comp_f(object = object, units = units,
+  object <- f(object = object, units = units,
                    hcr = hcr, ... = ...)
   class(object) <- "rfb_f"
   return(object)
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_f validity ####
+### f validity ####
 ### ------------------------------------------------------------------------ ###
 ### validity checks
 
 ### TO DO
 
-# setValidity("comp_r", function(object) {
+# setValidity("r", function(object) {
 #   if (any(c(length(object@n0), length(object@n0), length(object@n0)) != 1)) {
 #     "n0, n1, and n2 must each be of length 1"
 #   } else if (!identical(length(object@value), 1L)) {
@@ -250,13 +250,13 @@ setMethod(rfb_f,
 # })
 
 ### ------------------------------------------------------------------------ ###
-### comp_f convenience methods ####
+### f convenience methods ####
 ### ------------------------------------------------------------------------ ###
 
 #' @rdname summary
 #' @export
 setMethod(
-  f = "summary", signature = "comp_f",
+  f = "summary", signature = "f",
   definition = function(object) {
     txt <- (paste0(
       paste(rep("-", 50), collapse = ""), "\n",
@@ -280,21 +280,21 @@ setMethod(
 #' @rdname value
 #' @export
 setMethod(
-  f = "value", signature = "comp_f",
+  f = "value", signature = "f",
   definition = function(object) {
     return(object@value)
   }
 )
 
 ### print
-setMethod(f = "print", signature = "comp_f", 
+setMethod(f = "print", signature = "f", 
           definition = function(x) {
             cat(paste0("An object of class \"", class(x), "\".\n",
                        "Value: ", x@value, "\n"))
 })
 
 ### show
-setMethod(f = "show", signature = "comp_f", 
+setMethod(f = "show", signature = "f", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",
                        "Value: ", object@value, "\n"))
@@ -316,7 +316,7 @@ setMethod(f = "show", signature = "comp_f",
 #' @usage NULL
 #' @export
 setMethod(
-  f = "advice", signature = "comp_f",
+  f = "advice", signature = "f",
   definition = function(object) {
     txt <- paste0(
       paste(rep("-", 80), collapse = ""), "\n",

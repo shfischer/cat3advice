@@ -1,7 +1,7 @@
-#' @include comp_r.R
-#' @include comp_b.R
-#' @include comp_m.R
-#' @include comp_A.R
+#' @include r.R
+#' @include b.R
+#' @include m.R
+#' @include A.R
 #' @importFrom icesAdvice icesRound
 #' @importFrom utils capture.output tail
 NULL
@@ -45,10 +45,10 @@ setClass(
     advice_metric = "character",
     frequency = "character",
     years = "numeric",
-    A = "comp_A",
-    r = "comp_r",
-    b = "comp_b",
-    m = "comp_m",
+    A = "A",
+    r = "r",
+    b = "b",
+    m = "m",
     cap = "logical",
     cap_lower = "numeric",
     cap_upper = "numeric",
@@ -87,14 +87,14 @@ setClass(
 #' 
 #' The function requires the elements of the rb rule: A (the reference)
 #' catch, r (the biomass index ratio), f (the fising pressure proxy), 
-#' b (the biomass safeguard) and m (the multiplier). See the [comp_A()], 
-#' [comp_r()], [comp_b()], and [comp_m()] help files for details.
+#' b (the biomass safeguard) and m (the multiplier). See the [A()], 
+#' [r()], [b()], and [m()] help files for details.
 #' 
 #' @param object Optional. An object of class \code{rfb}.
-#' @param A The reference catch. Should be an object of class \code{comp_A}, see [comp_A()].
-#' @param r The biomass index ratio. Should be an object of class \code{comp_r}, see [comp_r()].
-#' @param b The biomass safeguard. Should be an object of class \code{comp_b}, see [comp_b()].
-#' @param m The multiplier. Should be an object of class \code{comp_m}, see [comp_m()].
+#' @param A The reference catch. Should be an object of class \code{A}, see [A()].
+#' @param r The biomass index ratio. Should be an object of class \code{r}, see [r()].
+#' @param b The biomass safeguard. Should be an object of class \code{b}, see [b()].
+#' @param m The multiplier. Should be an object of class \code{m}, see [m()].
 #' @param cap \code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}
 #' @param cap_upper Optional. \code{numeric}. The maximum allowed increase in the catch advice in \%. Default to +20.
 #' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.
@@ -136,14 +136,14 @@ setGeneric(name = "rb",
                           ...) 
              standardGeneric("rb"),
            signature = c("object", "A", "r", "b", "m"))
-### object = missing, A/r/b/m = comp_A/r/b/m
+### object = missing, A/r/b/m = A/r/b/m
 #' @rdname rb
 #' @usage NULL
 #' @export
 setMethod(rb,
           signature = c(object = "missing", 
-                        A = "comp_A", r = "comp_r", b = "comp_b",
-                        m = "comp_m"),
+                        A = "A", r = "r", b = "b",
+                        m = "m"),
           function(A, r, b, m,
                    cap,
                    cap_upper, cap_lower,
@@ -182,14 +182,14 @@ setMethod(rb,
   return(object)
   
 })
-### object = rb, A/r/b/m = comp_A/r/b/m -> check validity & update
+### object = rb, A/r/b/m = A/r/b/m -> check validity & update
 #' @rdname rb
 #' @usage NULL
 #' @export
 setMethod(rb,
           signature = c(object = "rb", 
-                        A = "comp_A", r = "comp_r", 
-                        b = "comp_b", m = "comp_m"),
+                        A = "A", r = "r", 
+                        b = "b", m = "m"),
           function(object, 
                    A = object@A, r = object@r, 
                    b = object@b, m = object@m,
@@ -229,7 +229,7 @@ rb_calc <- function(object = new("rb"),
   if (!missing(r)) object@r <- rb_r(r)
   if (!missing(b)) object@b <- rb_b(b)
   if (!missing(m)) {
-    object@m <- comp_m(m)
+    object@m <- m(m)
   } else if (is.na(object@m@value)) {
     ### use default multiplier if missing
     object@m <- rb_m()

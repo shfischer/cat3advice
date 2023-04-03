@@ -1,9 +1,9 @@
-#' @include comp_f.R
-#' @include comp_I.R
-#' @include comp_F_hr.R
-#' @include comp_b.R
-#' @include comp_m.R
-#' @include comp_A.R
+#' @include f.R
+#' @include I.R
+#' @include F_hr.R
+#' @include b.R
+#' @include m.R
+#' @include A.R
 #' @importFrom icesAdvice icesRound
 #' @importFrom utils capture.output tail
 NULL
@@ -15,7 +15,7 @@ NULL
 #' @title An S4 class to represent the chr rule.
 #'
 #' @description This class contains the components of the chr rule 
-#' (\code{\link{comp_I}}, \code{\link{F}}, \code{comp_b}, \code{comp_m}).
+#' (\code{\link{I}}, \code{\link{F}}, \code{b}, \code{m}).
 #'
 #' @slot advice The value of the catch advice.
 #' @slot advice_landings Landings corresponding to the catch advice.
@@ -48,11 +48,11 @@ setClass(
     advice_metric = "character",
     frequency = "character",
     years = "numeric",
-    A = "comp_A",
-    I = "comp_I",
+    A = "A",
+    I = "I",
     F = "F",
-    b = "comp_b",
-    m = "comp_m",
+    b = "b",
+    m = "m",
     cap = "logical",
     cap_lower = "numeric",
     cap_upper = "numeric",
@@ -98,11 +98,11 @@ setClass(
 #' See the help files of the components for their definition (\code{\link{chr_I}}, \code{\link{F}}, \code{\link{chr_b}}, \code{\link{chr_m}})
 #'
 #' @param object Optional. An object of class \code{chr}.
-#' @param A \code{\link{comp_A}}. The reference catch (previous catch advice). Required for calculating change in advice and for the application of the stability clause.
-#' @param I \code{\link{comp_I}}. The biomass index value.
+#' @param A \code{\link{A}}. The reference catch (previous catch advice). Required for calculating change in advice and for the application of the stability clause.
+#' @param I \code{\link{I}}. The biomass index value.
 #' @param F \code{\link{F}}. The harvest rate target.
-#' @param b \code{\link{comp_b}}. The biomass safeguard. 
-#' @param m \code{\link{comp_m}}. The multiplier.
+#' @param b \code{\link{b}}. The biomass safeguard. 
+#' @param m \code{\link{m}}. The multiplier.
 #' @param cap The uncertainty cap (stability clause). Defaults to 'conditional', i.e. it is only considered when b=1.
 #' @param cap_upper Optional. \code{numeric}. The maximum allowed increase in the catch advice in \%. Default to +20.
 #' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.
@@ -145,14 +145,14 @@ setGeneric(name = "chr",
                           ...)
              standardGeneric("chr"),
            signature = c("object", "A", "I", "F", "b", "m"))
-### object = missing, A/I/F/b/m = comp_A/I/F/b/m
+### object = missing, A/I/F/b/m = A/I/F/b/m
 #' @rdname chr
 #' @usage NULL
 #' @export
 setMethod(chr,
           signature = c(object = "missing",
-                        A = "comp_A", I = "comp_I", F = "F", b = "comp_b",
-                        m = "comp_m"),
+                        A = "A", I = "I", F = "F", b = "b",
+                        m = "m"),
           function(A, I, F, b, m,
                    cap = "conditional",
                    cap_upper = 20, 
@@ -162,7 +162,7 @@ setMethod(chr,
                    ...) {#browser()
   object <- chr_calc(A = A, I = I, F = F, b = b, m = m,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-                     year = years, frequency = frequency,
+                     years = years, frequency = frequency,
                      discard_rate = discard_rate, ... = ...)
   return(object)
 })
@@ -183,7 +183,7 @@ setMethod(chr,
                    ...) {#browser()
   object <- chr_calc(A = A, I = I, F = F, b = b, m = m,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-                     year = years, frequency = frequency,
+                     years = years, frequency = frequency,
                      discard_rate = discard_rate, ... = ...)
   return(object)
 })
@@ -209,19 +209,19 @@ setMethod(chr,
   ### update object if arguments provided
   object <- chr_calc(object = object,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-                     year = years, frequency = frequency,
+                     years = years, frequency = frequency,
                      discard_rate = discard_rate, ... = ...)
   return(object)
 
 })
-### object = chr, A/I/F/b/m = comp_A/I/F/b/m -> check validity & update
+### object = chr, A/I/F/b/m = A/I/F/b/m -> check validity & update
 #' @rdname chr
 #' @usage NULL
 #' @export
 setMethod(chr,
           signature = c(object = "chr",
-                        A = "comp_A", I = "comp_I", F = "F",
-                        b = "comp_b", m = "comp_m"),
+                        A = "A", I = "I", F = "F",
+                        b = "b", m = "m"),
           function(object,
                    A = object@A, I = object@I, F = object@F,
                    b = object@b, m = object@m,
@@ -237,7 +237,7 @@ setMethod(chr,
   object <- chr_calc(object = object,
                      A = A, I = I, F = F, b = b, m = m,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-                     year = years, frequency = frequency,
+                     years = years, frequency = frequency,
                      discard_rate = discard_rate, ... = ...)
   return(object)
 })

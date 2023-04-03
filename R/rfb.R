@@ -1,8 +1,8 @@
-#' @include comp_r.R
-#' @include comp_f.R
-#' @include comp_b.R
-#' @include comp_m.R
-#' @include comp_A.R
+#' @include r.R
+#' @include f.R
+#' @include b.R
+#' @include m.R
+#' @include A.R
 #' @importFrom icesAdvice icesRound
 #' @importFrom utils capture.output tail
 NULL
@@ -47,11 +47,11 @@ setClass(
     advice_metric = "character",
     frequency = "character",
     years = "numeric",
-    A = "comp_A",
-    r = "comp_r",
-    f = "comp_f",
-    b = "comp_b",
-    m = "comp_m",
+    A = "A",
+    r = "r",
+    f = "f",
+    b = "b",
+    m = "m",
     cap = "logical",
     cap_lower = "numeric",
     cap_upper = "numeric",
@@ -91,15 +91,15 @@ setClass(
 #' 
 #' The function requires the elements of the rfb rule: A (the reference)
 #' catch, r (the biomass index ratio), f (the fising pressure proxy), 
-#' b (the biomass safeguard) and m (the multiplier). See the [comp_A()], 
-#' [comp_r()], [comp_f()], [comp_b()], and [comp_m()] help files for details.
+#' b (the biomass safeguard) and m (the multiplier). See the [A()], 
+#' [r()], [f()], [b()], and [m()] help files for details.
 #' 
 #' @param object Optional. An object of class \code{rfb}.
-#' @param A The reference catch. Should be an object of class \code{comp_A}, see [comp_A()].
-#' @param r The biomass index ratio. Should be an object of class \code{comp_r}, see [comp_r()].
-#' @param f The fishing pressure proxy. Should be an object of class \code{comp_f}, see [comp_f()].
-#' @param b The biomass safeguard. Should be an object of class \code{comp_b}, see [comp_b()].
-#' @param m The multiplier. Should be an object of class \code{comp_m}, see [comp_m()].
+#' @param A The reference catch. Should be an object of class \code{A}, see [A()].
+#' @param r The biomass index ratio. Should be an object of class \code{r}, see [r()].
+#' @param f The fishing pressure proxy. Should be an object of class \code{f}, see [f()].
+#' @param b The biomass safeguard. Should be an object of class \code{b}, see [b()].
+#' @param m The multiplier. Should be an object of class \code{m}, see [m()].
 #' @param cap \code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}
 #' @param cap_upper Optional. \code{numeric}. The maximum allowed increase in the catch advice in \%. Default to +20.
 #' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.
@@ -140,14 +140,14 @@ setGeneric(name = "rfb",
                           ...) 
              standardGeneric("rfb"),
            signature = c("object", "A", "r", "f", "b", "m"))
-### object = missing, A/r/f/b/m = comp_A/r/f/b/m
+### object = missing, A/r/f/b/m = A/r/f/b/m
 #' @rdname rfb
 #' @usage NULL
 #' @export
 setMethod(rfb,
           signature = c(object = "missing", 
-                        A = "comp_A", r = "comp_r", f = "comp_f", b = "comp_b",
-                        m = "comp_m"),
+                        A = "A", r = "r", f = "f", b = "b",
+                        m = "m"),
           function(A, r, f, b, m,
                    cap,
                    cap_upper, cap_lower,
@@ -206,14 +206,14 @@ setMethod(rfb,
   return(object)
   
 })
-### object = rfb, A/r/f/b/m = comp_A/r/f/b/m -> check validity & update
+### object = rfb, A/r/f/b/m = A/r/f/b/m -> check validity & update
 #' @rdname rfb
 #' @usage NULL
 #' @export
 setMethod(rfb,
           signature = c(object = "rfb", 
-                        A = "comp_A", r = "comp_r", f = "comp_f", 
-                        b = "comp_b", m = "comp_m"),
+                        A = "A", r = "r", f = "f", 
+                        b = "b", m = "m"),
           function(object, 
                    A = object@A, r = object@r, f = object@f, 
                    b = object@b, m = object@m,
@@ -254,7 +254,7 @@ rfb_calc <- function(object = new("rfb"),
   if (!missing(f)) object@f <- rfb_f(f)
   if (!missing(b)) object@b <- rfb_b(b)
   if (!missing(m)) {
-    object@m <- comp_m(m)
+    object@m <- m(m)
   } else if (is.na(object@m@value)) {
     ### use default multiplier if missing
     object@m <- rfb_m()

@@ -1,5 +1,5 @@
 #' @include generics.R
-#' @include comp_f.R
+#' @include f.R
 #' @importFrom icesAdvice icesRound
 NULL
 
@@ -89,7 +89,7 @@ setClass(
 #' HR(HR(df))
 #' 
 #' # plot harvest rate
-#' plot(HR(df, units_catch = "tonnes", units_index = "kg/hr"))
+#' # plot(HR(df, units_catch = "tonnes", units_index = "kg/hr"))
 #' 
 #' @export
 setGeneric(
@@ -249,7 +249,7 @@ setClass(
     yr_ref = "numeric",
     units = "character",
     HR = "HR",
-    indicator = "comp_f",
+    indicator = "f",
     hcr = "character"
   ),
   prototype = list(
@@ -262,7 +262,7 @@ setClass(
     yr_ref = NA_real_,
     units = NA_character_,
     HR = new("HR"),
-    indicator = new("comp_f"),
+    indicator = new("f"),
     hcr = "chr"
   )
 )
@@ -274,12 +274,12 @@ setClass(
 #'
 #' This function calculates the target harvest rate for chr rule.
 #' 
-#' Usually, this functions is used by providing a time series of (relative) harvest rate values (see \code{\link{HR}}) and a length-based indicator based on the mean catch length (see \code{\link{comp_f}}). The functions then finds those years where the indicator values is above 1, indicating that the fishing pressure is likely below Fmsy, extracts the corresponding (relative) harvest rate values for these years, and returns the average of these values as the target harvest rate. Alternatively, years can directly be specified with the argument \code{yr_ref} and the target harvest rate is then calculated as the average of the (relative) harvest rates for these years. See the ICES technical guidelines (ICES, 2022) for details.
+#' Usually, this functions is used by providing a time series of (relative) harvest rate values (see \code{\link{HR}}) and a length-based indicator based on the mean catch length (see \code{\link{f}}). The functions then finds those years where the indicator values is above 1, indicating that the fishing pressure is likely below Fmsy, extracts the corresponding (relative) harvest rate values for these years, and returns the average of these values as the target harvest rate. Alternatively, years can directly be specified with the argument \code{yr_ref} and the target harvest rate is then calculated as the average of the (relative) harvest rates for these years. See the ICES technical guidelines (ICES, 2022) for details.
 #' 
 #' If an object of class \code{F} is provided, its validity is checked.
 #'
 #' @param object The time series with (relative) harvest rate values. See \code{\link{HR}}.
-#' @param indicator The length based indicator. See \code{\link{comp_f}}.
+#' @param indicator The length based indicator. See \code{\link{f}}.
 #' @param units Optional. The units of the harvest rate. Can be derived automatically from argument \code{HR}.
 #' @param yr_ref Optional. Allows direct specification of years to include in the calculation instead of using \code{indicator}.
 #' @param ... Additional arguments. Not currently used.
@@ -321,7 +321,7 @@ setGeneric(
 #' @usage NULL
 #' @export
 setMethod(F,
-          signature = c(object = "HR", indicator = "comp_f"),
+          signature = c(object = "HR", indicator = "f"),
           function(object, indicator, yr_ref, units, ...) {
   object <- calc_F(HR = object, indicator = indicator, units = units,
                    yr_ref = yr_ref)
@@ -372,7 +372,7 @@ setMethod(F,
 
 
 ### ------------------------------------------------------------------------ ###
-### comp_F calculation ####
+### F calculation ####
 ### ------------------------------------------------------------------------ ###
 ### calculate target harvest rate
 calc_F <- function(object = new("F"), HR, indicator, yr_ref, units) {

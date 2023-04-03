@@ -2,15 +2,15 @@
 NULL
 
 ### ------------------------------------------------------------------------ ###
-### comp_A class ####
+### A class ####
 ### ------------------------------------------------------------------------ ###
-#' @title comp_A-class
+#' @title A-class
 #' 
 #' @description An S4 class to represent component Ay (the last advice or reference catch) 
 #' of the rfb, rb, and chr rules.
 #' 
 #' The classes \code{rfb_A}, \code{rb_A}, and \code{chr_A} inherit from 
-#' \code{comp_A} and their only difference is that the slot \code{hcr}
+#' \code{A} and their only difference is that the slot \code{hcr}
 #' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 #' 
 #' @slot value The value of component Ay (reference catch)
@@ -20,10 +20,10 @@ NULL
 #' @slot basis Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch
 #' @slot advice_metric Advice metric, 'catch' or 'landings'.
 #' 
-#' @name comp_A-class
+#' @name A-class
 #' @export
 setClass(
-  Class = "comp_A",
+  Class = "A",
   slots = c(
     value = "numeric",
     units = "character",
@@ -47,21 +47,21 @@ setClass(
   )
 )
 
-#' @rdname comp_A-class
+#' @rdname A-class
 setClass(Class = "rfb_A", 
-         contains = "comp_A",
+         contains = "A",
          prototype = list(hcr = "rfb"))
-#' @rdname comp_A-class
+#' @rdname A-class
 setClass(Class = "rb_A", 
-         contains = "comp_A",
+         contains = "A",
          prototype = list(hcr = "rb"))
-#' @rdname comp_A-class
+#' @rdname A-class
 setClass(Class = "chr_A", 
-         contains = "comp_A",
+         contains = "A",
          prototype = list(hcr = "chr"))
 
 ### validity checks
-setValidity("comp_A", function(object) {
+setValidity("A", function(object) {
   if (!identical(length(object@value), 1L)) {
     "slot value must be of length 1"
   } else if (!identical(length(object@units), 1L)) {
@@ -84,7 +84,7 @@ setValidity("comp_A", function(object) {
 })
 
 ### ------------------------------------------------------------------------ ###
-### comp_A methods ####
+### A methods ####
 ### ------------------------------------------------------------------------ ###
 #' rfb/rb/chr rule - component Ay (reference catch or advice)
 #'
@@ -95,10 +95,10 @@ setValidity("comp_A", function(object) {
 #' - a single value representing a reference catch, e.g. the previous catch advice
 #' - a vector of historical values which are used to calculate the average catch
 #' - a data.frame with columns 'year' and either of 'advice', 'catch', 'landings'
-#' - an object of class `comp_A`
+#' - an object of class `A`
 #' 
 #' \code{rfb_A()}, \code{rb_A()}, and \code{chr_A()} are aliases for
-#' \code{comp_A()} in which the \code{hcr} argument is already set to 
+#' \code{A()} in which the \code{hcr} argument is already set to 
 #' 'rfb', 'rb', or 'chr'.
 #' 
 #' The reference catch is set following ICES (2022).
@@ -120,33 +120,33 @@ setValidity("comp_A", function(object) {
 #' ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 #'
 #'
-#' @return An object of class \code{comp_A}
+#' @return An object of class \code{A}
 #' 
-#' @name comp_A
+#' @name A
 #' @export
 NULL
 
-#' @rdname comp_A
+#' @rdname A
 setGeneric(
-  name = "comp_A",
+  name = "A",
   def = function(object, value, units, hcr, data, avg_years, 
                  basis = "advice", advice_metric = "catch", ...) {
-    standardGeneric("comp_A")
+    standardGeneric("A")
   },
   signature = c("object")
 )
 
 ### numeric -> use as Ay
-#' @rdname comp_A
+#' @rdname A
 #' @usage NULL
 #' @keywords internal
-setMethod(comp_A,
+setMethod(A,
   signature = c(object = "numeric"),
   function(object, value, units, hcr, data, avg_years, basis,
            advice_metric, ...) {
     value <- object
-    object <- new(Class = "comp_A")
-    comp_A_calc(
+    object <- new(Class = "A")
+    A_calc(
       object = object, value = value, units = units, hcr = hcr, 
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
@@ -155,16 +155,16 @@ setMethod(comp_A,
 )
 
 ### numeric -> use as Ay
-#' @rdname comp_A
+#' @rdname A
 #' @usage NULL
 #' @keywords internal
-setMethod(comp_A,
+setMethod(A,
   signature = c(object = "data.frame"),
   function(object, value, units, hcr, data, avg_years, basis,
            advice_metric, ...) {
     data <- object
-    object <- new(Class = "comp_A")
-    comp_A_calc(
+    object <- new(Class = "A")
+    A_calc(
       object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
@@ -172,16 +172,16 @@ setMethod(comp_A,
   }
 )
 
-### comp_A -> validate and update if needed
-#' @rdname comp_A
+### A -> validate and update if needed
+#' @rdname A
 #' @usage NULL
 #' @keywords internal
-setMethod(comp_A,
-  signature = c(object = "comp_A"),
+setMethod(A,
+  signature = c(object = "A"),
   function(object, value, units, hcr, data, avg_years, basis, 
            advice_metric, ...) {
     validObject(object)
-    comp_A_calc(
+    A_calc(
       object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       advice_metric = advice_metric, ...
@@ -190,13 +190,13 @@ setMethod(comp_A,
 )
 
 ### ------------------------------------------------------------------------ ###
-### comp_A calculation ####
+### A calculation ####
 ### ------------------------------------------------------------------------ ###
-comp_A_calc <- function(object, value, units, hcr, data, avg_years, 
+A_calc <- function(object, value, units, hcr, data, avg_years, 
                          basis, advice_metric, ...) {
   
   ### create empty object, if missing
-  if (missing(object)) object <- new(Class = "comp_A")
+  if (missing(object)) object <- new(Class = "A")
   
   ### format/check/insert values, if provided
   if (!missing(units))
@@ -285,11 +285,11 @@ comp_A_calc <- function(object, value, units, hcr, data, avg_years,
 ### ------------------------------------------------------------------------ ###
 ### alias ####
 ### ------------------------------------------------------------------------ ###
-### define aliases rfb_A, rb_A, and chr_A for comp_A
-### set object signature to ANY and let comp_A deal with method dispatch
+### define aliases rfb_A, rb_A, and chr_A for A
+### set object signature to ANY and let A deal with method dispatch
 
 ### alias for rfb rule
-#' @rdname comp_A
+#' @rdname A
 #' @export
 setGeneric(
   name = "rfb_A",
@@ -299,7 +299,7 @@ setGeneric(
   },
   signature = c("object")
 )
-#' @rdname comp_A
+#' @rdname A
 #' @usage NULL
 #' @export
 setMethod(rfb_A,
@@ -307,7 +307,7 @@ setMethod(rfb_A,
   function(object, value, units, hcr = "rfb", data, avg_years,
            basis, advice_metric, ...) {
     hcr <- match.arg(hcr)
-    object <- comp_A(
+    object <- A(
       object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       ...
@@ -318,7 +318,7 @@ setMethod(rfb_A,
 )
 
 ### alias for rb rule
-#' @rdname comp_A
+#' @rdname A
 #' @export
 setGeneric(
   name = "rb_A",
@@ -328,7 +328,7 @@ setGeneric(
   },
   signature = c("object")
 )
-#' @rdname comp_A
+#' @rdname A
 #' @usage NULL
 #' @export
 setMethod(rb_A,
@@ -336,7 +336,7 @@ setMethod(rb_A,
   function(object, value, units, hcr = "rb", data, avg_years,
            basis, ...) {
     hcr <- match.arg(hcr)
-    object <- comp_A(
+    object <- A(
       object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       ...
@@ -347,7 +347,7 @@ setMethod(rb_A,
 )
 
 ### alias for chr rule
-#' @rdname comp_A
+#' @rdname A
 #' @export
 setGeneric(
   name = "chr_A",
@@ -357,7 +357,7 @@ setGeneric(
   },
   signature = c("object")
 )
-#' @rdname comp_A
+#' @rdname A
 #' @usage NULL
 #' @export
 setMethod(chr_A,
@@ -365,7 +365,7 @@ setMethod(chr_A,
   function(object, value, hcr = "chr", data, avg_years,
            basis, ...) {
     hcr <- match.arg(hcr)
-    object <- comp_A(
+    object <- A(
       object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
       ...
@@ -380,21 +380,21 @@ setMethod(chr_A,
 ### ------------------------------------------------------------------------ ###
 ### value
 setMethod(
-  f = "value", signature = "comp_A",
+  f = "value", signature = "A",
   definition = function(object) {
     return(object@value)
   }
 )
 
 ### print
-setMethod(f = "print", signature = "comp_A", 
+setMethod(f = "print", signature = "A", 
           definition = function(x) {
             cat(paste0("An object of class \"", class(x), "\".\n",
                        "Value: ", x@value, "\n"))
 })
 
 ### show
-setMethod(f = "show", signature = "comp_A", 
+setMethod(f = "show", signature = "A", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",
                        "Value: ", object@value, "\n"))
@@ -404,7 +404,7 @@ setMethod(f = "show", signature = "comp_A",
 #' @rdname summary
 #' @export
 setMethod(
-  f = "summary", signature = "comp_A",
+  f = "summary", signature = "A",
   definition = function(object) {
     txt <- paste0(
       paste(rep("-", 50), collapse = ""), "\n",
@@ -429,7 +429,7 @@ setMethod(
 #' @usage NULL
 #' @export
 setMethod(
-  f = "advice", signature = "comp_A",
+  f = "advice", signature = "A",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n")
     if (identical(object@basis, "advice")) {

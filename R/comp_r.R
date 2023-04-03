@@ -3,14 +3,14 @@
 NULL
 
 ### ------------------------------------------------------------------------ ###
-### comp_r class ####
+### r class ####
 ### ------------------------------------------------------------------------ ###
 
-#' @title comp_r-class
+#' @title r-class
 #' 
 #' @description  An S4 class to represent component r of the rfb and rb rules.
 #' 
-#' This class (\code{comp_r}) stores the input for component r (the index ratio
+#' This class (\code{r}) stores the input for component r (the index ratio
 #' ) as well as the resulting r value. 
 #' 
 #' @slot value The value of component r
@@ -22,10 +22,10 @@ NULL
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot hcr \code{character}. The harvest control rule (hcr) for which the biomass safeguard is used. One of 'rfb' or 'rb'.
 #' 
-#' @name comp_r-class
-#' @title comp_r
+#' @name r-class
+#' @title r
 #' @export
-setClass(Class = "comp_r", 
+setClass(Class = "r", 
          slots = c(value = "numeric",
                    n0 = "numeric", n1 = "numeric", n2 = "numeric",
                    yr_last = "numeric",
@@ -42,16 +42,16 @@ setClass(Class = "comp_r",
                           n1_mean = NA_real_, n2_mean = NA_real_,
                           units = NA_character_,
                           hcr = NA_character_))
-#' @rdname comp_r-class
+#' @rdname r-class
 setClass(Class = "rfb_r", 
-         contains = "comp_r",
+         contains = "r",
          prototype = list(hcr = "rfb"))
-#' @rdname comp_r-class
+#' @rdname r-class
 setClass(Class = "rb_r", 
-         contains = "comp_r",
+         contains = "r",
          prototype = list(hcr = "rb"))
 ### ------------------------------------------------------------------------ ###
-### comp_r methods ####
+### r methods ####
 ### ------------------------------------------------------------------------ ###
 
 #' rfb/rb rule - component r (index ratio)
@@ -66,7 +66,7 @@ setClass(Class = "rb_r",
 #' 
 #' The index ratio is identical in the rfb and rb rules. 
 #' \code{rfb_r()} and \code{rb_b()} are aliases for 
-#' \code{comp_r()} with identical arguments and functionality.
+#' \code{r()} with identical arguments and functionality.
 #'
 #' @param object The biomass index. Can be a \code{data.frame} with columns 'data' and 'index' or an \code{FLQuant} object defined by \code{FLCore}.
 #' @param n0 Optional. Time lag between the last index year and the last year to be used. By default, the last index year is used (\code{n0=0})
@@ -91,7 +91,7 @@ setClass(Class = "rb_r",
 #' Fischer, S. H., De Oliveira, J. A. A., and Kell, L. T. 2020. Linking the performance of a data-limited empirical catch rule to life-history traits. ICES Journal of Marine Science, 77: 1914--1926. \url{https://doi.org/10.1093/icesjms/fsaa054}.
 #'
 #'
-#' @return An object of class \code{comp_r}
+#' @return An object of class \code{r}
 #'
 #' @examples
 #' # If the value of r is known
@@ -106,27 +106,27 @@ setClass(Class = "rb_r",
 #' plot(rfb_r(df_idx, units = "kg/hr"))
 #' 
 #' @export
-setGeneric(name = "comp_r", 
+setGeneric(name = "r", 
            def = function(object, n0, n1, n2, units, hcr, ...) 
-             standardGeneric("comp_r"),
+             standardGeneric("r"),
            signature = c("object"))
 
 ### FLQuant -> convert to data.frame
-# #' @rdname comp_r
-# setMethod(comp_r, 
+# #' @rdname r
+# setMethod(r, 
 #           signature = c(object = "FLQuant"), 
 #           function(object, n0, n1, n2, units, hcr, ...) {
 #   ### convert FLQuant into data.frame
 #   idx <- as.data.frame(object)[, c("year", "data")]
 #   names(idx)[2] <- "index"
-#   comp_r(idx, n0 = n0, n1 = n1, n2 = n2, units = units, hcr = hcr,
+#   r(idx, n0 = n0, n1 = n1, n2 = n2, units = units, hcr = hcr,
 #          ...)
 # })
 ### data.frame -> use as index
-#' @rdname comp_r
+#' @rdname r
 #' @usage NULL
 #' @export
-setMethod(comp_r, 
+setMethod(r, 
           signature = c(object = "data.frame"),
           function(object, n0, n1, n2, units, hcr, ...) {
   idx <- object
@@ -143,19 +143,19 @@ setMethod(comp_r,
       stop("Column \"index\" missing in idx")
     }
   }
-  comp_r_calc(idx = idx, n0 = n0, n1 = n1, n2 = n2, units = units, 
+  r_calc(idx = idx, n0 = n0, n1 = n1, n2 = n2, units = units, 
               hcr = hcr, ...)
 })
 ### numeric -> use as ratio
-#' @rdname comp_r
+#' @rdname r
 #' @usage NULL
 #' @export
-setMethod(comp_r, 
+setMethod(r, 
           signature = c(object = "numeric"), 
           function(object, ...) {
   
-  ### create empty comp_r object
-  res <- new("comp_r")
+  ### create empty r object
+  res <- new("r")
   
   ### remove parameters
   res@n0 <- NA_real_
@@ -167,59 +167,59 @@ setMethod(comp_r,
   
   return(res)
 })
-### comp_r -> check validity and update values if necessary
-#' @rdname comp_r
+### r -> check validity and update values if necessary
+#' @rdname r
 #' @usage NULL
 #' @export
-setMethod(comp_r, 
-          signature = c(object = "comp_r"), 
+setMethod(r, 
+          signature = c(object = "r"), 
           function(object, n0, n1, n2, units, hcr, ...) {
   ### check validity
   validObject(object)
-  ### run comp_r() to update slots and recalculate if needed
-  comp_r_calc(object, n0, n1, n2, units, hcr, ...)
+  ### run r() to update slots and recalculate if needed
+  r_calc(object, n0, n1, n2, units, hcr, ...)
 })
 
 ### ------------------------------------------------------------------------ ###
 ### aliases ####
 ### ------------------------------------------------------------------------ ###
-### define aliases rfb_r and rb_r for comp_r
-### set object signature to ANY and let comp_r deal with method dispatch
+### define aliases rfb_r and rb_r for r
+### set object signature to ANY and let r deal with method dispatch
 
 ### rfb_r
-#' @rdname comp_r
+#' @rdname r
 #' @export
 setGeneric(name = "rfb_r", 
            def = function(object, n0, n1, n2, units, hcr = "rfb", ...) 
              standardGeneric("rfb_r"),
            signature = c("object"))
-#' @rdname comp_r
+#' @rdname r
 #' @usage NULL
 #' @export
 setMethod(rfb_r, 
           signature = c(object = "ANY"),
           function(object, n0, n1, n2, units, hcr = "rfb", ...) {
   hcr <- match.arg(hcr)
-  object <- comp_r(object = object, n0 = n0, n1 = n1, n2 = n2, units = units,
+  object <- r(object = object, n0 = n0, n1 = n1, n2 = n2, units = units,
                    hcr = hcr, ... = ...)
   class(object) <- "rfb_r"
   return(object)
 })
 ### rb_r
-#' @rdname comp_r
+#' @rdname r
 #' @export
 setGeneric(name = "rb_r", 
            def = function(object, n0, n1, n2, units, hcr = "rb", ...) 
              standardGeneric("rb_r"),
            signature = c("object"))
-#' @rdname comp_r
+#' @rdname r
 #' @usage NULL
 #' @export
 setMethod(rb_r, 
           signature = c(object = "ANY"),
           function(object, n0, n1, n2, units, hcr = "rb", ...) {
   hcr <- match.arg(hcr)
-  object <- comp_r(object = object, n0 = n0, n1 = n1, n2 = n2, units = units,
+  object <- r(object = object, n0 = n0, n1 = n1, n2 = n2, units = units,
                    hcr = hcr, ... = ...)
   class(object) <- "rb_r"
   return(object)
@@ -228,7 +228,7 @@ setMethod(rb_r,
 ### ------------------------------------------------------------------------ ###
 ### validity checks ####
 ### ------------------------------------------------------------------------ ###
-setValidity("comp_r", function(object) {
+setValidity("r", function(object) {
   if (any(c(length(object@n0), length(object@n0), length(object@n0)) != 1)) {
     "n0, n1, and n2 must each be of length 1"
   } else if (!identical(length(object@value), 1L)) {
@@ -242,9 +242,9 @@ setValidity("comp_r", function(object) {
 
 
 ### ------------------------------------------------------------------------ ###
-### comp_r calculation ####
+### r calculation ####
 ### ------------------------------------------------------------------------ ###
-comp_r_calc <- function(object, idx, n0, n1, n2, units, hcr) {
+r_calc <- function(object, idx, n0, n1, n2, units, hcr) {
   ### create empty rfb_r object, if missing
   if (missing(object)) object <- new("rfb_r")
   if (!missing(hcr)) {
@@ -298,7 +298,7 @@ comp_r_calc <- function(object, idx, n0, n1, n2, units, hcr) {
 
 #' @rdname summary
 #' @export
-setMethod(f = "summary", signature = "comp_r", 
+setMethod(f = "summary", signature = "r", 
   definition = function(object) {
     txt <- (paste0(paste(rep("-", 50), collapse = ""), "\n",
                "component r:\n",
@@ -318,27 +318,27 @@ setMethod(f = "summary", signature = "comp_r",
 
 #' @rdname value
 #' @export
-setMethod(f = "value", signature = "comp_r", 
+setMethod(f = "value", signature = "r", 
           definition = function(object) {
   return(object@value)
 })
 
 #' @rdname value
 #' @export
-setMethod(f = "value", signature = "comp_b", 
+setMethod(f = "value", signature = "b", 
           definition = function(object) {
             return(object@value)
           })
 
 ### print
-setMethod(f = "print", signature = "comp_r", 
+setMethod(f = "print", signature = "r", 
           definition = function(x) {
             cat(paste0("An object of class \"", class(x), "\".\n",
                        "Value: ", x@value, "\n"))
 })
 
 ### show
-setMethod(f = "show", signature = "comp_r", 
+setMethod(f = "show", signature = "r", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",
                        "Value: ", object@value, "\n"))
@@ -360,7 +360,7 @@ setMethod(f = "show", signature = "comp_r",
 #' @usage NULL
 #' @export
 setMethod(
-  f = "advice", signature = "comp_r",
+  f = "advice", signature = "r",
   definition = function(object) {
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n",
                   "Stock biomass trend\n",
