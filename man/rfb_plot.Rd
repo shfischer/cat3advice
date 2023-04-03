@@ -2,25 +2,25 @@
 % Please edit documentation in R/plotting.R
 \name{rfb_plot}
 \alias{rfb_plot}
-\alias{plot,comp_r,missing-method}
-\alias{plot,comp_b,missing-method}
-\alias{plot,comp_r,comp_b-method}
-\alias{plot,comp_b,comp_r-method}
-\alias{plot,comp_f,missing-method}
+\alias{plot,r,missing-method}
+\alias{plot,b,missing-method}
+\alias{plot,r,b-method}
+\alias{plot,b,r-method}
+\alias{plot,f,missing-method}
 \alias{plot,F,missing-method}
 \title{Plot elements of the rfb/rb/chr rule}
 \usage{
 plot(x, y, y_label, ...)
 
-\S4method{plot}{comp_r,missing}(x, y, y_label, ...)
+\S4method{plot}{r,missing}(x, y, y_label, ...)
 
-\S4method{plot}{comp_b,missing}(x, y, y_label, ...)
+\S4method{plot}{b,missing}(x, y, y_label, ...)
 
-\S4method{plot}{comp_r,comp_b}(x, y, y_label, ...)
+\S4method{plot}{r,b}(x, y, y_label, ...)
 
-\S4method{plot}{comp_b,comp_r}(x, y, y_label, ...)
+\S4method{plot}{b,r}(x, y, y_label, ...)
 
-\S4method{plot}{comp_f,missing}(x, y, y_label, ...)
+\S4method{plot}{f,missing}(x, y, y_label, ...)
 
 \S4method{plot}{F,missing}(x, y, y_label, ...)
 }

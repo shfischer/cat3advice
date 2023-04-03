@@ -2,9 +2,9 @@
 % Please edit documentation in R/rb.R
 \name{rb}
 \alias{rb}
-\alias{rb,missing,comp_A,comp_r,comp_b,comp_m-method}
+\alias{rb,missing,A,r,b,m-method}
 \alias{rb,rb,missing,missing,missing,missing-method}
-\alias{rb,rb,comp_A,comp_r,comp_b,comp_m-method}
+\alias{rb,rb,A,r,b,m-method}
 \title{rb rule}
 \usage{
 rb(
@@ -25,13 +25,13 @@ rb(
 \arguments{
 \item{object}{Optional. An object of class \code{rfb}.}
 
-\item{A}{The reference catch. Should be an object of class \code{comp_A}, see [comp_A()].}
+\item{A}{The reference catch. Should be an object of class \code{A}, see [A()].}
 
-\item{r}{The biomass index ratio. Should be an object of class \code{comp_r}, see [comp_r()].}
+\item{r}{The biomass index ratio. Should be an object of class \code{r}, see [r()].}
 
-\item{b}{The biomass safeguard. Should be an object of class \code{comp_b}, see [comp_b()].}
+\item{b}{The biomass safeguard. Should be an object of class \code{b}, see [b()].}
 
-\item{m}{The multiplier. Should be an object of class \code{comp_m}, see [comp_m()].}
+\item{m}{The multiplier. Should be an object of class \code{m}, see [m()].}
 
 \item{cap}{\code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}}
 
@@ -56,8 +56,8 @@ This function applies the rb rule.
 \details{
 The function requires the elements of the rb rule: A (the reference)
 catch, r (the biomass index ratio), f (the fising pressure proxy), 
-b (the biomass safeguard) and m (the multiplier). See the [comp_A()], 
-[comp_r()], [comp_b()], and [comp_m()] help files for details.
+b (the biomass safeguard) and m (the multiplier). See the [A()], 
+[r()], [b()], and [m()] help files for details.
 }
 \section{Warning}{
 

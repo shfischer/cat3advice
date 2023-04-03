@@ -6,7 +6,7 @@
 \title{An S4 class to represent the chr rule.}
 \description{
 This class contains the components of the chr rule 
-(\code{\link{comp_I}}, \code{\link{F}}, \code{comp_b}, \code{comp_m}).
+(\code{\link{I}}, \code{\link{F}}, \code{b}, \code{m}).
 }
 \section{Slots}{
 

@@ -2,10 +2,10 @@
 % Please edit documentation in R/chr.R
 \name{chr}
 \alias{chr}
-\alias{chr,missing,comp_A,comp_I,F,comp_b,comp_m-method}
+\alias{chr,missing,A,I,F,b,m-method}
 \alias{chr,missing,numeric,numeric,numeric,numeric,numeric-method}
 \alias{chr,chr,missing,missing,missing,missing,missing-method}
-\alias{chr,chr,comp_A,comp_I,F,comp_b,comp_m-method}
+\alias{chr,chr,A,I,F,b,m-method}
 \title{chr rule}
 \usage{
 chr(
@@ -27,15 +27,15 @@ chr(
 \arguments{
 \item{object}{Optional. An object of class \code{chr}.}
 
-\item{A}{\code{\link{comp_A}}. The reference catch (previous catch advice). Required for calculating change in advice and for the application of the stability clause.}
+\item{A}{\code{\link{A}}. The reference catch (previous catch advice). Required for calculating change in advice and for the application of the stability clause.}
 
-\item{I}{\code{\link{comp_I}}. The biomass index value.}
+\item{I}{\code{\link{I}}. The biomass index value.}
 
 \item{F}{\code{\link{F}}. The harvest rate target.}
 
-\item{b}{\code{\link{comp_b}}. The biomass safeguard.}
+\item{b}{\code{\link{b}}. The biomass safeguard.}
 
-\item{m}{\code{\link{comp_m}}. The multiplier.}
+\item{m}{\code{\link{m}}. The multiplier.}
 
 \item{cap}{The uncertainty cap (stability clause). Defaults to 'conditional', i.e. it is only considered when b=1.}
 
