@@ -102,6 +102,19 @@ Usually, the reference catch is the previous advised catch. Alternatively,
 if the rfb/rb/chr rule is applied the first time, it can be based on an
 average of historical catches.
 }
+\examples{
+# data.frame with advice/catch history
+df <- data.frame(year = 2018:2022,
+                 advice = c(3257, 3648, 2721, 2177, 1742),
+                 catch = c(2513, 2091, 1887, 1614, NA),
+                 landings = c(1880, 1725, 1373, 1403, NA))
+# get reference catch (advice)
+A <- A(object = df, basis = "advice", units = "tonnes", advice_metric = "catch")
+advice(A)
+# use average catch
+A(object = df, basis = "average catch", avg_years = 3, units = "tonnes", advice_metric = "catch")
+
+}
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 }

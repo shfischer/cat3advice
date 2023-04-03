@@ -66,6 +66,33 @@ stability clause, etc) unless the changes are supported by case-specific
 simulations.
 }
 
+\examples{
+#' # calculate elements of rb rule for plaice
+# reference catch
+data(ple7e_catch)
+A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
+# biomass index trend
+data(ple7e_idx)
+r <- r(ple7e_idx)
+# biomass safeguard
+b <- b(ple7e_idx)
+# multiplier
+m <- m(hcr = "rb", k = 0.1)
+# apply rb rule
+advice <- rb(A = A, r = r, b = b, m = m, discard_rate = 27)
+advice
+advice(advice)
+
+### application in subsequent years (without updating reference levels)
+A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
+r <- r(ple7e_idx)
+b <- b(ple7e_idx, yr_ref = 2007) # use reference year for Itrigger
+m <- m(0.95) # keep multiplier
+advice <- rb(A = A, r = r, b = b, m = m, discard_rate = 27)
+advice
+advice(advice)
+
+}
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 

@@ -121,6 +121,32 @@ setClass(
 #'
 #'
 #' @return An object of class \code{rb}.
+#' 
+#' @examples 
+#' #' # calculate elements of rb rule for plaice
+#' # reference catch
+#' data(ple7e_catch)
+#' A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
+#' # biomass index trend
+#' data(ple7e_idx)
+#' r <- r(ple7e_idx)
+#' # biomass safeguard
+#' b <- b(ple7e_idx)
+#' # multiplier
+#' m <- m(hcr = "rb", k = 0.1)
+#' # apply rb rule
+#' advice <- rb(A = A, r = r, b = b, m = m, discard_rate = 27)
+#' advice
+#' advice(advice)
+#' 
+#' ### application in subsequent years (without updating reference levels)
+#' A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
+#' r <- r(ple7e_idx)
+#' b <- b(ple7e_idx, yr_ref = 2007) # use reference year for Itrigger
+#' m <- m(0.95) # keep multiplier
+#' advice <- rb(A = A, r = r, b = b, m = m, discard_rate = 27)
+#' advice
+#' advice(advice)
 #'
 #' @name rb
 #' @export

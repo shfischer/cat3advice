@@ -49,10 +49,19 @@ For application in ICES, do not change the defaults unless the change is support
 # Use a data.frame with index values
 df_idx <- data.frame(year = 2017:2021,
                      index = c(1.33, 1.13, 0.84, 0.60, 1.03))
-I(df_idx)
+I <- I(df_idx)
+I
+advice(I)
+
 
 # If only the value of the last biomass index is known
 I(1)
+
+# ple7e example data
+data(ple7e_idx)
+I <- I(ple7e_idx)
+advice(I)
+plot(I)
 
 }
 \references{

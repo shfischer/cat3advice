@@ -13,8 +13,6 @@
 \alias{summary,r-method}
 \title{summary}
 \usage{
-summary(object, ...)
-
 \S4method{summary}{A}(object)
 
 \S4method{summary}{f}(object)

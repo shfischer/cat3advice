@@ -201,9 +201,9 @@ setMethod(f = "print", signature = "HR",
 ### show
 setMethod(f = "show", signature = "HR", 
           definition = function(object) {
-            cat(paste0("An object of class \"", class(x), "\".\n",
+            cat(paste0("An object of class \"", class(object), "\".\n",
                        "Value(s): \n"))
-            print(x@value)
+            print(object@value)
           })
 
 ### summary
@@ -302,10 +302,37 @@ setClass(
 #' data(ple7e_hr)
 #' data(ple7e_f2)
 #' # calculate target harvest rate
-#' F(ple7e_hr, ple7e_f2)
+#' F <- F(ple7e_hr, ple7e_f2)
+#' F
+#' advice(F)
+#' plot(F)
 #'
 #' # use reference years when using in following years
 #' F(ple7e_hr, yr_ref = c(2016, 2019))
+#' 
+#' # full example with ple7e data
+#' data(ple7e_length)
+#' # calculate (pooled) length at first capture first
+#' lc <- Lc(data = ple7e_length, pool = 2017:2021)
+#' # calculate mean catch length
+#' lmean <- Lmean(data = data, Lc = lc, units = "mm")
+#' # reference length
+#' lref <- Lref(Lc = 264, Linf = 528)
+#' # calculate component f
+#' f <- f(Lmean = lmean, Lref = lref, units = "mm")
+#' # harvest rate
+#' data(ple7e_idx)
+#' data(ple7e_catch)
+#' df <- full_join(ple7e_catch, idx_df) # combine catch & index data
+#' hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr")
+#' # calculate (relative) target harvest rate
+#' F <- F(hr, f)
+#' F
+#' advice(F)
+#' plot(F)
+#' 
+#' # application in following years without updating target harvest rate
+#' F <- F(hr, yr_ref = c(2016, 2019))
 #' 
 #' @export
 setGeneric(

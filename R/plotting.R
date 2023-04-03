@@ -1,4 +1,5 @@
 #' @include generics.R
+#' @include r.R
 #' @importFrom ggplot2 ggplot geom_ribbon geom_line geom_vline aes coord_cartesian labs theme theme_bw element_text element_blank unit scale_linetype_manual scale_colour_manual scale_fill_manual facet_wrap
 #' @importFrom scales parse_format
 #' @importFrom dplyr select mutate bind_rows filter group_by summarise
@@ -287,6 +288,61 @@ setMethod(f = "plot", signature = c(x = "b", y = "r"),
   plot(x = y, y = x, y_label = y_label, ...)
 })
 
+### chr_I ####
+#' @rdname rfb_plot
+#' @export
+setMethod(f = "plot", signature = c(x = "I", y = "missing"), 
+          definition = function(x, y, y_label, ...) {
+            
+  object <- x
+  
+  ### check validity
+  . <- validObject(object)
+  
+  ### get range of years and index values
+  yr_min <- min(object@idx$year, na.rm = TRUE)
+  yr_max <- max(object@idx$year, na.rm = TRUE)
+  idx_min <- min(object@idx$index, na.rm = TRUE)
+  idx_max <- max(object@idx$index, na.rm = TRUE)
+  
+  ### index units
+  if (missing(y_label)) {
+    y_label <- "Biomass index"
+    if (!is.na(object@units))
+      y_label <- paste0(y_label, " in ", object@units)
+  }
+  
+  
+  ### create plot
+  p <- ggplot2::ggplot()
+  
+  ### add shaded area if high/low exist
+  if (all(c("low", "high") %in% names(object@idx))) {
+    idx_max_high <- max(object@idx$high, na.rm = TRUE)
+    if (isTRUE(idx_max_high > idx_max)) idx_max <- idx_max_high
+    p <- p +
+      ggplot2::geom_ribbon(data = object@idx,
+                           ggplot2::aes(x = year, ymin = low, ymax = high),
+                           fill = "#077c6c", alpha = 0.7, show.legend = FALSE)
+  }
+  p <- p +
+    ggplot2::geom_line(data = object@idx,
+                       ggplot2::aes(x = year, y = index),
+                       color = "#077c6c") +
+    ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1), 
+                             xlim = c(yr_min - 1, yr_max + 1), 
+                             expand = FALSE) +
+    ggplot2::labs(x = "", y = y_label, 
+                  title = "Biomass Index") +
+    ggplot2::theme_bw(base_size = 8) +
+    ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+                   axis.title.x = ggplot2::element_blank(),
+                   legend.position = "bottom",
+                   legend.key.height = ggplot2::unit(0.5, "lines"),
+                   plot.title = ggplot2::element_text(face = "bold", colour = "#097e6e"))
+  return(p)
+})
+
 ### rfb_f ####
 #' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "f", y = "missing"), 
@@ -477,7 +533,7 @@ setMethod(f = "plot", signature = c(x = "Lc"),
             
   p <- x@data %>%
     ggplot2::ggplot(aes(x = length, y = numbers)) +
-    ggplot2::geom_col() +
+    ggplot2::geom_col(na.rm = TRUE) +
     ggplot2::geom_col(
       data = dplyr::bind_rows(
         x@summary |> ### modal length
@@ -547,7 +603,7 @@ setMethod(
 
     p <- x@data %>%
       ggplot2::ggplot(aes(x = length, y = numbers)) +
-      ggplot2::geom_col() +
+      ggplot2::geom_col(na.rm = TRUE) +
       ggplot2::geom_vline(data = x@summary |>
                    tidyr::pivot_longer(c(Lc, Lmean)) |>
                    dplyr::mutate(name = factor(name, 
@@ -585,7 +641,7 @@ setMethod(
 ### harvest rate ####
 ### ------------------------------------------------------------------------ ###
 ### HR ####
-#' @rdname HR_plot
+#' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "HR"), 
           definition = function(x, y_label, 
                                 show.data = TRUE,

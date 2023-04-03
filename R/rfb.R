@@ -125,6 +125,44 @@ setClass(
 #' Fischer, S. H., De Oliveira, J. A. A., and Kell, L. T. 2020. Linking the performance of a data-limited empirical catch rule to life-history traits. ICES Journal of Marine Science, 77: 1914--1926. \url{https://doi.org/10.1093/icesjms/fsaa054}.
 #'
 #' @return An object of class \code{rfb}.
+#' 
+#' @examples 
+#' # calculate elements of rfb rule for plaice
+#' # reference catch
+#' data(ple7e_catch)
+#' A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
+#' # biomass index trend
+#' data(ple7e_idx)
+#' r <- r(ple7e_idx)
+#' plot(r)
+#' # fishing pressure proxy
+#' data(ple7e_length)
+#' lc <- Lc(data = ple7e_length, pool = 2017:2021)
+#' lmean <- Lmean(data = data, Lc = lc, units = "mm")
+#' lref <- Lref(Lc = 264, Linf = 585)
+#' f <- f(Lmean = lmean, Lref = lref, units = "mm")
+#' plot(f)
+#' # biomass safeguard
+#' b <- b(ple7e_idx)
+#' plot(b)
+#' plot(r, b)
+#' # multiplier
+#' m <- m(hcr = "rfb", k = 0.1)
+#' # apply rfb rule
+#' advice <- rfb(A = A, r = r, f = f, b = b, m = m, discard_rate = 27)
+#' advice
+#' advice(advice)
+#' 
+#' ### application in subsequent years (without updating reference levels)
+#' A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
+#' r <- r(ple7e_idx)
+#' lref <- Lref(344.25) # use previous value
+#' f <- f(Lmean = lmean, Lref = lref, units = "mm")
+#' b <- b(ple7e_idx, yr_ref = 2007) # use reference year for Itrigger
+#' m <- m(0.95) # keep multiplier
+#' advice <- rfb(A = A, r = r, f = f, b = b, m = m, discard_rate = 27)
+#' advice
+#' advice(advice)
 #'
 #' @name rfb
 #' @export

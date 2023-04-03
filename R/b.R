@@ -143,7 +143,9 @@ setClass(Class = "chr_b",
 #' # Use a data.frame with index values
 #' df_idx <- data.frame(year = 2017:2021,
 #'                      index = c(1.33, 1.13, 0.84, 0.60, 1.03))
-#' b(df_idx)
+#' b <- b(df_idx)
+#' b
+#' advice(b)
 #' 
 #' # plot
 #' plot(b(df_idx, units = "kg/hr"))

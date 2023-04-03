@@ -78,6 +78,18 @@ classes outside this range. \code{lstep} can be used to combine the length
 into broader length classes. This can be useful if data are noisy with
 several local minima/maxima and to smooth the length distribution.
 }
+\examples{
+# example data for plaice
+data(ple7e_length)
+# calculate (pooled) length at first capture first
+lc <- Lc(data = ple7e_length, pool = 2017:2021)
+# mean catch length
+lmean <- Lmean(data = data, Lc = lc, units = "mm")
+lmean
+plot(lmean)
+
+
+}
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 }

@@ -57,14 +57,17 @@ For application in ICES, do not change the defaults (\code{n0}, \code{n1}, \code
 \examples{
 # If the value of r is known
 rfb_r(0.9)
+r(0.9)
 
 # Use a data.frame with index values
 df_idx <- data.frame(year = 2017:2021,
                      index = c(1.33, 1.13, 0.84, 0.60, 1.03))
-rfb_r(df_idx)
+r <- r(df_idx)
+r
+advice(r)
 
 # plot
-plot(rfb_r(df_idx, units = "kg/hr"))
+plot(r(df_idx, units = "kg/hr"))
 
 }
 \references{

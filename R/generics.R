@@ -35,14 +35,21 @@ setGeneric(name = "value",
 ### ------------------------------------------------------------------------ ###
 ### show ####
 ### ------------------------------------------------------------------------ ###
-setGeneric(name = "show",
-           def = function(object)  standardGeneric("show"))
+#' @title show
+#'
+#' Show a summary of the elements of the empirical harvest control rule
+#'
+#' @name show
+#' @export
+NULL
+# setGeneric(name = "show",
+#            def = function(object)  standardGeneric("show"))
 
 ### ------------------------------------------------------------------------ ###
 ### print ####
 ### ------------------------------------------------------------------------ ###
-setGeneric(name = "print",
-           def = function(x)  standardGeneric("print"))
+# setGeneric(name = "print",
+#            def = function(x)  standardGeneric("print"))
 
 ### ------------------------------------------------------------------------ ###
 ### summary ####
@@ -53,8 +60,10 @@ setGeneric(name = "print",
 #' @param object The object to be plotted.
 #' @param ... Additional arguments. Not used.
 #' @export
-setGeneric(name = "summary",
-           def = function(object, ...)  standardGeneric("summary"))
+#' @name summary
+NULL
+# setGeneric(name = "summary",
+#            def = function(object, ...)  standardGeneric("summary"))
 
 ### ------------------------------------------------------------------------ ###
 ### plot ####

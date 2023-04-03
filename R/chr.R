@@ -124,6 +124,48 @@ setClass(
 #' Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2022. Exploring a relative harvest rate strategy for moderately data-limited fisheries management. ICES Journal of Marine Science, 79: 1730--1741. \url{https://doi.org/10.1093/icesjms/fsac103}.
 #'
 #' @return An object of class \code{chr}.
+#' 
+#' @examples 
+#' # calculate elements of chr rule for plaice
+#' # reference catch
+#' data(ple7e_catch)
+#' A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
+#' # biomass index value
+#' data(ple7e_idx)
+#' I <- I(ple7e_idx)
+#' plot(I)
+#' # target harvest rate
+#' data(ple7e_length)
+#' data(ple7e_catch)
+#' lc <- Lc(data = ple7e_length, pool = 2017:2021) # length at first capture
+#' lmean <- Lmean(data = data, Lc = lc, units = "mm") # mean catch length
+#' lref <- Lref(Lc = 264, Linf = 528) # reference length
+#' f <- f(Lmean = lmean, Lref = lref, units = "mm") # f indicator
+#' df <- full_join(ple7e_catch, idx_df) # combine catch & index data
+#' hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr") # harvest rate
+#' F <- F(hr, f) # calculate (relative) target harvest rate
+#' plot(F)
+#' # biomass safeguard
+#' b <- b(ple7e_idx)
+#' plot(b)
+#' plot(r, b)
+#' # multiplier
+#' m <- m(hcr = "chr")
+#' 
+#' # apply chr rule
+#' advice <- chr(A = A, I = I, F = F, b = b, m = m, discard_rate = 27)
+#' advice
+#' advice(advice)
+#' 
+#' # application in following years without updating reference levels
+#' A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
+#' I <- I(ple7e_idx)
+#' hr <- HR(full_join(ple7e_catch, idx_df), units_catch = "tonnes", units_index = "kg/hr")
+#' F <- F(hr, yr_ref = c(2016, 2019)) # use reference years to define target
+#' b <- b(ple7e_idx, yr_ref = 2007) # use reference year for Itrigger
+#' m <- m(0.5) # keep multiplier
+#' advice <- chr(A = A, I = I, F = F, b = b, m = m, discard_rate = 27)
+#' advice
 #'
 #' @name chr
 #' @export

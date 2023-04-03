@@ -69,24 +69,20 @@ setClass(
 #' 
 #' The value is calculated by comparing the mean catch length (above length of first capture Lc) to a reference length.
 #'
-#' \code{rfb_f()} is an alias for
-#' \code{f()} with identical arguments and functionality.
+#' \code{rfb_f()} is an alias for \code{f()} with identical arguments and functionality.
 #'
 #' @param object Optional. An object of class \code{f}.
 #' @param Lmean The mean catch length. Either a \code{data.frame} with columns
 #'              'year' and 'Lmean' or an object of class \code{Lmean}.
 #' @param Lref The reference length. Either a \code{numeric} with the value or 
 #'             an object of class \code{Lref}.
-#'  
-#' ...
-#'
 #' @param units Optional. The units of the length dat, e.g. 'cm'. Only used for plotting.
 #' @param hcr Optional. Defaults to 'rfb'.
 #' @param ... Additional arguments. Not currently used.
 #'
 #' @section Note:
 #' The reference length Lref should be kept constant for all years unless there 
-#' a substantial changes in the fishery or fishery selectivity.
+#' is a substantial changes in the fishery or fishery selectivity.
 #'
 #' @references
 #' ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
@@ -101,6 +97,21 @@ setClass(
 #'
 #'
 #' @return An object of class \code{f} with the length indicator value(s).
+#' 
+#' @examples 
+#' # use ple7e example data
+#' data(ple7e_length)
+#' # calculate (pooled) length at first capture first
+#' lc <- Lc(data = ple7e_length, pool = 2017:2021)
+#' # calculate mean catch length
+#' lmean <- Lmean(data = data, Lc = lc, units = "mm")
+#' # reference length
+#' lref <- Lref(Lc = 264, Linf = 585)
+#' # calculate component f
+#' f <- f(Lmean = lmean, Lref = lref, units = "mm")
+#' f
+#' advice(f)
+#' plot(f)
 #' 
 #' @export
 setGeneric(

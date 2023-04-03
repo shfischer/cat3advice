@@ -129,6 +129,20 @@ data, pool = FALSE, lmin, lmax, lstep, rounding = floor
 For application in ICES, do not change the defaults (\code{n0}, \code{n1}, \code{n2}) unless the change is supported by stock-specific simulations.
 }
 
+\examples{
+# example data for plaice
+data(ple7e_length)
+# annual length at first capture
+lc <- Lc(data = ple7e_length)
+lc
+plot(lc)
+
+# pool data over several years (recommended)
+lc <- Lc(data = ple7e_length, pool = 2017:2021)
+plot(lc)
+
+
+}
 \references{
 ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
 }
