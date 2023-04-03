@@ -84,7 +84,7 @@ data(ple7e_length)
 # calculate (pooled) length at first capture first
 lc <- Lc(data = ple7e_length, pool = 2017:2021)
 # mean catch length
-lmean <- Lmean(data = data, Lc = lc, units = "mm")
+lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm")
 lmean
 plot(lmean)
 

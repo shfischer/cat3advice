@@ -4,9 +4,21 @@
 \alias{Lref}
 \title{Reference catch length}
 \usage{
-Lref(basis = "LF=M", Lc, Linf, Mk = 1.5, gamma = 1, theta = 1/Mk, units, ...)
+Lref(
+  value,
+  basis = "LF=M",
+  Lc,
+  Linf,
+  Mk = 1.5,
+  gamma = 1,
+  theta = 1/Mk,
+  units,
+  ...
+)
 }
 \arguments{
+\item{value}{Optional. The reference length value, if already known.}
+
 \item{basis}{The basis for the calculation, defaults to "LF=M".}
 
 \item{Lc}{The length at first capture.}

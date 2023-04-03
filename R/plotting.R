@@ -1,5 +1,6 @@
 #' @include generics.R
 #' @include r.R
+#' @include b.R
 #' @import ggplot2 dplyr tidyr
 #' @importFrom ggplot2 ggplot geom_ribbon geom_line geom_vline aes coord_cartesian labs theme theme_bw element_text element_blank unit scale_linetype_manual scale_colour_manual scale_fill_manual facet_wrap
 #' @importFrom scales parse_format

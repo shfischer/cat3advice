@@ -22,3 +22,5 @@ NULL
 #' @rdname ple7e
 "ple7e_idx"
 
+#' @rdname ple7e
+"ple7e_length"

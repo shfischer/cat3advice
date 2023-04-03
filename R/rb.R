@@ -87,14 +87,13 @@ setClass(
 #' 
 #' The function requires the elements of the rb rule: A (the reference)
 #' catch, r (the biomass index ratio), f (the fising pressure proxy), 
-#' b (the biomass safeguard) and m (the multiplier). See the [A()], 
-#' [r()], [b()], and [m()] help files for details.
+#' b (the biomass safeguard) and m (the multiplier). See the help files for details \code{\link{A}}, v\code{\link{r}}, \code{\link{b}}, and \code{\link{m}}.
 #' 
 #' @param object Optional. An object of class \code{rfb}.
-#' @param A The reference catch. Should be an object of class \code{A}, see [A()].
-#' @param r The biomass index ratio. Should be an object of class \code{r}, see [r()].
-#' @param b The biomass safeguard. Should be an object of class \code{b}, see [b()].
-#' @param m The multiplier. Should be an object of class \code{m}, see [m()].
+#' @param A The reference catch. Should be an object of class \code{A}, see \code{\link{A}}.
+#' @param r The biomass index ratio. Should be an object of class \code{r}, see \code{\link{r}}.
+#' @param b The biomass safeguard. Should be an object of class \code{b}, see \code{\link{b}}.
+#' @param m The multiplier. Should be an object of class \code{m}, see \code{\link{m}}.
 #' @param cap \code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}
 #' @param cap_upper Optional. \code{numeric}. The maximum allowed increase in the catch advice in \%. Default to +20.
 #' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.

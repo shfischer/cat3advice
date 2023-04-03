@@ -85,17 +85,20 @@ plot(I)
 data(ple7e_length)
 data(ple7e_catch)
 lc <- Lc(data = ple7e_length, pool = 2017:2021) # length at first capture
-lmean <- Lmean(data = data, Lc = lc, units = "mm") # mean catch length
+plot(lc)
+lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm") # mean catch length
+plot(lmean)
 lref <- Lref(Lc = 264, Linf = 528) # reference length
 f <- f(Lmean = lmean, Lref = lref, units = "mm") # f indicator
-df <- full_join(ple7e_catch, idx_df) # combine catch & index data
+plot(f)
+df <- merge(ple7e_catch, ple7e_idx, all = TRUE) # combine catch & index data
 hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr") # harvest rate
+plot(hr)
 F <- F(hr, f) # calculate (relative) target harvest rate
 plot(F)
 # biomass safeguard
 b <- b(ple7e_idx)
 plot(b)
-plot(r, b)
 # multiplier
 m <- m(hcr = "chr")
 
@@ -107,7 +110,7 @@ advice(advice)
 # application in following years without updating reference levels
 A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
 I <- I(ple7e_idx)
-hr <- HR(full_join(ple7e_catch, idx_df), units_catch = "tonnes", units_index = "kg/hr")
+hr <- HR(merge(ple7e_catch, ple7e_idx, all = TRUE), units_catch = "tonnes", units_index = "kg/hr")
 F <- F(hr, yr_ref = c(2016, 2019)) # use reference years to define target
 b <- b(ple7e_idx, yr_ref = 2007) # use reference year for Itrigger
 m <- m(0.5) # keep multiplier

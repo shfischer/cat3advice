@@ -315,7 +315,7 @@ setClass(
 #' # calculate (pooled) length at first capture first
 #' lc <- Lc(data = ple7e_length, pool = 2017:2021)
 #' # calculate mean catch length
-#' lmean <- Lmean(data = data, Lc = lc, units = "mm")
+#' lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm")
 #' # reference length
 #' lref <- Lref(Lc = 264, Linf = 528)
 #' # calculate component f
@@ -323,7 +323,7 @@ setClass(
 #' # harvest rate
 #' data(ple7e_idx)
 #' data(ple7e_catch)
-#' df <- full_join(ple7e_catch, idx_df) # combine catch & index data
+#' df <- merge(ple7e_catch, ple7e_idx, all = TRUE) # combine catch & index data
 #' hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr")
 #' # calculate (relative) target harvest rate
 #' F <- F(hr, f)

@@ -381,7 +381,7 @@ setClass(
 #' # calculate (pooled) length at first capture first
 #' lc <- Lc(data = ple7e_length, pool = 2017:2021)
 #' # mean catch length
-#' lmean <- Lmean(data = data, Lc = lc, units = "mm")
+#' lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm")
 #' lmean
 #' plot(lmean)
 #'
@@ -644,6 +644,7 @@ setClass(
 #' applied and should then be kept constant unless there a substantial changes
 #' in the fishery or fishery selectivity.
 #'
+#' @param value Optional. The reference length value, if already known.
 #' @param basis The basis for the calculation, defaults to "LF=M".
 #' @param Lc The length at first capture.
 #' @param Linf The asymptotic length from a von Bertalanffy growth model.
@@ -666,13 +667,18 @@ setClass(
 #' Lref(Lc = 26.4, Linf = 58.5)
 #'
 #' @export
-Lref <- function(basis = "LF=M",
+Lref <- function(value,
+                 basis = "LF=M",
                  Lc, Linf,
                  Mk = 1.5, gamma = 1, theta = 1 / Mk, units, ...) {
   
   object <- new("Lref")
   object@basis <- basis
   if (!missing(units)) object@units <- units
+  if (!missing(value)) {
+    object@value <- value
+    return(object)
+  }
   
   ### get Lc
   if (is(Lc, "Lc")) Lc <- Lc@value

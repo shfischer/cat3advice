@@ -91,15 +91,14 @@ setClass(
 #' 
 #' The function requires the elements of the rfb rule: A (the reference)
 #' catch, r (the biomass index ratio), f (the fising pressure proxy), 
-#' b (the biomass safeguard) and m (the multiplier). See the [A()], 
-#' [r()], [f()], [b()], and [m()] help files for details.
+#' b (the biomass safeguard) and m (the multiplier). See the help files for details: \code{\link{A}}, v\code{\link{r}}, \code{\link{f}}, \code{\link{b}}, and \code{\link{m}}.
 #' 
 #' @param object Optional. An object of class \code{rfb}.
-#' @param A The reference catch. Should be an object of class \code{A}, see [A()].
-#' @param r The biomass index ratio. Should be an object of class \code{r}, see [r()].
-#' @param f The fishing pressure proxy. Should be an object of class \code{f}, see [f()].
-#' @param b The biomass safeguard. Should be an object of class \code{b}, see [b()].
-#' @param m The multiplier. Should be an object of class \code{m}, see [m()].
+#' @param A The reference catch. Should be an object of class \code{A}, see \code{\link{A}}.
+#' @param r The biomass index ratio. Should be an object of class \code{r}, see \code{\link{r}}.
+#' @param f The fishing pressure proxy. Should be an object of class \code{f}, see \code{\link{f}}.
+#' @param b The biomass safeguard. Should be an object of class \code{b}, see \code{\link{b}}.
+#' @param m The multiplier. Should be an object of class \code{m}, see \code{\link{m}}.
 #' @param cap \code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}
 #' @param cap_upper Optional. \code{numeric}. The maximum allowed increase in the catch advice in \%. Default to +20.
 #' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.
@@ -138,14 +137,14 @@ setClass(
 #' # fishing pressure proxy
 #' data(ple7e_length)
 #' lc <- Lc(data = ple7e_length, pool = 2017:2021)
-#' lmean <- Lmean(data = data, Lc = lc, units = "mm")
+#' lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm")
 #' lref <- Lref(Lc = 264, Linf = 585)
 #' f <- f(Lmean = lmean, Lref = lref, units = "mm")
 #' plot(f)
 #' # biomass safeguard
 #' b <- b(ple7e_idx)
 #' plot(b)
-#' plot(r, b)
+#' plot(b, r)
 #' # multiplier
 #' m <- m(hcr = "rfb", k = 0.1)
 #' # apply rfb rule

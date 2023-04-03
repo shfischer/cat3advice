@@ -8,6 +8,7 @@
 \alias{ple7e_f2}
 \alias{ple7e_hr}
 \alias{ple7e_idx}
+\alias{ple7e_length}
 \title{Western English Channel plaice example data
 
 This data set contains 2022 example data from Western English Channel plaice (ple.27.7e) to illustrate the application of the ICES category 3 empirical harvest control rules.}
@@ -16,11 +17,13 @@ An object of class \code{data.frame} with 36 rows and 5 columns.
 
 An object of class \code{comp_f} of length 1.
 
-An object of class \code{comp_f} of length 1.
+An object of class \code{f} of length 1.
 
 An object of class \code{HR} of length 1.
 
 An object of class \code{data.frame} with 19 rows and 2 columns.
+
+An object of class \code{data.frame} with 777 rows and 4 columns.
 }
 \source{
 \url{https://github.com/ices-taf}
@@ -35,6 +38,8 @@ ple7e_f2
 ple7e_hr
 
 ple7e_idx
+
+ple7e_length
 }
 \description{
 Western English Channel plaice example data

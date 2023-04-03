@@ -27,15 +27,15 @@ rfb(
 \arguments{
 \item{object}{Optional. An object of class \code{rfb}.}
 
-\item{A}{The reference catch. Should be an object of class \code{A}, see [A()].}
+\item{A}{The reference catch. Should be an object of class \code{A}, see \code{\link{A}}.}
 
-\item{r}{The biomass index ratio. Should be an object of class \code{r}, see [r()].}
+\item{r}{The biomass index ratio. Should be an object of class \code{r}, see \code{\link{r}}.}
 
-\item{f}{The fishing pressure proxy. Should be an object of class \code{f}, see [f()].}
+\item{f}{The fishing pressure proxy. Should be an object of class \code{f}, see \code{\link{f}}.}
 
-\item{b}{The biomass safeguard. Should be an object of class \code{b}, see [b()].}
+\item{b}{The biomass safeguard. Should be an object of class \code{b}, see \code{\link{b}}.}
 
-\item{m}{The multiplier. Should be an object of class \code{m}, see [m()].}
+\item{m}{The multiplier. Should be an object of class \code{m}, see \code{\link{m}}.}
 
 \item{cap}{\code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}}
 
@@ -60,8 +60,7 @@ This function applies the rfb rule.
 \details{
 The function requires the elements of the rfb rule: A (the reference)
 catch, r (the biomass index ratio), f (the fising pressure proxy), 
-b (the biomass safeguard) and m (the multiplier). See the [A()], 
-[r()], [f()], [b()], and [m()] help files for details.
+b (the biomass safeguard) and m (the multiplier). See the help files for details: \code{\link{A}}, v\code{\link{r}}, \code{\link{f}}, \code{\link{b}}, and \code{\link{m}}.
 }
 \section{Warning}{
 
@@ -82,14 +81,14 @@ plot(r)
 # fishing pressure proxy
 data(ple7e_length)
 lc <- Lc(data = ple7e_length, pool = 2017:2021)
-lmean <- Lmean(data = data, Lc = lc, units = "mm")
+lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm")
 lref <- Lref(Lc = 264, Linf = 585)
 f <- f(Lmean = lmean, Lref = lref, units = "mm")
 plot(f)
 # biomass safeguard
 b <- b(ple7e_idx)
 plot(b)
-plot(r, b)
+plot(b, r)
 # multiplier
 m <- m(hcr = "rfb", k = 0.1)
 # apply rfb rule

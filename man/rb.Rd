@@ -25,13 +25,13 @@ rb(
 \arguments{
 \item{object}{Optional. An object of class \code{rfb}.}
 
-\item{A}{The reference catch. Should be an object of class \code{A}, see [A()].}
+\item{A}{The reference catch. Should be an object of class \code{A}, see \code{\link{A}}.}
 
-\item{r}{The biomass index ratio. Should be an object of class \code{r}, see [r()].}
+\item{r}{The biomass index ratio. Should be an object of class \code{r}, see \code{\link{r}}.}
 
-\item{b}{The biomass safeguard. Should be an object of class \code{b}, see [b()].}
+\item{b}{The biomass safeguard. Should be an object of class \code{b}, see \code{\link{b}}.}
 
-\item{m}{The multiplier. Should be an object of class \code{m}, see [m()].}
+\item{m}{The multiplier. Should be an object of class \code{m}, see \code{\link{m}}.}
 
 \item{cap}{\code{logical}. The uncertainty cap (stability clause). Defaults to \code{TRUE}}
 
@@ -56,8 +56,7 @@ This function applies the rb rule.
 \details{
 The function requires the elements of the rb rule: A (the reference)
 catch, r (the biomass index ratio), f (the fising pressure proxy), 
-b (the biomass safeguard) and m (the multiplier). See the [A()], 
-[r()], [b()], and [m()] help files for details.
+b (the biomass safeguard) and m (the multiplier). See the help files for details \code{\link{A}}, v\code{\link{r}}, \code{\link{b}}, and \code{\link{m}}.
 }
 \section{Warning}{
 
