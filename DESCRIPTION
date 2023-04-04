@@ -22,9 +22,9 @@ Imports:
     patchwork,
     stats,
     utils
-Depends:
 Suggests: 
-    FLCore (>= 2.6.5)
+    knitr,
+    rmarkdown
 RoxygenNote: 7.1.2
 Collate: 
     'generics.R'
@@ -41,3 +41,4 @@ Collate:
     'plotting.R'
     'rb.R'
     'rfb.R'
+VignetteBuilder: knitr
