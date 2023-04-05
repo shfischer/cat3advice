@@ -1,0 +1,6 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+example_data
+example_scripts
+^doc$
+^Meta$

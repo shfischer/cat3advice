@@ -1,13 +1,7 @@
 ---
 title: "cat3advice"
 output: 
-  rmarkdown::pdf_document:
-    toc: true
-    toc_depth: 2
   rmarkdown::html_vignette:
-      toc: true
-      toc_depth: 2
-  rmarkdown::md_document:
       toc: true
       toc_depth: 2
 bibliography: references.bib
@@ -51,7 +45,7 @@ Before reading this vignette, please first read the ICES Technical Guidelines [@
 
 For more details on the rfb rule, please refer to Fischer et al. [-@Fischer2020_catch_rule;-@Fischer2021_GA;@Fischer2021_GA_PA;-@Fischer2022_risk_equivalence] and for the chr rule, please refer to Fischer et al. [-@Fischer2022_hr;-@Fischer2022_risk_equivalence].
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 ### load package
 library(cat3advice)
 ```
@@ -127,7 +121,7 @@ plot(r)
 r(1)
 ```
 
-Biomass index data is usually available until the year before the advise year. More recent data can be used and the function automatically picks the most recent data provided to it.
+Biomass index data are usually available until the year before the advice year. More recent data can be used and the function automatically picks the most recent data provided to it.
 
 ## Biomass safeguard $b$
 
@@ -181,37 +175,42 @@ head(ple7e_length)
 
 Only length data above the length at first capture $L_c$ are used to avoid noisy data from fish that are not fully selected. $L_c$ is defined as the first length class where the abundance is at or above 50\% of the mode of the length distribution and can be calculated with the function `Lc()`:
 
-```{r, fig.align='center', fig.width=5, fig.height=4, dpi=300, out.width=500}
+```{r, fig.align='center', fig.width=5, fig.height=4, dpi=300, out.width=500, warning=FALSE}
 lc <- Lc(ple7e_length)
 lc
 plot(lc)
 ```
 
 $L_c$ can change from year to year. Therefore, it is recommended to pool data from several (e.g. 5) years:
-```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500}
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500, warning=FALSE}
 lc <- Lc(ple7e_length, pool = 2017:2021)
 lc
 plot(lc)
 ```
 
 If length data are noisy, the size of the length classes can be increased:
-```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500}
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500, warning=FALSE}
 ### use 20mm length classes
 plot(Lc(ple7e_length, pool = 2017:2021, lstep = 20))
 ```
 
-Once defined, $L_c$ should be kept constant and used the same value used for all data years. $L_c$ should only be changed if there are strong changes in the fishery or data.
+Once defined, $L_c$ should be kept constant and the same value used for all data years. $L_c$ should only be changed if there are strong changes in the fishery or data.
 
 ### Mean length
 
 After defining $L_c$, the mean (annual) catch length $L_{\text{mean}}$ above $L_c$ can be calculated:
 
-If length data are noisy, the size of the length classes can be increased:
 ```{r, fig.align='center', fig.width=5, fig.height=3, dpi=300, out.width=700}
-### use 20mm length classes
+### calculate annual mean length
 lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm")
 lmean
 plot(lmean)
+```
+
+If length data are noisy, the size of the length classes can be increased:
+```{r, fig.align='center', fig.width=5, fig.height=3, dpi=300, out.width=700}
+### use 20mm length classes
+plot(Lmean(data = ple7e_length, Lc = lc, units = "mm", lstep = 20))
 ```
 
 ### Reference length
@@ -266,6 +265,9 @@ m
 
 ### alias for rfb rule
 rfb_m(k = 0.1)
+
+### ICES advice style table
+advice(m)
 ```
 
 Please note that the multiplier $m$ does not lead to a continuous reduction in the catch advice. The components of the rfb rule are multiplicative, this means that $m$ could be considered as part of component $f$ and essentially adjusts the reference length $L_{F=M}$ to $L'_{F=M}$:
@@ -285,9 +287,9 @@ advice
 
 A discard rate in \% can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
 
-The rfb rule includes a stability clause that restricts changes to $+20%$ and $-30%$. This stability clause in conditional on the biomass safeguard and is only applied if $b=1$ but turned off when $b<1$.
+The rfb rule includes a stability clause that restricts changes to $+20\%$ and $-30\%$. This stability clause is conditional on the biomass safeguard and is only applied if $b=1$ but turned off when $b<1$.
 
-`cat3advice` can print a table similar to the table presented in ICES advice sheets:
+`cat3advice` can print a table similar to the table presented in ICES advice sheets in which all numbers are rounded following ICES rounding rules:
 ```{r}
 advice(advice)
 ```
@@ -366,7 +368,7 @@ plot(r)
 r(1)
 ```
 
-Biomass index data is usually available until the year before the advise year. More recent data can be used and the function automatically picks the most recent data provided to it.
+Biomass index data are usually available until the year before the advice year. More recent data can be used and the function automatically picks the most recent data provided to it.
 
 ## Biomass safeguard $b$
 
@@ -416,6 +418,9 @@ m
 
 ### alias for rb rule
 rb_m()
+
+### ICES advice style table
+advice(m)
 ```
 
 Please note that for the rb rule, the multiplier $m$ does lead to a continuous reduction in the catch advice because the rb rule does not include a target.
@@ -431,11 +436,274 @@ advice
 
 A discard rate in \% can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
 
-The rb rule includes a stability clause that restricts changes to $+20%$ and $-30%$. This stability clause in conditional on the biomass safeguard and is only applied if $b=1$ but turned off when $b<1$.
+The rb rule includes a stability clause that restricts changes to $+20%$ and $-30%$. This stability clause is conditional on the biomass safeguard and is only applied if $b=1$ but turned off when $b<1$.
 
-`cat3advice` can print a table similar to the table presented in ICES advice sheets:
+`cat3advice` can print a table similar to the table presented in ICES advice sheets in which all numbers are rounded following ICES rounding rules:
 ```{r}
 advice(advice)
 ```
+
+# The chr rule
+
+The chr rule is a (relative) harvest rate-based harvest control rule. The relative harvest rate is defined by dividing the catch by the values from a biomass index. It is not an absolute harvest rate because the absolute stock size is unknown. The method is defined as Method 2.2 in the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines, page 13] as
+
+$$
+A_{y+1} = I_{y-1} \times F_{\text{proxyMSY}} \times b \times m
+$$
+
+where $A_{y+1}$ is the new catch advice, $I_{y-1}$ the last biomass index value, 
+$F_{\text{proxyMSY}}$ the (relative) harvest rate target, $b$ a biomass safeguard and $m$ a precautionary multiplier. Furthermore, the change in the advice is restricted by a stability clause that only allows changes of between $+20\%$ and $-30\%$ relative to the previous advice, but the application of the stability clause is conditional on $b=1$ and turned off when $b<1$.
+
+The chr rule should be applied annually, i.e. the catch advice is valid for one year.
+
+Please note that any change from the default configuration should be supported by case-specific simulations.
+
+## Reference catch $A_y$
+
+A reference catch $A_y$ is needed for the application of the stability clause.
+The reference catch $A_y$ is usually the most recently advised catch. In a typical ICES setting, an assessment is conducted in an assessment (intermediate) year $y$ to give advice for the following advice year $y+1$, this is the advice for year $y$:
+
+```{r}
+### load plaice catch and advice data
+data("ple7e_catch")
+tail(ple7e_catch)
+### get reference catch
+A <- A(ple7e_catch, units = "tonnes")
+A
+```
+
+The ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] specify that if the realised catch is very different from the advised catch, the reference catch could be replaced by an average of recent catches:
+
+```{r}
+### use 3-year average
+A(ple7e_catch, units = "tonnes", basis = "average catch", avg_years = 3)
+```
+
+The reference catch can also be defined manually:
+
+```{r}
+### use 3-year average
+A(2000, units = "tonnes")
+```
+
+## Biomass index value $I_{y-1}$
+
+$I_{y-1}$ is the most recent value from the biomass index. This is usually a value from the year before the assessment year ($y$) but a more recent value can be used if available.
+
+Index data should be provided as a `data.frame` with columns `year` and `index`.
+
+```{r, fig.align='center', fig.width=3, fig.height=2, dpi=300, out.width=500}
+### load plaice data
+data("ple7e_idx")
+tail(ple7e_idx)
+
+### get most recent value
+i <- I(ple7e_idx, units = "kg/hr")
+i
+
+### ICES advice style table
+advice(i)
+
+### plot index
+plot(i)
+
+### when the value of r is known
+I(1)
+```
+
+## Biomass safeguard $b$
+
+The biomass safeguard reduces the advice when the biomass index $I$ falls below a threshold value $I_{\text{trigger}}$:
+
+$$
+b = \text{min}\{1,\ I_{y-1}/I_{\text{trigger}}\}
+$$
+By default, the trigger value is defined based on the lowest observed index value $I_{\text{loss}}$ as $I_{\text{trigger}} = 1.4I_{\text{loss}}$. 
+
+The biomass safeguard is calculated with the function `b`:
+```{r, fig.align='center', fig.width=3, fig.height=2, dpi=300, out.width=500}
+### use same plaice data as before
+### application in first year with new calculation of Itrigger
+b <- b(ple7e_idx, units = "kg/hr")
+b
+
+### ICES advice style table
+advice(b)
+
+### plot
+plot(b)
+```
+
+**Please note that $I_{\text{trigger}}$ should only be defined once in the first year of the application of the chr rule**. In the following years, the same value should be used. For this purpose, `b` allows the direct definition of $I_{\text{trigger}}$, or, more conveniently, $I_{\text{trigger}}$ can be based on the year in which $I_{\text{loss}}$ is defined:
+
+```{r}
+### in following years, Itrigger should NOT be updated
+### i.e. provide value for Itrigger
+b(ple7e_idx, units = "kg/hr", Itrigger = 0.3924721)
+### alternatively, the reference year for Iloss can be used
+b(ple7e_idx, units = "kg/hr", yr_ref = 2007)
+```
+
+## Target harvest rate $F_{\text{proxyMSY}}$
+
+The target harvest rate $F_{\text{proxyMSY}}$ defines the target for the chr rule and is a proxy for MSY. The standard approach to define $F_{\text{proxyMSY}}$ is to use catch length data, find years in which the mean catch length $L_{\text{mean}}$ is above a reference length ($L_{F=M}$), calculate the harvest rate for these years, and use their average. The approach is the same as the one used for component $f$ of the rfb rule described above. This needs to be done only once in the first year of the application of the chr rule. In subsequent years, no length data are required.
+
+### Length data
+
+Ideally, length data for several years are provided in a `data.frame` with columns `year`, `length` and `numbers`. An additional column `catch_category` specifying the catch category, such as discards and landings, is optional.
+
+```{r}
+data("ple7e_length")
+head(ple7e_length)
+```
+
+### Length at first capture $L_c$
+
+Only length data above the length at first capture $L_c$ are used to avoid noisy data from fish that are not fully selected. $L_c$ is defined as the first length class where the abundance is at or above 50\% of the mode of the length distribution and can be calculated with the function `Lc()`:
+
+```{r, fig.align='center', fig.width=5, fig.height=4, dpi=300, out.width=500, warning=FALSE}
+lc <- Lc(ple7e_length)
+lc
+plot(lc)
+```
+
+$L_c$ can change from year to year. Therefore, it is recommended to pool data from several (e.g. 5) years:
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500, warning=FALSE}
+lc <- Lc(ple7e_length, pool = 2017:2021)
+lc
+plot(lc)
+```
+
+If length data are noisy, the size of the length classes can be increased:
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500, warning=FALSE}
+### use 20mm length classes
+plot(Lc(ple7e_length, pool = 2017:2021, lstep = 20))
+```
+
+Once defined, $L_c$ should be kept constant and the same value used for all data years. $L_c$ should only be changed if there are strong changes in the fishery or data.
+
+### Mean length
+
+After defining $L_c$, the mean (annual) catch length $L_{\text{mean}}$ above $L_c$ can be calculated:
+
+```{r, fig.align='center', fig.width=5, fig.height=3, dpi=300, out.width=700}
+### calculate annual mean length
+lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm")
+lmean
+plot(lmean)
+```
+
+If length data are noisy, the size of the length classes can be increased:
+```{r, fig.align='center', fig.width=5, fig.height=3, dpi=300, out.width=700}
+### use 20mm length classes
+plot(Lmean(data = ple7e_length, Lc = lc, units = "mm", lstep = 20))
+```
+
+### Reference length
+
+The reference length follows the concepts of @Beverton1957_dynamics_populations and is calculated as derived by @Jardim2015_HCR:
+
+$$
+L_{F=M} = 0.75L_c + 0.25L_\infty
+$$
+where $L_{F=M}$ is the MSY reference length, $L_c$ the length at first capture as defined above, and $L_\infty$ the von Bertalanffy asymptotic length. This simple equation assumes that fishing at $F=M$ can be used as a proxy for MSY and that $M/k=1.5$ (where $M$ is the natural mortality and $k$ the von Bertalanffy individual growth rate). The reference length can be calculated with
+
+```{r}
+lref <- Lref(Lc = 264, Linf = 585, units = "mm")
+lref
+### use a dummy value here for illustrative purposes of the chr rule
+lref <- Lref(330, units = "mm")
+```
+
+Deviations from the assumptions of $F=M$ and $M/k=1.5$ are possible following Equation A.3 of @Jardim2015_HCR $L_{F=\gamma M, k = \theta M}=(\theta L_\infty + L_c(\gamma + 1))/(\theta + \gamma +1)$ and can be used by providing arguments `gamma` and `theta` to `Lref()`.
+
+### Indicator
+
+The mean catch length relative to the reference $f = L_{\text{mean}}/L_{F=M}$ is used as an indicator. The same function (`f()`) as used in the rfb rule (described above) can be used to calculate the indicator time series:
+
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500}
+f <- f(Lmean = lmean, Lref = lref, units = "mm")
+plot(f)
+```
+
+In this case, the mean catch length (orange curve) is above the reference length in two years, indicating that the fishing pressure was below $F_{\text{MSY}}$ in these two years.
+
+### Harvest rate
+
+For the estimation of the target harvest rate, the harvest rate needs to be calculated with `HR()`.
+
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500}
+### catch data
+data("ple7e_catch")
+### index data
+data("ple7e_idx")
+
+### combine catch and index data into single data.frame
+df <- merge(ple7e_catch, ple7e_idx, all = TRUE) # combine catch & index data
+
+### calculate harvest rate
+hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr")
+hr
+```
+
+The harvest rate can only be calculated for years in which both catch and index data are available. The harvest rate and its input data can be plotted automatically:
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=700}
+plot(hr)
+```
+
+### Harvest rate target $F_{\text{proxyMSY}}$
+
+Now we can use the indicator and (relative) harvest rate time series to calculate the target harvest rate:
+
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=700}
+### calculate (relative) target harvest rate
+F <- F(hr, f) 
+F
+plot(F)
+```
+
+The years selected for the target harvest rate are indicated by orange points.
+
+## Multiplier $m$
+
+The multiplier $m$ is a tuning parameter and ensures that the catch advice is precautionary in the long term. 
+
+By default, the value of $m$ is set to $m=0.5$. The multiplier can be calculated with the function `m()`:
+
+```{r}
+m <- m(hcr = "chr")
+m
+
+### alias for chr rule
+chr_m()
+
+### ICES advice style table
+advice(m)
+```
+
+Please note that the multiplier $m$ does not lead to a continuous reduction in the catch advice. The components of the chr rule are multiplicative, this means that $m$ could be considered as adjusting the target harvest rate $F_{\text{MSY}}$ to $F'_{\text{MSY}}$:
+
+$$
+A_{y+1} = I \times F_{\text{proxyMSY}} \times b \times m = I \times \frac{F_{\text{proxyMSY}}}{1/m} \times b = I \times F'_{\text{proxyMSY}} \times b
+$$
+
+## Application of chr rule
+
+Now we have all the components of the chr rule and can apply it:
+
+```{r}
+advice <- chr(A = A, I = i, F = F, b = b, m = m, discard_rate = 27)
+advice
+```
+
+A discard rate in \% can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
+
+The chr rule includes a stability clause that restricts changes to $+20\%$ and $-30\%$. This stability clause is conditional on the biomass safeguard and is only applied if $b=1$ but turned off when $b<1$.
+
+`cat3advice` can print a table similar to the table presented in ICES advice sheets in which all numbers are rounded following ICES rounding rules:
+```{r}
+advice(advice)
+```
+
 
 # References
