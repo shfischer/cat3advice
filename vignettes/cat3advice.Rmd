@@ -1,10 +1,15 @@
 ---
 title: "cat3advice"
 output: 
-  rmarkdown::html_vignette:
+  rmarkdown::pdf_document:
     toc: true
     toc_depth: 2
-    keep_md: true
+  rmarkdown::html_vignette:
+      toc: true
+      toc_depth: 2
+  rmarkdown::md_document:
+      toc: true
+      toc_depth: 2
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{cat3advice}
@@ -19,17 +24,37 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
-library(cat3advice)
+# `cat3advice`
+
+`cat3advice` is an R package that allows the application of the ICES category 3 data-limited harvest control rules (rfb/rb/chr rules) and follows the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] (https://doi.org/10.17895/ices.advice.19801564).
+
+# Documentation
+
+The package documentation contains help files for its functions which also include code examples. See `help(package = "cat3advice")` for available functions.
+
+The main functions are `rfb()`, `rb()`, and `chr()`. Each of these functions has a help file with code examples (see `?rfb`, `?rb` `?chr`).
+
+# Installation
+
+The latest version of the `cat3advice` R package can be installed from GitHub with
+
+```{R, eval = FALSE}
+library(remotes)
+install_github("shfischer/cat3advice", build_vignettes = TRUE)
 ```
 
-# Introduction
+# Tutorial
 
-This tutorial uses data from the ICES Western English Channel plaice stock (ple.27.7e) to illustrate the application of the rfb/rb/chr rules. The data is included in the `cat3advice` R package.
+This tutorial uses data from the ICES Western English Channel plaice stock (ple.27.7e) to illustrate the application of the rfb/rb/chr rules. The data are included in the `cat3advice` R package.
 
 Before reading this vignette, please first read the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines].
 
 For more details on the rfb rule, please refer to Fischer et al. [-@Fischer2020_catch_rule;-@Fischer2021_GA;@Fischer2021_GA_PA;-@Fischer2022_risk_equivalence] and for the chr rule, please refer to Fischer et al. [-@Fischer2022_hr;-@Fischer2022_risk_equivalence].
+
+```{r}
+### load package
+library(cat3advice)
+```
 
 # The rfb rule
 

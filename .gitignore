@@ -10,3 +10,5 @@ tmp/*
 Cat3Advice/tmp*
 *tmp.R
 inst/doc
+/doc/
+/Meta/
