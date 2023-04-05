@@ -302,7 +302,7 @@ r_calc <- function(object, idx, n0, n1, n2, units, hcr) {
 #' @rdname summary
 #' @export
 setMethod(f = "summary", signature = "r", 
-  definition = function(object) {
+  definition = function(object, ...) {
     txt <- (paste0(paste(rep("-", 50), collapse = ""), "\n",
                "component r:\n",
                "last index year: ", object@yr_last, "\n",
@@ -341,8 +341,6 @@ setMethod(f = "print", signature = "r",
 })
 
 ### show
-#' @rdname show
-#' @export
 setMethod(f = "show", signature = "r", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",

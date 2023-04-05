@@ -4,3 +4,6 @@ example_data
 example_scripts
 ^doc$
 ^Meta$
+tmp*
+readme*
+NEWS*

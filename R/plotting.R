@@ -25,6 +25,7 @@ NULL
 #' @param x An object of class \code{rfb_r}, \code{rfb_b}, ...
 #' @param y Optional. An additional object of \code{rfb_b}, ...
 #' @param y_label Optional. The y-axis label.
+#' @param show.data Show input data. Only applicable to some methods.
 #' @param ... Additional arguments. Not used.
 #'  
 #' @return An object of class \code{gg}/\code{ggplot} with the plot.
@@ -47,13 +48,13 @@ NULL
 #' @export
 #' @name rfb_plot
 setGeneric(name = "plot",
-           def = function(x, y, y_label, ...)  standardGeneric("plot"))
+           def = function(x, y, y_label, show.data = TRUE, ...)  standardGeneric("plot"))
 
 ### rfb_r ####
 #' @rdname rfb_plot
 #' @export
 setMethod(f = "plot", signature = c(x = "r", y = "missing"), 
-          definition = function(x, y, y_label, ...) {
+          definition = function(x, y, y_label, show.data, ...) {
             
   object <- x
   
@@ -123,7 +124,7 @@ setMethod(f = "plot", signature = c(x = "r", y = "missing"),
 ### rfb_b ####
 #' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "b", y = "missing"), 
-          definition = function(x, y, y_label, ...) {
+          definition = function(x, y, y_label, show.data, ...) {
             
   object <- x
   
@@ -194,7 +195,7 @@ setMethod(f = "plot", signature = c(x = "b", y = "missing"),
 #' @rdname rfb_plot
 #' @export
 setMethod(f = "plot", signature = c(x = "r", y = "b"), 
-          definition = function(x, y, y_label, ...) {
+          definition = function(x, y, y_label, show.data, ...) {
   
   ### check validity
   . <- validObject(x)
@@ -286,7 +287,7 @@ setMethod(f = "plot", signature = c(x = "r", y = "b"),
 #' @rdname rfb_plot
 #' @export
 setMethod(f = "plot", signature = c(x = "b", y = "r"), 
-          definition = function(x, y, y_label, ...) {
+          definition = function(x, y, y_label, show.data, ...) {
   plot(x = y, y = x, y_label = y_label, ...)
 })
 
@@ -294,7 +295,7 @@ setMethod(f = "plot", signature = c(x = "b", y = "r"),
 #' @rdname rfb_plot
 #' @export
 setMethod(f = "plot", signature = c(x = "I", y = "missing"), 
-          definition = function(x, y, y_label, ...) {
+          definition = function(x, y, y_label, show.data, ...) {
             
   object <- x
   
@@ -348,7 +349,7 @@ setMethod(f = "plot", signature = c(x = "I", y = "missing"),
 ### rfb_f ####
 #' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "f", y = "missing"), 
-          definition = function(x, y, y_label, ...) {
+          definition = function(x, y, y_label, show.data, ...) {
             
   object <- x
   
@@ -401,7 +402,7 @@ setMethod(f = "plot", signature = c(x = "f", y = "missing"),
 ### F (chr) ####
 #' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "F", y = "missing"), 
-          definition = function(x, y, y_label, ...) {
+          definition = function(x, y, y_label, show.data, ...) {
             
   object <- x
   
@@ -515,18 +516,19 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
 #' points.
 #' 
 #' @param x An object of class \code{Lc}, \code{Lmean}, ...
+#' @param y Not used.
+#' @param y_label Not used.
+#' @param show.data Not used.
 #' @param ... Additional arguments. Not currently used.
 #'  
 #' @return An object of class \code{gg}/\code{ggplot} with the plot.
 #' Can be manipulated with the usual ggplot2 commands, e.g. \code{ylim()}.
-#'
-#' @examples
 #' 
 #' @export
 #' @rdname length_freq_plot
 ### Lc
 setMethod(f = "plot", signature = c(x = "Lc"), 
-          definition = function(x, ...) {
+          definition = function(x, y, y_label, show.data, ...) {
   
   if (all(is.na(x@data$year))) 
     x@data$year <- "pooled data"
@@ -595,7 +597,7 @@ setMethod(f = "plot", signature = c(x = "Lc"),
 #' @rdname length_freq_plot
 setMethod(
   f = "plot", signature = c(x = "Lmean"),
-  definition = function(x, ...) {
+  definition = function(x, y, y_label, show.data, ...) {
     if (all(is.na(x@data$year))) {
       x@data$year <- "pooled data"
     }
@@ -645,7 +647,7 @@ setMethod(
 ### HR ####
 #' @rdname rfb_plot
 setMethod(f = "plot", signature = c(x = "HR"), 
-          definition = function(x, y_label, 
+          definition = function(x, y, y_label, 
                                 show.data = TRUE,
                                 ...) {
   #browser()

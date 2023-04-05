@@ -261,7 +261,7 @@ setMethod(
 #' @export
 setMethod(
   f = "summary", signature = "Lc",
-  definition = function(object) {
+  definition = function(object, ...) {
     print(object@summary)
   }
 )
@@ -555,7 +555,7 @@ setMethod(
 #' @export
 setMethod(
   f = "summary", signature = "Lmean",
-  definition = function(object) {
+  definition = function(object, ...) {
     print(object@summary)
   }
 )

@@ -268,7 +268,7 @@ setMethod(rfb_f,
 #' @export
 setMethod(
   f = "summary", signature = "f",
-  definition = function(object) {
+  definition = function(object, ...) {
     txt <- (paste0(
       paste(rep("-", 50), collapse = ""), "\n",
       "component f:\n",

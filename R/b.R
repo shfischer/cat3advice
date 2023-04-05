@@ -425,7 +425,7 @@ b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
 #' @rdname summary
 #' @export
 setMethod(f = "summary", signature = "b", 
-          definition = function(object) {
+          definition = function(object, ...) {
   txt <- (paste0(paste(rep("-", 50), collapse = ""), "\n",
                  "component b (biomass safeguard):\n",
                  "Itrigger (", object@Itrigger, ") is based on:\n",

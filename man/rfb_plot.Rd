@@ -12,23 +12,23 @@
 \alias{plot,HR,ANY-method}
 \title{Plot elements of the rfb/rb/chr rule}
 \usage{
-plot(x, y, y_label, ...)
+plot(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{r,missing}(x, y, y_label, ...)
+\S4method{plot}{r,missing}(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{b,missing}(x, y, y_label, ...)
+\S4method{plot}{b,missing}(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{r,b}(x, y, y_label, ...)
+\S4method{plot}{r,b}(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{b,r}(x, y, y_label, ...)
+\S4method{plot}{b,r}(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{I,missing}(x, y, y_label, ...)
+\S4method{plot}{I,missing}(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{f,missing}(x, y, y_label, ...)
+\S4method{plot}{f,missing}(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{F,missing}(x, y, y_label, ...)
+\S4method{plot}{F,missing}(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{HR,ANY}(x, y_label, show.data = TRUE, ...)
+\S4method{plot}{HR,ANY}(x, y, y_label, show.data = TRUE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{rfb_r}, \code{rfb_b}, ...}
@@ -36,6 +36,8 @@ plot(x, y, y_label, ...)
 \item{y}{Optional. An additional object of \code{rfb_b}, ...}
 
 \item{y_label}{Optional. The y-axis label.}
+
+\item{show.data}{Show input data. Only applicable to some methods.}
 
 \item{...}{Additional arguments. Not used.}
 }

@@ -40,7 +40,6 @@ setGeneric(name = "value",
 #' Show a summary of the elements of the empirical harvest control rule
 #'
 #' @name show
-#' @export
 NULL
 # setGeneric(name = "show",
 #            def = function(object)  standardGeneric("show"))

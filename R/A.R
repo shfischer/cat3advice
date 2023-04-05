@@ -416,7 +416,7 @@ setMethod(f = "show", signature = "A",
 #' @export
 setMethod(
   f = "summary", signature = "A",
-  definition = function(object) {
+  definition = function(object, ...) {
     txt <- paste0(
       paste(rep("-", 50), collapse = ""), "\n",
       "component Ay:\n"

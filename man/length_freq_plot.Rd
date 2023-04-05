@@ -5,12 +5,18 @@
 \alias{plot,Lmean,ANY-method}
 \title{Plot length frequencies}
 \usage{
-\S4method{plot}{Lc,ANY}(x, y, y_label, ...)
+\S4method{plot}{Lc,ANY}(x, y, y_label, show.data = TRUE, ...)
 
-\S4method{plot}{Lmean,ANY}(x, y, y_label, ...)
+\S4method{plot}{Lmean,ANY}(x, y, y_label, show.data = TRUE, ...)
 }
 \arguments{
 \item{x}{An object of class \code{Lc}, \code{Lmean}, ...}
+
+\item{y}{Not used.}
+
+\item{y_label}{Not used.}
+
+\item{show.data}{Not used.}
 
 \item{...}{Additional arguments. Not currently used.}
 }
@@ -21,7 +27,4 @@ Can be manipulated with the usual ggplot2 commands, e.g. \code{ylim()}.
 \description{
 A convenience function for plotting length frequencies and length reference
 points.
-}
-\examples{
-
 }

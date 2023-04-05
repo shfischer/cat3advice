@@ -13,17 +13,17 @@
 \alias{summary,r-method}
 \title{summary}
 \usage{
-\S4method{summary}{A}(object)
+\S4method{summary}{A}(object, ...)
 
-\S4method{summary}{f}(object)
+\S4method{summary}{f}(object, ...)
 
 \S4method{summary}{HR}(object)
 
-\S4method{summary}{b}(object)
+\S4method{summary}{b}(object, ...)
 
-\S4method{summary}{m}(object)
+\S4method{summary}{m}(object, ...)
 
-\S4method{summary}{r}(object)
+\S4method{summary}{r}(object, ...)
 }
 \arguments{
 \item{object}{The object to be plotted.}

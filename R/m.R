@@ -394,7 +394,7 @@ setMethod(f = "show", signature = "m",
 #' @export
 setMethod(
   f = "summary", signature = "m",
-  definition = function(object) {
+  definition = function(object, ...) {
     txt <- paste0(paste(rep("-", 50), collapse = ""), "\n", 
                   "component m:\n")
     if (isTRUE(!is.na(object@hcr))) {
