@@ -23,7 +23,7 @@ The latest version of the `cat3advice` R package can be installed from GitHub wi
 
 ```{R, eval = FALSE}
 library(remotes)
-install_github("shfischer/cat3advice", build_vignettes = TRUE)
+install_github("shfischer/cat3advice")
 ```
 
 ## Support

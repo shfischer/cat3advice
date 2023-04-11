@@ -27,7 +27,7 @@ GitHub with
 
 ``` r
 library(remotes)
-install_github("shfischer/cat3advice", build_vignettes = TRUE)
+install_github("shfischer/cat3advice")
 ```
 
 ## Support
