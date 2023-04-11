@@ -29,3 +29,9 @@ GitHub with
 library(remotes)
 install_github("shfischer/cat3advice", build_vignettes = TRUE)
 ```
+
+## Support
+
+Please use the repository’s [issue
+page](https://github.com/shfischer/cat3advice/issues) to report issues,
+bugs, and feature requests.
