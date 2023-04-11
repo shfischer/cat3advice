@@ -540,18 +540,18 @@ setMethod(f = "plot", signature = c(x = "Lc"),
     ggplot2::geom_col(na.rm = TRUE) +
     ggplot2::geom_col(
       data = dplyr::bind_rows(
-        x@summary |> ### modal length
-          dplyr::select(year, L = Lmode, N = Nmode) |>
+        x@summary %>% ### modal length
+          dplyr::select(year, L = Lmode, N = Nmode) %>%
           dplyr::mutate(source = "mode"),
-        x@summary |> ### length at first capture
-          dplyr::select(year, L = Lc, N = Nc) |>
+        x@summary %>% ### length at first capture
+          dplyr::select(year, L = Lc, N = Nc) %>%
           dplyr::mutate(source = "c"),
         ### empty data to ensure bin width is kept
-        x@data |>
-          dplyr::select(year, L = length) |>
-          unique() |>
+        x@data %>%
+          dplyr::select(year, L = length) %>%
+          unique() %>%
           dplyr::mutate(N = NA, source = NA)
-      ) |>
+      ) %>%
         dplyr::mutate(source = factor(source,
           levels = c("c", "mode"),
           labels = c("Lc", "mode")
@@ -560,10 +560,10 @@ setMethod(f = "plot", signature = c(x = "Lc"),
     ) +
     ggplot2::scale_fill_manual("Length", values = c("Lc" = "red", "mode" = "black")) +
     ggplot2::geom_hline(
-      data = x@summary |>
-        dplyr::select(year, mode = Nmode) |>
-        dplyr::mutate("mode/2" = mode / 2) |>
-        tidyr::pivot_longer(-year) |>
+      data = x@summary %>%
+        dplyr::select(year, mode = Nmode) %>%
+        dplyr::mutate("mode/2" = mode / 2) %>%
+        tidyr::pivot_longer(-year) %>%
         dplyr::mutate(name = factor(name,
           levels = c("mode", "mode/2")
         )),
@@ -608,8 +608,8 @@ setMethod(
     p <- x@data %>%
       ggplot2::ggplot(aes(x = length, y = numbers)) +
       ggplot2::geom_col(na.rm = TRUE) +
-      ggplot2::geom_vline(data = x@summary |>
-                   tidyr::pivot_longer(c(Lc, Lmean)) |>
+      ggplot2::geom_vline(data = x@summary %>%
+                   tidyr::pivot_longer(c(Lc, Lmean)) %>%
                    dplyr::mutate(name = factor(name, 
                                         levels = c("Lc", "Lmean"),
                                         labels = c("L[c]", "L[mean]"))),

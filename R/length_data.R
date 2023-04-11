@@ -214,13 +214,13 @@ setMethod(Lc,
     if (!missing(units)) object@units <- units
 
     ### aggregate data - keep only year, length, numbers
-    data <- data |>
-      dplyr::group_by(year, length) |>
+    data <- data %>%
+      dplyr::group_by(year, length) %>%
       dplyr::summarise(numbers = sum(numbers), .groups = "drop")
     object@data <- data
     ### find Lc per year (first length class where numbers >= half of mode)
-    smry <- data |>
-      dplyr::group_by(year) |>
+    smry <- data %>%
+      dplyr::group_by(year) %>%
       dplyr::summarise(
         Lmode = length[numbers == max(numbers)],
         Nmode = max(numbers),
@@ -527,11 +527,11 @@ setMethod(Lmean,
     }
     
     ### calculate mean length above Lc
-    object@summary <- data |>
-      dplyr::group_by(year, length, Lc) |>
-      dplyr::summarise(numbers = sum(numbers), .groups = "keep") |>
-      dplyr::ungroup(length) |>
-      dplyr::filter(length >= Lc) |>
+    object@summary <- data %>%
+      dplyr::group_by(year, length, Lc) %>%
+      dplyr::summarise(numbers = sum(numbers), .groups = "keep") %>%
+      dplyr::ungroup(length) %>%
+      dplyr::filter(length >= Lc) %>%
       ### mean of length classes, weighted by catch numbers at length
       dplyr::summarise(Lmean = stats::weighted.mean(x = length, w = numbers),
                        .groups = "keep")
