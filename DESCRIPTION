@@ -21,7 +21,8 @@ Imports:
     icesAdvice,
     patchwork,
     stats,
-    utils
+    utils,
+    magrittr
 Suggests: 
     knitr,
     rmarkdown
@@ -41,4 +42,5 @@ Collate:
     'plotting.R'
     'rb.R'
     'rfb.R'
+    'utils-pipe.R'
 VignetteBuilder: knitr
