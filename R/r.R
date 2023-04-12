@@ -180,7 +180,7 @@ setMethod(r,
   ### check validity
   validObject(object)
   ### run r() to update slots and recalculate if needed
-  r_calc(object, n0, n1, n2, units, hcr, ...)
+  r_calc(object, n0 = n0, n1 = n1, n2 = n2, units = units, hcr = hcr, ...)
 })
 
 ### ------------------------------------------------------------------------ ###
