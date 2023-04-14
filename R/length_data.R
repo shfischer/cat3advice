@@ -402,7 +402,7 @@ setMethod(Lmean,
   function(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...) {
     ### create empty Lc
     out <- new("Lmean")
-    out@summary <- data.frame(year = NA, Lc = NA, Lmean = data)
+    out@summary <- data.frame(year = seq(length(data)), Lc = NA, Lmean = data)
     out@value <- data
     return(out)
   }
