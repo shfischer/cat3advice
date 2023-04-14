@@ -404,6 +404,7 @@ setMethod(Lmean,
     out <- new("Lmean")
     out@summary <- data.frame(year = NA, Lc = NA, Lmean = data)
     out@value <- data
+    return(out)
   }
 )
 
