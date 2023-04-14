@@ -384,7 +384,8 @@ b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
     object@Itrigger <- object@Iloss * object@w
     
   ### determine Iloss from index time series and estimate Itrigger from Iloss
-  } else if (isTRUE(length(object@idx) > 0)) {
+  } else if (isTRUE(length(object@idx) > 0) & 
+             missing(Itrigger) & missing(Iloss)) {
     
     pos_loss <- which.min(object@idx$index)
     object@yr_ref <- object@idx$year[pos_loss]
