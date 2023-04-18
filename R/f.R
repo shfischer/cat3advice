@@ -19,6 +19,7 @@ NULL
 #' @slot years Years with data.
 #' @slot Lmean Mean catch length.
 #' @slot Lref Reference catch length.
+#' @slot n0 Time lag between the last index year and the last year to be used.
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot hcr \code{factor}. The harvest control rule (hcr) for which component f is used (rfb).
 #'
@@ -33,6 +34,7 @@ setClass(
     years = "numeric",
     Lmean = "Lmean",
     Lref = "Lref",
+    n0 = "numeric",
     units = "character",
     hcr = "character"
   ),
@@ -48,6 +50,7 @@ setClass(
     years = NA_integer_,
     Lmean = new("Lmean"),
     Lref = new("Lref"),
+    n0 = 0,
     units = NA_character_,
     hcr = NA_character_
   )
@@ -76,6 +79,7 @@ setClass(
 #'              'year' and 'Lmean' or an object of class \code{Lmean}.
 #' @param Lref The reference length. Either a \code{numeric} with the value or 
 #'             an object of class \code{Lref}.
+#' @param n0 Time lag between the last indicator year and the last year to be used. Defaults to 0.
 #' @param units Optional. The units of the length dat, e.g. 'cm'. Only used for plotting.
 #' @param hcr Optional. Defaults to 'rfb'.
 #' @param ... Additional arguments. Not currently used.
@@ -116,7 +120,7 @@ setClass(
 #' @export
 setGeneric(
   name = "f",
-  def = function(object, Lmean, Lref, units, hcr, ...) {
+  def = function(object, Lmean, Lref, n0 = 0, units, hcr, ...) {
     standardGeneric("f")
   },
   signature = c("object", "Lmean", "Lref")
@@ -134,11 +138,12 @@ setGeneric(
 #' @export
 setMethod(f,
   signature = c(object = "missing", Lmean = "Lmean", Lref = "Lref"),
-  function(object, Lmean, Lref, units, hcr, ...) {
+  function(object, Lmean, Lref, n0 = 0, units, hcr, ...) {
     
     object <- new("f")
     object@Lmean <- Lmean
     object@Lref <- Lref
+    if (!missing(n0)) object@n0 <- n0
     if (!missing(units)) object@units <- units
     if (!missing(hcr)) object@hcr <- hcr
     
@@ -155,10 +160,10 @@ setMethod(f,
     
     ### years
     object@years <- object@indicator$year
-    object@yr_last <- tail(object@years, 1)
+    object@yr_last <- object@years[length(object@years) - n0]
     
     ### indicator value
-    object@value <- tail(object@indicator$indicator, 1)
+    object@value <- object@indicator$indicator[length(object@indicator$indicator) - n0]
     
     return(object)
   }
@@ -170,7 +175,7 @@ setMethod(f,
 #' @export
 setMethod(f,
   signature = c(object = "f", Lmean = "missing", Lref = "missing"),
-  function(object, Lmean = object@Lmean, Lref = object@Lmean, 
+  function(object, Lmean = object@Lmean, Lref = object@Lmean, n0 = 0,
            units, hcr, ...) {
     ### check validity
     validObject(object)
@@ -185,12 +190,13 @@ setMethod(f,
 #' @export
 setMethod(f,
           signature = c(object = "numeric", Lmean = "missing", Lref = "missing"),
-          function(object, Lmean = object@Lmean, Lref = object@Lmean, 
+          function(object, Lmean = object@Lmean, Lref = object@Lmean, n0 = 0,
                    units, hcr, ...) {
   ### empty object with value
   value <- object
   object <- new("f")
   object@value <- value
+  if (!missing(n0)) object@n0 <- n0
   if (!missing(units)) object@units <- units
   if (!missing(hcr)) object@hcr <- hcr
   return(object)
@@ -208,7 +214,7 @@ setMethod(f,
 #' @export
 setGeneric(
   name = "rfb_f",
-  def = function(object, Lmean, Lref, units, hcr = "rfb", ...) {
+  def = function(object, Lmean, Lref, n0 = 0, units, hcr = "rfb", ...) {
     standardGeneric("rfb_f")
   },
   signature = c("object", "Lmean", "Lref")
@@ -218,10 +224,10 @@ setGeneric(
 #' @export
 setMethod(rfb_f,
           signature = c(object = "missing", Lmean = "ANY", Lref = "ANY"),
-          function(object, Lmean, Lref, units, hcr = "rfb", ...) {
+          function(object, Lmean, Lref, n0 = 0, units, hcr = "rfb", ...) {
   hcr <- match.arg(hcr)
   ### ignore object because it is missing
-  object <- f(Lmean = Lmean, Lref = Lref, units = units, 
+  object <- f(Lmean = Lmean, Lref = Lref, n0 = n0, units = units, 
                    hcr = hcr, ... = ...)
   class(object) <- "rfb_f"
   return(object)
@@ -232,7 +238,7 @@ setMethod(rfb_f,
 #' @export
 setMethod(rfb_f,
           signature = c(object = "ANY", Lmean = "missing", Lref = "missing"),
-          function(object, Lmean, Lref, units, hcr = "rfb", ...) {
+          function(object, Lmean, Lref, n0 = 0, units, hcr = "rfb", ...) {
   hcr <- match.arg(hcr)
   ### ignore Lmean & Lref becuase they are missing
   object <- f(object = object, units = units,
@@ -264,29 +270,29 @@ setMethod(rfb_f,
 ### f convenience methods ####
 ### ------------------------------------------------------------------------ ###
 
-#' @rdname summary
-#' @export
-setMethod(
-  f = "summary", signature = "f",
-  definition = function(object, ...) {
-    txt <- (paste0(
-      paste(rep("-", 50), collapse = ""), "\n",
-      "component f:\n",
-      "last index year: ", object@yr_last, "\n",
-      "using a ", object@n1, " over ", object@n2, " ratio ",
-      "with a time lag of n0=", object@n0, "\n",
-      "index average (", paste(object@n1_yrs, collapse = ","),
-      ") = ",
-      object@n1_mean, "\n",
-      "index average (", paste(object@n2_yrs, collapse = ","),
-      ") = ",
-      object@n2_mean, "\n",
-      "ratio r = ", object@value, "\n",
-      paste0(paste(rep("-", 50), collapse = ""))
-    ))
-    cat(txt)
-  }
-)
+# #' @rdname summary
+# #' @export
+# setMethod(
+#   f = "summary", signature = "f",
+#   definition = function(object, ...) {
+#     txt <- (paste0(
+#       paste(rep("-", 50), collapse = ""), "\n",
+#       "component f:\n",
+#       "last index year: ", object@yr_last, "\n",
+#       "using a ", object@n1, " over ", object@n2, " ratio ",
+#       "with a time lag of n0=", object@n0, "\n",
+#       "index average (", paste(object@n1_yrs, collapse = ","),
+#       ") = ",
+#       object@n1_mean, "\n",
+#       "index average (", paste(object@n2_yrs, collapse = ","),
+#       ") = ",
+#       object@n2_mean, "\n",
+#       "ratio r = ", object@value, "\n",
+#       paste0(paste(rep("-", 50), collapse = ""))
+#     ))
+#     cat(txt)
+#   }
+# )
 
 #' @rdname value
 #' @export

@@ -268,7 +268,7 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
     object@value <- value
     
   ### calculate Ay
-  } else {
+  } else if (!missing(data)) {
     if (is.na(object@basis) | identical(object@basis, "average catch")) {
       value <- mean(object@data$catch[object@data$year %in% object@avg_years],
                   na.rm = TRUE)
@@ -282,7 +282,8 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
         ### find last advice value 
         pos <- tail(which(!is.na(object@data$advice)), 1)
         value <- object@data$advice[pos]
-        object@avg_years <- object@data$year[pos]
+        if (isTRUE(nrow(object@data) > 0))
+          object@avg_years <- object@data$year[pos]
       }
     }
     object@value <- value
