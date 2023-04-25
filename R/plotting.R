@@ -434,7 +434,7 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
     ggplot2::geom_line(data = object@HR@data,
                        ggplot2::aes(x = year, y = harvest_rate),
                        color = "#ed6028", 
-                       na.rm = TRUE) +
+                       na.rm = FALSE) +
     ggplot2::geom_hline(data = hr_target, 
                         ggplot2::aes(yintercept = y, linetype = type),
                         alpha = 0.8, colour = "#679dfe") +
@@ -458,7 +458,7 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
                    legend.key.height = ggplot2::unit(0.5, "lines"),
                    plot.title = ggplot2::element_text(face = "bold", 
                                                       colour = "#ed6028"))
-  p
+  #p
   
   ### length indicator
   idx_min <- min(object@indicator@indicator$indicator, na.rm = TRUE)

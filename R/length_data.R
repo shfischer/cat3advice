@@ -536,7 +536,18 @@ setMethod(Lmean,
       ### mean of length classes, weighted by catch numbers at length
       dplyr::summarise(Lmean = stats::weighted.mean(x = length, w = numbers),
                        .groups = "keep")
+
+    ### add NAs for year with missing data 
+    ### -> useful for plotting later so that line does not pass through missing
+    ###    years
+    yrs_full <- min(object@years):max(object@years)
+    yrs_missing <- setdiff(yrs_full, object@years)
+    if (isTRUE(length(yrs_missing) > 0)) {
+      object@summary <- dplyr::bind_rows(object@summary, data.frame(year = yrs_missing)) %>%
+        dplyr::arrange(year)
+    }
     
+    ### fill value slot
     object@value <- object@summary$Lmean
     names(object@value) <- object@summary$year
     
