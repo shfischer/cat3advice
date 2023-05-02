@@ -355,7 +355,7 @@ rfb_calc <- function(object = new("rfb"),
   object@frequency <- match.arg(frequency)
   ### if advice years missing, try to guess from previous advice
   if (missing(years)) {
-    if (!is.na(object@A@avg_years)) {
+    if (all(!is.na(object@A@avg_years))) {
       object@years <- seq(from = tail(sort(object@A@avg_years), 1) + 1, 
                           length.out = switch(object@frequency, 
                                               "annual" = 1, 

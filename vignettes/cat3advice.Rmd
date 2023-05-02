@@ -7,8 +7,10 @@ output:
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{cat3advice}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE, warning=FALSE, message=FALSE}
@@ -87,7 +89,7 @@ A(ple7e_catch, units = "tonnes", basis = "average catch", avg_years = 3)
 The reference catch can also be defined manually:
 
 ```{r}
-### use 3-year average
+### define manually
 A(2000, units = "tonnes")
 ```
 
@@ -175,7 +177,7 @@ head(ple7e_length)
 
 Only length data above the length at first capture $L_c$ are used to avoid noisy data from fish that are not fully selected. $L_c$ is defined as the first length class where the abundance is at or above 50\% of the mode of the length distribution and can be calculated with the function `Lc()`:
 
-```{r, fig.align='center', fig.width=5, fig.height=4, dpi=300, out.width=500, warning=FALSE}
+```{r fig.align='center', fig.height=4, fig.width=5, warning=FALSE, dpi=300, out.width=500}
 lc <- Lc(ple7e_length)
 lc
 plot(lc)

@@ -189,8 +189,9 @@ setMethod(A,
 #' @keywords internal
 setMethod(A,
   signature = c(object = "A"),
-  function(object, value, units, hcr, data, avg_years, basis, 
-           advice_metric, ...) {
+  function(object, value, units = object@units, hcr = object@hcr, data, 
+           avg_years = object@avg_years, basis = object@basis, 
+           advice_metric = object@advice_metric, ...) {
     validObject(object)
     A_calc(
       object = object, value = value, units = units, hcr = hcr,
@@ -317,8 +318,12 @@ setGeneric(
 setMethod(rfb_A,
   signature = c(object = "ANY"),
   function(object, value, units, hcr = "rfb", data, avg_years,
-           basis, advice_metric, ...) {
+           basis, advice_metric, ...) {#browser()
     hcr <- match.arg(hcr)
+    if (missing(basis)) basis <- object@basis
+    if (missing(units)) units <- object@units
+    if (missing(avg_years)) avg_years <- object@avg_years
+    if (missing(advice_metric)) advice_metric <- object@advice_metric
     object <- A(
       object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
