@@ -289,6 +289,7 @@ setMethod(
 #' @slot summary A summary of the mean catch length value(s)
 #' @slot years The years for which mean catch length is calculated
 #' @slot Lc The length at first capture
+#' @slot include_Lc Include Lc in the calculation of the mean length? (default: \code{TRUE})
 #' @slot units The units for length data (e.g. cm)
 #' @slot data The data (length frequencies) used in the calculation
 #'
@@ -301,6 +302,7 @@ setClass(
     summary = "data.frame",
     years = "numeric",
     Lc = "Lc",
+    include_Lc = "logical",
     units = "character",
     data = "data.frame"
   ),
@@ -314,6 +316,7 @@ setClass(
     )),
     years = numeric(),
     Lc = new("Lc"),
+    include_Lc = TRUE,
     units = character(),
     summary = data.frame(matrix(
       ncol = 4, nrow = 0,
@@ -352,6 +355,11 @@ setClass(
 #' classes outside this range. \code{lstep} can be used to combine the length
 #' into broader length classes. This can be useful if data are noisy with
 #' several local minima/maxima and to smooth the length distribution.
+#' 
+#' By default, the calculation of the mean length includes individuals at the 
+#' length of first capture (Lc). This can be manually turned off by 
+#' providing the argument \code{include_Lc = FALSE}. If this is turned off,
+#' only fish above Lc are considered.
 #'
 #'
 #' @param data The input data with the length distribution. (see details below)
@@ -366,6 +374,9 @@ setClass(
 #' @param rounding Optional. The method used to round length classes when using
 #'                 \code{lstep}. Defaults to \code{floor}, can also be
 #'                 \code{ceiling} or \code{round}.
+#' @param include_Lc. Optional. Include individuals at the length of first
+#'                    capture (Lc)? Defaults to \code{TRUE}. If set to \code{FALSE},
+#'                    only individuals above Lc are considered.
 #' @param units Units of length data, e.g. "cm".
 #' @param ... Additional arguments. Not currently used.
 #'
@@ -389,7 +400,8 @@ setClass(
 #' @export
 setGeneric(
   name = "Lmean",
-  def = function(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...) {
+  def = function(data, Lc, lmin, lmax, lstep, rounding = floor, 
+                 include_Lc = TRUE, units, ...) {
     standardGeneric("Lmean")
   },
   signature = c("data", "Lc")
@@ -399,7 +411,8 @@ setGeneric(
 #' @rdname Lmean
 setMethod(Lmean,
   signature = c(data = "numeric", Lc = "missing"),
-  function(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...) {
+  function(data, Lc, lmin, lmax, lstep, rounding = floor, 
+           include_Lc = TRUE, units, ...) {
     ### create empty Lc
     out <- new("Lmean")
     out@summary <- data.frame(year = seq(length(data)), Lc = NA, Lmean = data)
@@ -412,7 +425,8 @@ setMethod(Lmean,
 #' @rdname Lmean
 setMethod(Lmean,
   signature = c(data = "Lmean", Lc = "missing"),
-  function(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...) {
+  function(data, Lc, lmin, lmax, lstep, rounding = floor, 
+           include_Lc = TRUE, units, ...) {
     if (validObject(data)) {
       return(data)
     }
@@ -424,7 +438,8 @@ setMethod(Lmean,
 #' @rdname Lmean
 setMethod(Lmean,
   signature = c(data = "data.frame", Lc = "missing"),
-  function(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...) {
+  function(data, Lc, lmin, lmax, lstep, rounding = floor, 
+           include_Lc = TRUE, units, ...) {
     ### calculate Lc from data
     Lc <- Lc(
       data = data, lmin = lmin, lmax = lmax, lstep = lstep,
@@ -433,7 +448,7 @@ setMethod(Lmean,
     ### call Lc
     object <- Lmean(
       data = data, Lc = Lc, lmin = lmin, lmax = lmax, lstep = lstep,
-      rounding = rounding, units = units, ...
+      rounding = rounding, include_Lc = include_Lc, units = units, ...
     )
     return(Lc)
   }
@@ -443,7 +458,8 @@ setMethod(Lmean,
 #' @rdname Lmean
 setMethod(Lmean,
   signature = c(data = "data.frame", Lc = "data.frame"),
-  function(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...) {
+  function(data, Lc, lmin, lmax, lstep, rounding = floor, 
+           include_Lc = include_Lc, units, ...) {
     ### extract Lc from data.frame
     if (!"year" %in% names(Lc)) stop("column 'year' missing in Lc data.frame")
     if (!"Lc" %in% names(Lc)) stop("column 'Lc' missing in Lc data.frame")
@@ -457,7 +473,7 @@ setMethod(Lmean,
     ### call Lc
     object <- Lmean(
       data = data, Lc = Lc, lmin = lmin, lmax = lmax, lstep = lstep,
-      rounding = rounding, units = units, ...
+      rounding = rounding, include_Lc = include_Lc, units = units, ...
     )
     return(object)
   }
@@ -467,9 +483,11 @@ setMethod(Lmean,
 #' @rdname Lmean
 setMethod(Lmean,
   signature = c(data = "data.frame", Lc = "Lc"),
-  function(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...) {
+  function(data, Lc, lmin, lmax, lstep, rounding = floor, 
+           include_Lc = include_Lc, units, ...) {
     object <- new("Lmean")
     if (!missing(units)) object@units <- units
+    if (!missing(include_Lc)) object@include_Lc <- include_Lc
     
     ### check if required columns exist in data
     if (!"year" %in% names(data))
@@ -528,11 +546,18 @@ setMethod(Lmean,
     }
     
     ### calculate mean length above Lc
-    object@summary <- data %>%
+    tmp_smry <- data %>%
       dplyr::group_by(year, length, Lc) %>%
       dplyr::summarise(numbers = sum(numbers), .groups = "keep") %>%
-      dplyr::ungroup(length) %>%
-      dplyr::filter(length >= Lc) %>%
+      dplyr::ungroup(length)
+    ### include Lc?
+    if (isTRUE(object@include_Lc)) {
+      tmp_smry <- tmp_smry %>% dplyr::filter(length >= Lc)
+    } else {
+      tmp_smry <- tmp_smry %>% dplyr::filter(length > Lc)
+    }
+    ### mean 
+    object@summary <-  tmp_smry %>%
       ### mean of length classes, weighted by catch numbers at length
       dplyr::summarise(Lmean = stats::weighted.mean(x = length, w = numbers),
                        .groups = "keep")

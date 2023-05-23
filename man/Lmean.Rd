@@ -9,17 +9,77 @@
 \alias{Lmean,data.frame,Lc-method}
 \title{Mean catch length Lmean}
 \usage{
-Lmean(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...)
+Lmean(
+  data,
+  Lc,
+  lmin,
+  lmax,
+  lstep,
+  rounding = floor,
+  include_Lc = TRUE,
+  units,
+  ...
+)
 
-\S4method{Lmean}{numeric,missing}(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...)
+\S4method{Lmean}{numeric,missing}(
+  data,
+  Lc,
+  lmin,
+  lmax,
+  lstep,
+  rounding = floor,
+  include_Lc = TRUE,
+  units,
+  ...
+)
 
-\S4method{Lmean}{Lmean,missing}(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...)
+\S4method{Lmean}{Lmean,missing}(
+  data,
+  Lc,
+  lmin,
+  lmax,
+  lstep,
+  rounding = floor,
+  include_Lc = TRUE,
+  units,
+  ...
+)
 
-\S4method{Lmean}{data.frame,missing}(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...)
+\S4method{Lmean}{data.frame,missing}(
+  data,
+  Lc,
+  lmin,
+  lmax,
+  lstep,
+  rounding = floor,
+  include_Lc = TRUE,
+  units,
+  ...
+)
 
-\S4method{Lmean}{data.frame,data.frame}(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...)
+\S4method{Lmean}{data.frame,data.frame}(
+  data,
+  Lc,
+  lmin,
+  lmax,
+  lstep,
+  rounding = floor,
+  include_Lc = include_Lc,
+  units,
+  ...
+)
 
-\S4method{Lmean}{data.frame,Lc}(data, Lc, lmin, lmax, lstep, rounding = floor, units, ...)
+\S4method{Lmean}{data.frame,Lc}(
+  data,
+  Lc,
+  lmin,
+  lmax,
+  lstep,
+  rounding = floor,
+  include_Lc = include_Lc,
+  units,
+  ...
+)
 }
 \arguments{
 \item{data}{The input data with the length distribution. (see details below)}
@@ -43,6 +103,10 @@ classes into larger length classes. (see details below)}
 \item{units}{Units of length data, e.g. "cm".}
 
 \item{...}{Additional arguments. Not currently used.}
+
+\item{include_Lc.}{Optional. Include individuals at the length of first
+capture (Lc)? Defaults to \code{TRUE}. If set to \code{FALSE},
+only individuals above Lc are considered.}
 }
 \value{
 An object of class \code{Lc}
@@ -77,6 +141,11 @@ The optional arguments \code{lmin} and \code{lmax} allow removing of length
 classes outside this range. \code{lstep} can be used to combine the length
 into broader length classes. This can be useful if data are noisy with
 several local minima/maxima and to smooth the length distribution.
+
+By default, the calculation of the mean length includes individuals at the 
+length of first capture (Lc). This can be manually turned off by 
+providing the argument \code{include_Lc = FALSE}. If this is turned off,
+only fish above Lc are considered.
 }
 \examples{
 # example data for plaice

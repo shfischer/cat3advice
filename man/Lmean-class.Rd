@@ -20,6 +20,8 @@ at first capture (Lc).
 
 \item{\code{Lc}}{The length at first capture}
 
+\item{\code{include_Lc}}{Include Lc in the calculation of the mean length? (default: \code{TRUE})}
+
 \item{\code{units}}{The units for length data (e.g. cm)}
 
 \item{\code{data}}{The data (length frequencies) used in the calculation}
