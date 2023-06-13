@@ -257,7 +257,7 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
   ### years for average catch
   if (!missing(avg_years)) {
     ### if a single number is provided, this is the number of years to use
-    if (identical(length(avg_years), 1L)) {
+    if (identical(length(avg_years), 1L) & !is.na(avg_years)) {
       avg_years <- tail(object@data[!is.na(object@data[, advice_metric]), "year"], avg_years)
       ### otherwise assume years to be considered are provided
     }
