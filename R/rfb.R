@@ -417,7 +417,7 @@ setMethod(
                            paste0(" ", object@A@units), "")
     ### rfb calculation (uncapped advice)
     rfb_txt <- "RFB calculation (r*f*b*m)"
-    rfb_val <- paste0(icesAdvice::icesRound(object@advice_uncapped), 
+    rfb_val <- paste0(round(object@advice_uncapped), 
                       object@units)
     txt_rfb <- paste0(
       format(rfb_txt, width = 48), " | ",

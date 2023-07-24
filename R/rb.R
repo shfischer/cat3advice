@@ -379,7 +379,7 @@ setMethod(
                            paste0(" ", object@A@units), "")
     ### rb calculation (uncapped advice)
     rb_txt <- "RB calculation (r*b*m)"
-    rb_val <- paste0(icesAdvice::icesRound(object@advice_uncapped), 
+    rb_val <- paste0(round(object@advice_uncapped), 
                      object@units)
     txt_rb <- paste0(
       format(rb_txt, width = 48), " | ",
@@ -400,7 +400,7 @@ setMethod(
     catch_adv_txt2 <- ifelse(isTRUE(object@cap),
                              "   (Ay * stability clause)",
                              "   (Ay * r * b * m)")
-    catch_adv_val <- paste0(icesAdvice::icesRound(object@advice), object@units)
+    catch_adv_val <- paste0(round(object@advice), object@units)
     txt_catch_adv <- paste0(format(catch_adv_txt1, width = 48), " | \n",
                             format(catch_adv_txt2, width = 48), " | ",
                             format(catch_adv_val, width = 29, 
@@ -411,7 +411,7 @@ setMethod(
       disc_rate_val <- paste0(icesAdvice::icesRound(object@discard_rate), 
                               "%")
       land_txt <- "Projected landings corresponding to advice"
-      land_val <- paste0(icesAdvice::icesRound(object@advice_landings),
+      land_val <- paste0(round(object@advice_landings),
                          object@units)
       txt_disc_land <- paste0(format(disc_rate_txt, width = 48), " | ",
                               format(disc_rate_val, width = 29, 
