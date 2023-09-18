@@ -372,19 +372,34 @@ setMethod(f = "plot", signature = c(x = "f", y = "missing"),
   ### data.frame for reference length
   Lref_df <- data.frame(name = "L[F==M]", value = x@Lref@value)
   
+  if(length(x@Lref@value)!=1) {
+    object@indicator <- melt(object@indicator, id.vars="year", variable.name = "name") %>% 
+      filter(name %in% c("Lmean","Lref")) %>%
+      mutate(name = gsub("Lref", "L[F==M]", name))
+  }
+  
   ### create plot
   p <- ggplot2::ggplot()
-  
-  p <- p +
-    ggplot2::geom_line(data = object@indicator,
-                       ggplot2::aes(x = year, y = Lmean),
-              color = "#ed6028") +
-    ggplot2::geom_hline(data = Lref_df, 
-                        ggplot2::aes(yintercept = value, colour = name)) +
-    ggplot2::scale_colour_manual("",
-                        values = c("L[F==M]" = "#679dfe"),
-                        labels = scales::parse_format()) +
-    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+  if(length(x@Lref@value)==1) {
+    p <- p +
+      ggplot2::geom_line(data = object@indicator,
+                         ggplot2::aes(x = year, y = Lmean),
+                         color = "#ed6028") + 
+      ggplot2::geom_hline(data = Lref_df,
+                          ggplot2::aes(yintercept = value, colour = name)) +
+      ggplot2::scale_colour_manual("",
+                                   values = c("L[F==M]" = "#679dfe"),
+                                   labels = scales::parse_format())
+  } else {
+    p <- p +
+      ggplot2::geom_line(data = object@indicator,
+                         ggplot2::aes(x = year, y = value, group = name, color = name)) + 
+      ggplot2::scale_colour_manual("",
+                                   values = c("L[F==M]" = "#679dfe","Lmean" = "#ed6028"),
+                                   labels = scales::parse_format())
+  }
+
+    p <- p + ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1),
                     xlim = c(yr_min - 1, yr_max + 1),
                     expand = FALSE) +
