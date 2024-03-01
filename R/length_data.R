@@ -86,7 +86,6 @@ setClass(
 #' the previous Lc should then be kept unless a substantial change happened
 #' (e.g. because of changed in the fishery or fishery selectivity).
 #'
-#' data, pool = FALSE, lmin, lmax, lstep, rounding = floor
 #' @param data The input data with the length distribution. (see details below)
 #' @param pool Pool data from several years in the calculation?
 #'             \code{TRUE}/\code{FALSE} or a vector specifying years to use.
@@ -103,9 +102,6 @@ setClass(
 #'                 \code{ceiling} or \code{round}.
 #' @param units Units of length data, e.g. "cm".
 #' @param ... Additional arguments. Not currently used.
-#'
-#' @section Warning:
-#' For application in ICES, do not change the defaults (\code{n0}, \code{n1}, \code{n2}) unless the change is supported by stock-specific simulations.
 #'
 #' @references
 #' ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
@@ -374,7 +370,7 @@ setClass(
 #' @param rounding Optional. The method used to round length classes when using
 #'                 \code{lstep}. Defaults to \code{floor}, can also be
 #'                 \code{ceiling} or \code{round}.
-#' @param include_Lc. Optional. Include individuals at the length of first
+#' @param include_Lc Optional. Include individuals at the length of first
 #'                    capture (Lc)? Defaults to \code{TRUE}. If set to \code{FALSE},
 #'                    only individuals above Lc are considered.
 #' @param units Units of length data, e.g. "cm".

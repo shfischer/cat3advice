@@ -100,13 +100,13 @@ classes into larger length classes. (see details below)}
 \code{lstep}. Defaults to \code{floor}, can also be
 \code{ceiling} or \code{round}.}
 
+\item{include_Lc}{Optional. Include individuals at the length of first
+capture (Lc)? Defaults to \code{TRUE}. If set to \code{FALSE},
+only individuals above Lc are considered.}
+
 \item{units}{Units of length data, e.g. "cm".}
 
 \item{...}{Additional arguments. Not currently used.}
-
-\item{include_Lc.}{Optional. Include individuals at the length of first
-capture (Lc)? Defaults to \code{TRUE}. If set to \code{FALSE},
-only individuals above Lc are considered.}
 }
 \value{
 An object of class \code{Lc}

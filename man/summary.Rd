@@ -23,7 +23,7 @@
 \S4method{summary}{r}(object, ...)
 }
 \arguments{
-\item{object}{The object to be plotted.}
+\item{object}{The object for which a summary is requested.}
 
 \item{...}{Additional arguments. Not used.}
 }

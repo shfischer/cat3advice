@@ -120,13 +120,6 @@ For application with the rfb or chr rule, Lc should be set once in the first
 year of the implementation. At every subsequent application of the method,
 the previous Lc should then be kept unless a substantial change happened
 (e.g. because of changed in the fishery or fishery selectivity).
-
-data, pool = FALSE, lmin, lmax, lstep, rounding = floor
-}
-
-\section{Warning}{
-
-For application in ICES, do not change the defaults (\code{n0}, \code{n1}, \code{n2}) unless the change is supported by stock-specific simulations.
 }
 
 \examples{
