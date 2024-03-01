@@ -224,7 +224,7 @@ setMethod(
 ### ------------------------------------------------------------------------ ###
 ### F class ####
 ### ------------------------------------------------------------------------ ###
-#' @title F-class
+#' @title F
 #' 
 #' @description  An S4 class to represent component F (the target harvest rate) of the chr rule.
 #' 
@@ -238,7 +238,7 @@ setMethod(
 #' @slot indicator \code{F}. The indicator used to select years of the harvest rate.
 #' @slot hcr \code{character}. The harvest control rule (hcr) for which the index is used. Only applicable to 'chr'.
 #' 
-#' @name F-class
+#' @name Ftarget-class
 #' @title F
 #' @export
 setClass(
@@ -334,6 +334,7 @@ setClass(
 #' # application in following years without updating target harvest rate
 #' F <- F(hr, yr_ref = c(2016, 2019))
 #' 
+#' @rdname Ftarget
 #' @export
 setGeneric(
   name = "F",
@@ -344,7 +345,7 @@ setGeneric(
 )
 
 ### object = HR, indicator = F
-#' @rdname F
+#' @rdname Ftarget
 #' @usage NULL
 #' @export
 setMethod(F,
@@ -357,7 +358,7 @@ setMethod(F,
 })
 
 ### object = HR, indicator = missing + yr_ref
-#' @rdname F
+#' @rdname Ftarget
 #' @usage NULL
 #' @export
 setMethod(F,
@@ -370,7 +371,7 @@ setMethod(F,
 })
 
 ### object = numeric, indicator = missing -> use as value
-#' @rdname F
+#' @rdname Ftarget
 #' @usage NULL
 #' @export
 setMethod(F,
@@ -387,7 +388,7 @@ setMethod(F,
 })
 
 ### object = F -> check validity
-#' @rdname F
+#' @rdname Ftarget
 #' @usage NULL
 #' @export
 setMethod(F,
