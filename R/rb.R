@@ -177,7 +177,7 @@ setMethod(rb,
                    ...) {#browser()
   object <- rb_calc(A = A, r = r, b = b, m = m,
                     cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-                    year = years, frequency = frequency, 
+                    years = years, frequency = frequency, 
                     discard_rate = discard_rate, ... = ...)
   return(object)
 })
@@ -202,7 +202,7 @@ setMethod(rb,
   ### update object if arguments provided
   object <- rb_calc(object = object,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-                     year = years, frequency = frequency, 
+                     years = years, frequency = frequency, 
                      discard_rate = discard_rate, ... = ...)
   return(object)
   
@@ -229,7 +229,7 @@ setMethod(rb,
   object <- rb_calc(object = object,
                      A = A, r = r, b = b, m = m,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
-                     year = years, frequency = frequency, 
+                     years = years, frequency = frequency, 
                      discard_rate = discard_rate, ... = ...)
   return(object)
 })
