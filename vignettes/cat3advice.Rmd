@@ -1,7 +1,9 @@
 ---
 title: "cat3advice"
+author: "Simon H. Fischer"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
-  rmarkdown::html_vignette:
+  rmarkdown::github_document:
       toc: true
       toc_depth: 2
 bibliography: references.bib
@@ -22,7 +24,7 @@ knitr::opts_chunk$set(
 
 # `cat3advice`
 
-`cat3advice` is an R package that allows the application of the ICES category 3 data-limited harvest control rules (rfb/rb/chr rules) and follows the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] (https://doi.org/10.17895/ices.advice.19801564).
+`cat3advice` is an R package that allows the application of the ICES category 3 data-limited harvest control rules (rfb/rb/chr rules) and follows the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] (<https://doi.org/10.17895/ices.advice.19801564>).
 
 # Documentation
 
@@ -45,7 +47,7 @@ This tutorial uses data from the ICES Western English Channel plaice stock (ple.
 
 Before reading this vignette, please first read the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines].
 
-For more details on the rfb rule, please refer to Fischer et al. [-@Fischer2020_catch_rule;-@Fischer2021_GA;@Fischer2021_GA_PA;-@Fischer2022_risk_equivalence] and for the chr rule, please refer to Fischer et al. [-@Fischer2022_hr;-@Fischer2022_risk_equivalence].
+For more details on the rfb rule, please refer to Fischer et al. [-@Fischer2020_catch_rule; -@Fischer2021_GA; @Fischer2021_GA_PA; -@Fischer2022_risk_equivalence] and for the chr rule, please refer to Fischer et al. [-@Fischer2022_hr; -@Fischer2022_risk_equivalence].
 
 ```{r, message=FALSE, warning=FALSE}
 ### load package
@@ -131,10 +133,10 @@ The biomass safeguard reduces the advice when the biomass index $I$ falls below 
 
 $$
 b = \text{min}\{1,\ I_{y-1}/I_{\text{trigger}}\}
-$$
-By default, the trigger value is defined based on the lowest observed index value $I_{\text{loss}}$ as $I_{\text{trigger}} = 1.4I_{\text{loss}}$. 
+$$ By default, the trigger value is defined based on the lowest observed index value $I_{\text{loss}}$ as $I_{\text{trigger}} = 1.4I_{\text{loss}}$.
 
 The biomass safeguard is calculated with the function `b`:
+
 ```{r, fig.align='center', fig.width=3, fig.height=2, dpi=300, out.width=500}
 ### use same plaice data as before
 ### application in first year with new calculation of Itrigger
@@ -150,7 +152,7 @@ plot(b)
 plot(r, b)
 ```
 
-**Please note that $I_{\text{trigger}}$ should only be defined once in the first year of the application of the rfb rule**. In the following years, the same value should be used. For this purpose, `b` allows the direct definition of $I_{\text{trigger}}$, or, more conveniently, $I_{\text{trigger}}$ can be based on the year in which $I_{\text{loss}}$ is defined:
+**Please note that** $I_{\text{trigger}}$ should only be defined once in the first year of the application of the rfb rule. In the following years, the same value should be used. For this purpose, `b` allows the direct definition of $I_{\text{trigger}}$, or, more conveniently, $I_{\text{trigger}}$ can be based on the year in which $I_{\text{loss}}$ is defined:
 
 ```{r}
 ### in following years, Itrigger should NOT be updated
@@ -175,7 +177,7 @@ head(ple7e_length)
 
 ### Length at first capture $L_c$
 
-Only length data above the length at first capture $L_c$ are used to avoid noisy data from fish that are not fully selected. $L_c$ is defined as the first length class where the abundance is at or above 50\% of the mode of the length distribution and can be calculated with the function `Lc()`:
+Only length data above the length at first capture $L_c$ are used to avoid noisy data from fish that are not fully selected. $L_c$ is defined as the first length class where the abundance is at or above 50% of the mode of the length distribution and can be calculated with the function `Lc()`:
 
 ```{r fig.align='center', fig.height=4, fig.width=5, warning=FALSE, dpi=300, out.width=500}
 lc <- Lc(ple7e_length)
@@ -184,6 +186,7 @@ plot(lc)
 ```
 
 $L_c$ can change from year to year. Therefore, it is recommended to pool data from several (e.g. 5) years:
+
 ```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500, warning=FALSE}
 lc <- Lc(ple7e_length, pool = 2017:2021)
 lc
@@ -191,6 +194,7 @@ plot(lc)
 ```
 
 If length data are noisy, the size of the length classes can be increased:
+
 ```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500, warning=FALSE}
 ### use 20mm length classes
 plot(Lc(ple7e_length, pool = 2017:2021, lstep = 20))
@@ -210,6 +214,7 @@ plot(lmean)
 ```
 
 If length data are noisy, the size of the length classes can be increased:
+
 ```{r, fig.align='center', fig.width=5, fig.height=3, dpi=300, out.width=700}
 ### use 20mm length classes
 plot(Lmean(data = ple7e_length, Lc = lc, units = "mm", lstep = 20))
@@ -221,8 +226,7 @@ The reference length follows the concepts of @Beverton1957_dynamics_populations 
 
 $$
 L_{F=M} = 0.75L_c + 0.25L_\infty
-$$
-where $L_{F=M}$ is the MSY reference length, $L_c$ the length at first capture as defined above, and $L_\infty$ the von Bertalanffy asymptotic length. This simple equation assumes that fishing at $F=M$ can be used as a proxy for MSY and that $M/k=1.5$ (where $M$ is the natural mortality and $k$ the von Bertalanffy individual growth rate). The reference length can be calculated with
+$$ where $L_{F=M}$ is the MSY reference length, $L_c$ the length at first capture as defined above, and $L_\infty$ the von Bertalanffy asymptotic length. This simple equation assumes that fishing at $F=M$ can be used as a proxy for MSY and that $M/k=1.5$ (where $M$ is the natural mortality and $k$ the von Bertalanffy individual growth rate). The reference length can be calculated with
 
 ```{r}
 lref <- Lref(Lc = 264, Linf = 585, units = "mm")
@@ -256,7 +260,7 @@ In this case, the mean catch length (orange curve) is always below the MSY proxy
 
 ## Multiplier $m$
 
-The multiplier $m$ is a tuning parameter and ensures that the catch advice is precautionary in the long term. 
+The multiplier $m$ is a tuning parameter and ensures that the catch advice is precautionary in the long term.
 
 The value of $m$ is set depending on the von Bertalanffy parameter $k$ (individual growth rate), with $m=0.95$ for stocks with $k<0.2/\text{year}$ and $m=0.90$ for stocks with $0.2\text{year}^{-1} \leq k < 0.32\text{year}^{-1}$. The multiplier can be calculated with the function `m()`:
 
@@ -287,15 +291,15 @@ advice <- rfb(A = A, r = r, f = f, b = b, m = m, discard_rate = 27)
 advice
 ```
 
-A discard rate in \% can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
+A discard rate in % can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
 
 The rfb rule includes a stability clause that restricts changes to $+20\%$ and $-30\%$. This stability clause is conditional on the biomass safeguard and is only applied if $b=1$ but turned off when $b<1$.
 
 `cat3advice` can print a table similar to the table presented in ICES advice sheets in which all numbers are rounded following ICES rounding rules:
+
 ```{r}
 advice(advice)
 ```
-
 
 # The rb rule
 
@@ -378,10 +382,10 @@ The biomass safeguard reduces the advice when the biomass index $I$ falls below 
 
 $$
 b = \text{min}\{1,\ I_{y-1}/I_{\text{trigger}}\}
-$$
-By default, the trigger value is defined based on the lowest observed index value $I_{\text{loss}}$ as $I_{\text{trigger}} = 1.4I_{\text{loss}}$. 
+$$ By default, the trigger value is defined based on the lowest observed index value $I_{\text{loss}}$ as $I_{\text{trigger}} = 1.4I_{\text{loss}}$.
 
 The biomass safeguard is calculated with the function `b`:
+
 ```{r, fig.align='center', fig.width=3, fig.height=2, dpi=300, out.width=500}
 ### use same plaice data as before
 ### application in first year with new calculation of Itrigger
@@ -397,7 +401,7 @@ plot(b)
 plot(r, b)
 ```
 
-**Please note that $I_{\text{trigger}}$ should only be defined once in the first year of the application of the rb rule**. In the following years, the same value should be used. For this purpose, `b` allows the direct definition of $I_{\text{trigger}}$, or, more conveniently, $I_{\text{trigger}}$ can be based on the year in which $I_{\text{loss}}$ is defined:
+**Please note that** $I_{\text{trigger}}$ should only be defined once in the first year of the application of the rb rule. In the following years, the same value should be used. For this purpose, `b` allows the direct definition of $I_{\text{trigger}}$, or, more conveniently, $I_{\text{trigger}}$ can be based on the year in which $I_{\text{loss}}$ is defined:
 
 ```{r}
 ### in following years, Itrigger should NOT be updated
@@ -407,10 +411,9 @@ b(ple7e_idx, units = "kg/hr", Itrigger = 0.3924721)
 b(ple7e_idx, units = "kg/hr", yr_ref = 2007)
 ```
 
-
 ## Multiplier $m$
 
-The multiplier $m$ is a tuning parameter and ensures that the catch advice is precautionary in the long term. 
+The multiplier $m$ is a tuning parameter and ensures that the catch advice is precautionary in the long term.
 
 The value of $m$ is set to $m=0.5$ for all stocks. The multiplier can be calculated with the function `m()`:
 
@@ -436,11 +439,12 @@ advice <- rb(A = A, r = r, b = b, m = m, discard_rate = 27)
 advice
 ```
 
-A discard rate in \% can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
+A discard rate in % can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
 
 The rb rule includes a stability clause that restricts changes to $+20%$ and $-30%$. This stability clause is conditional on the biomass safeguard and is only applied if $b=1$ but turned off when $b<1$.
 
 `cat3advice` can print a table similar to the table presented in ICES advice sheets in which all numbers are rounded following ICES rounding rules:
+
 ```{r}
 advice(advice)
 ```
@@ -453,8 +457,7 @@ $$
 A_{y+1} = I_{y-1} \times F_{\text{proxyMSY}} \times b \times m
 $$
 
-where $A_{y+1}$ is the new catch advice, $I_{y-1}$ the last biomass index value, 
-$F_{\text{proxyMSY}}$ the (relative) harvest rate target, $b$ a biomass safeguard and $m$ a precautionary multiplier. Furthermore, the change in the advice is restricted by a stability clause that only allows changes of between $+20\%$ and $-30\%$ relative to the previous advice, but the application of the stability clause is conditional on $b=1$ and turned off when $b<1$.
+where $A_{y+1}$ is the new catch advice, $I_{y-1}$ the last biomass index value, $F_{\text{proxyMSY}}$ the (relative) harvest rate target, $b$ a biomass safeguard and $m$ a precautionary multiplier. Furthermore, the change in the advice is restricted by a stability clause that only allows changes of between $+20\%$ and $-30\%$ relative to the previous advice, but the application of the stability clause is conditional on $b=1$ and turned off when $b<1$.
 
 The chr rule should be applied annually, i.e. the catch advice is valid for one year.
 
@@ -462,8 +465,7 @@ Please note that any change from the default configuration should be supported b
 
 ## Reference catch $A_y$
 
-A reference catch $A_y$ is needed for the application of the stability clause.
-The reference catch $A_y$ is usually the most recently advised catch. In a typical ICES setting, an assessment is conducted in an assessment (intermediate) year $y$ to give advice for the following advice year $y+1$, this is the advice for year $y$:
+A reference catch $A_y$ is needed for the application of the stability clause. The reference catch $A_y$ is usually the most recently advised catch. In a typical ICES setting, an assessment is conducted in an assessment (intermediate) year $y$ to give advice for the following advice year $y+1$, this is the advice for year $y$:
 
 ```{r}
 ### load plaice catch and advice data
@@ -519,10 +521,10 @@ The biomass safeguard reduces the advice when the biomass index $I$ falls below 
 
 $$
 b = \text{min}\{1,\ I_{y-1}/I_{\text{trigger}}\}
-$$
-By default, the trigger value is defined based on the lowest observed index value $I_{\text{loss}}$ as $I_{\text{trigger}} = 1.4I_{\text{loss}}$. 
+$$ By default, the trigger value is defined based on the lowest observed index value $I_{\text{loss}}$ as $I_{\text{trigger}} = 1.4I_{\text{loss}}$.
 
 The biomass safeguard is calculated with the function `b`:
+
 ```{r, fig.align='center', fig.width=3, fig.height=2, dpi=300, out.width=500}
 ### use same plaice data as before
 ### application in first year with new calculation of Itrigger
@@ -536,7 +538,7 @@ advice(b)
 plot(b)
 ```
 
-**Please note that $I_{\text{trigger}}$ should only be defined once in the first year of the application of the chr rule**. In the following years, the same value should be used. For this purpose, `b` allows the direct definition of $I_{\text{trigger}}$, or, more conveniently, $I_{\text{trigger}}$ can be based on the year in which $I_{\text{loss}}$ is defined:
+**Please note that** $I_{\text{trigger}}$ should only be defined once in the first year of the application of the chr rule. In the following years, the same value should be used. For this purpose, `b` allows the direct definition of $I_{\text{trigger}}$, or, more conveniently, $I_{\text{trigger}}$ can be based on the year in which $I_{\text{loss}}$ is defined:
 
 ```{r}
 ### in following years, Itrigger should NOT be updated
@@ -561,7 +563,7 @@ head(ple7e_length)
 
 ### Length at first capture $L_c$
 
-Only length data above the length at first capture $L_c$ are used to avoid noisy data from fish that are not fully selected. $L_c$ is defined as the first length class where the abundance is at or above 50\% of the mode of the length distribution and can be calculated with the function `Lc()`:
+Only length data above the length at first capture $L_c$ are used to avoid noisy data from fish that are not fully selected. $L_c$ is defined as the first length class where the abundance is at or above 50% of the mode of the length distribution and can be calculated with the function `Lc()`:
 
 ```{r, fig.align='center', fig.width=5, fig.height=4, dpi=300, out.width=500, warning=FALSE}
 lc <- Lc(ple7e_length)
@@ -570,6 +572,7 @@ plot(lc)
 ```
 
 $L_c$ can change from year to year. Therefore, it is recommended to pool data from several (e.g. 5) years:
+
 ```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500, warning=FALSE}
 lc <- Lc(ple7e_length, pool = 2017:2021)
 lc
@@ -577,6 +580,7 @@ plot(lc)
 ```
 
 If length data are noisy, the size of the length classes can be increased:
+
 ```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500, warning=FALSE}
 ### use 20mm length classes
 plot(Lc(ple7e_length, pool = 2017:2021, lstep = 20))
@@ -596,6 +600,7 @@ plot(lmean)
 ```
 
 If length data are noisy, the size of the length classes can be increased:
+
 ```{r, fig.align='center', fig.width=5, fig.height=3, dpi=300, out.width=700}
 ### use 20mm length classes
 plot(Lmean(data = ple7e_length, Lc = lc, units = "mm", lstep = 20))
@@ -607,8 +612,7 @@ The reference length follows the concepts of @Beverton1957_dynamics_populations 
 
 $$
 L_{F=M} = 0.75L_c + 0.25L_\infty
-$$
-where $L_{F=M}$ is the MSY reference length, $L_c$ the length at first capture as defined above, and $L_\infty$ the von Bertalanffy asymptotic length. This simple equation assumes that fishing at $F=M$ can be used as a proxy for MSY and that $M/k=1.5$ (where $M$ is the natural mortality and $k$ the von Bertalanffy individual growth rate). The reference length can be calculated with
+$$ where $L_{F=M}$ is the MSY reference length, $L_c$ the length at first capture as defined above, and $L_\infty$ the von Bertalanffy asymptotic length. This simple equation assumes that fishing at $F=M$ can be used as a proxy for MSY and that $M/k=1.5$ (where $M$ is the natural mortality and $k$ the von Bertalanffy individual growth rate). The reference length can be calculated with
 
 ```{r}
 lref <- Lref(Lc = 264, Linf = 585, units = "mm")
@@ -630,6 +634,24 @@ plot(f)
 
 In this case, the mean catch length (orange curve) is above the reference length in two years, indicating that the fishing pressure was below $F_{\text{MSY}}$ in these two years.
 
+ICES advice sheets typically show the inverse indicator ratio. This can be plotted by adding an `inverse = TRUE` argument to `plot()`:
+
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500}
+plot(f, inverse = TRUE)
+```
+
+The time series of the indicator values can be printed with
+
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500}
+indicator(f)
+```
+
+and the inverse values also with
+
+```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=500}
+inverse_indicator(f)
+```
+
 ### Harvest rate
 
 For the estimation of the target harvest rate, the harvest rate needs to be calculated with `HR()`.
@@ -649,6 +671,7 @@ hr
 ```
 
 The harvest rate can only be calculated for years in which both catch and index data are available. The harvest rate and its input data can be plotted automatically:
+
 ```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=700}
 plot(hr)
 ```
@@ -668,7 +691,7 @@ The years selected for the target harvest rate are indicated by orange points.
 
 ## Multiplier $m$
 
-The multiplier $m$ is a tuning parameter and ensures that the catch advice is precautionary in the long term. 
+The multiplier $m$ is a tuning parameter and ensures that the catch advice is precautionary in the long term.
 
 By default, the value of $m$ is set to $m=0.5$. The multiplier can be calculated with the function `m()`:
 
@@ -698,14 +721,14 @@ advice <- chr(A = A, I = i, F = F, b = b, m = m, discard_rate = 27)
 advice
 ```
 
-A discard rate in \% can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
+A discard rate in % can be provided to the argument `discard_rate` and this means the advice is provided for the catch and landings.
 
 The chr rule includes a stability clause that restricts changes to $+20\%$ and $-30\%$. This stability clause is conditional on the biomass safeguard and is only applied if $b=1$ but turned off when $b<1$.
 
 `cat3advice` can print a table similar to the table presented in ICES advice sheets in which all numbers are rounded following ICES rounding rules:
+
 ```{r}
 advice(advice)
 ```
-
 
 # References
