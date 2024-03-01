@@ -158,6 +158,8 @@ setMethod(f,
     }
     ### calculate Lmean/Lref ratio
     object@indicator$indicator <- object@indicator$Lmean/object@indicator$Lref
+    ### also include inverse indicator ratio to make ICES happy
+    object@indicator$inverse_indicator <- 1/object@indicator$indicator
     
     ### years
     object@years <- object@indicator$year
@@ -317,6 +319,25 @@ setMethod(f = "show", signature = "f",
             cat(paste0("An object of class \"", class(object), "\".\n",
                        "Value: ", object@value, "\n"))
 })
+
+### indicator
+#' @rdname chr_indicator
+#' @export
+setMethod(f = "indicator", signature = "f", 
+          definition = function(object) {
+            object@indicator
+          })
+
+### inverse indicator
+#' Return the inverse indicator for component f of the chr rule.
+#'
+#' @param object An object of class \code{f}.
+#'
+#' @return A \code{data.frame} with the inverse length indicator value(s).
+#' @export
+inverse_indicator <- function(object) {
+  object@indicator[, c("year", "inverse_indicator")]
+}
 
 #
 # ### shows which methods are used (sequentially if neccessary)

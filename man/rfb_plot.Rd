@@ -52,6 +52,10 @@ using ggplot2 and loosely following ICES style figures.
 \details{
 Combinations of object are possible, e.g. for the rfb rule, it is possible to
 plot components r (index ratio) and b (biomass safeguard) on the same plot.
+
+For the chr rule, plotting component f will return a plot with the absolute
+value of the mean catch length. The inverse indicator length can be plotted
+with \code{plot(f, inverse = TRUE)}.
 }
 \examples{
 # Component b 

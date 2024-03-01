@@ -21,6 +21,9 @@ NULL
 #' Combinations of object are possible, e.g. for the rfb rule, it is possible to
 #' plot components r (index ratio) and b (biomass safeguard) on the same plot.
 #' 
+#' For the chr rule, plotting component f will return a plot with the absolute
+#' value of the mean catch length. The inverse indicator length can be plotted
+#' with \code{plot(f, inverse = TRUE)}.
 #'
 #' @param x An object of class \code{rfb_r}, \code{rfb_b}, ...
 #' @param y Optional. An additional object of \code{rfb_b}, ...
@@ -48,7 +51,8 @@ NULL
 #' @export
 #' @name rfb_plot
 setGeneric(name = "plot",
-           def = function(x, y, y_label, show.data = TRUE, ...)  standardGeneric("plot"))
+           def = function(x, y, y_label, show.data = TRUE, 
+                          ...)  standardGeneric("plot"))
 
 ### rfb_r ####
 #' @rdname rfb_plot
@@ -348,10 +352,19 @@ setMethod(f = "plot", signature = c(x = "I", y = "missing"),
 
 ### rfb_f ####
 #' @rdname rfb_plot
+#' @export
 setMethod(f = "plot", signature = c(x = "f", y = "missing"), 
-          definition = function(x, y, y_label, show.data, ...) {
-            
+          definition = function(x, y, y_label, show.data, 
+                                ...) {
+  #browser()          
   object <- x
+  
+  inverse <- FALSE
+  if (isTRUE("inverse" %in% names(list(...)))) {
+    inverse <- list(...)[["inverse"]]
+  } else {
+    inverse <- FALSE
+  }
   
   ### check validity
   . <- validObject(object)
@@ -364,8 +377,12 @@ setMethod(f = "plot", signature = c(x = "f", y = "missing"),
   
   ### index units
   if (missing(y_label)) {
-    y_label <- "Mean catch length"
-    if (!is.na(object@units))
+    if (!isTRUE(inverse)) {
+      y_label <- "Mean catch length"
+    } else {
+      y_label <- "Inverse indicator ratio"
+    }
+    if (!is.na(object@units) & !isTRUE(inverse))
       y_label <- paste0(y_label, " in ", object@units)
   }
   
@@ -375,32 +392,66 @@ setMethod(f = "plot", signature = c(x = "f", y = "missing"),
   ### create plot
   p <- ggplot2::ggplot()
   
-  p <- p +
-    ggplot2::geom_line(data = object@indicator,
-                       ggplot2::aes(x = year, y = Lmean),
-              color = "#ed6028") +
-    ggplot2::geom_hline(data = Lref_df, 
-                        ggplot2::aes(yintercept = value, colour = name)) +
-    ggplot2::scale_colour_manual("",
-                        values = c("L[F==M]" = "#679dfe"),
-                        labels = scales::parse_format()) +
-    ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
-    ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1),
-                    xlim = c(yr_min - 1, yr_max + 1),
-                    expand = FALSE) +
-    ggplot2::labs(x = "", y = y_label, 
-         title = "Length indicator") +
-    ggplot2::theme_bw(base_size = 8) +
-    ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
-          axis.title.x = ggplot2::element_blank(),
-          legend.position = "bottom",
-          legend.key.height = ggplot2::unit(0.5, "lines"),
-          plot.title = ggplot2::element_text(face = "bold", colour = "#ed6028"))
+  if (!isTRUE(inverse)) {
+  
+    p <- p +
+      ggplot2::geom_line(data = object@indicator,
+                         ggplot2::aes(x = year, y = Lmean),
+                color = "#ed6028") +
+      ggplot2::geom_hline(data = Lref_df, 
+                          ggplot2::aes(yintercept = value, colour = name)) +
+      ggplot2::scale_colour_manual("",
+                          values = c("L[F==M]" = "#679dfe"),
+                          labels = scales::parse_format()) +
+      ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+      ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1),
+                      xlim = c(yr_min - 1, yr_max + 1),
+                      expand = FALSE) +
+      ggplot2::labs(x = "", y = y_label, 
+           title = "Length indicator") +
+      ggplot2::theme_bw(base_size = 8) +
+      ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+            axis.title.x = ggplot2::element_blank(),
+            legend.position = "bottom",
+            legend.key.height = ggplot2::unit(0.5, "lines"),
+            plot.title = ggplot2::element_text(face = "bold", colour = "#ed6028"))
+    
+  } else {
+  ### inverse indicator - similar to ICES advice sheets for chr rule
+    idx_min <- min(object@indicator$inverse_indicator, na.rm = TRUE)
+    idx_max <- max(object@indicator$inverse_indicator, na.rm = TRUE)
+    p <- p +
+      ggplot2::geom_line(data = object@indicator,
+                         ggplot2::aes(x = year, y = inverse_indicator),
+                         color = "#ed6028") +
+      ggplot2::geom_hline(data = data.frame(name = "F[MSY~proxy]",
+                                            value = 1), 
+                          ggplot2::aes(yintercept = value, colour = name)) +
+      ggplot2::scale_colour_manual("",
+                                   values = c("F[MSY~proxy]" = "#679dfe"),
+                                   labels = scales::parse_format()) +
+      ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
+      ggplot2::scale_y_continuous(breaks = scales::pretty_breaks()) +
+      ggplot2::coord_cartesian(ylim = c(0, max(idx_max * 1.1, 1.1)),
+                               xlim = c(yr_min - 1, yr_max + 1),
+                               expand = FALSE) +
+      ggplot2::labs(x = "", y = y_label, 
+                    title = "Length-based Fishing Pressure Proxy") +
+      ggplot2::theme_bw(base_size = 8) +
+      ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
+                     axis.title.x = ggplot2::element_blank(),
+                     legend.position = "bottom",
+                     legend.key.height = ggplot2::unit(0.5, "lines"),
+                     plot.title = ggplot2::element_text(face = "bold", 
+                                                        colour = "#ed6028"))
+    
+  }
   return(p)
 })
 
 ### F (chr) ####
 #' @rdname rfb_plot
+#' @export
 setMethod(f = "plot", signature = c(x = "F", y = "missing"), 
           definition = function(x, y, y_label, show.data, ...) {
             
