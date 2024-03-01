@@ -35,7 +35,7 @@ setGeneric(name = "value",
 ### ------------------------------------------------------------------------ ###
 ### show ####
 ### ------------------------------------------------------------------------ ###
-#' @title show
+#' @title show 
 #'
 #' Show a summary of the elements of the empirical harvest control rule
 #'
@@ -56,7 +56,7 @@ NULL
 #' @title summary
 #' @description This function returns a summary of any component or the advice
 #' for the empirical harvest control rules
-#' @param object The object to be plotted.
+#' @param object The object for which a summary is requested.
 #' @param ... Additional arguments. Not used.
 #' @export
 #' @name summary
@@ -72,3 +72,17 @@ NULL
 # #' @export
 # setGeneric(name = "plot",
 #            def = function(x, y, y_label, ...)  standardGeneric("plot"))
+
+### ------------------------------------------------------------------------ ###
+### indicator ####
+### ------------------------------------------------------------------------ ###
+#' @title indicator
+#' @description This function returns the indicator value(s) for the empirical
+#' harvest control rules, e.g. the length indicator.
+#' @param object The object from which the indicator is requested.
+#' @export
+#' @name indicator
+#' @rdname chr_indicator
+#' @export
+setGeneric(name = "indicator",
+           def = function(object)  standardGeneric("indicator"))
