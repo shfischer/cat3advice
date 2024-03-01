@@ -108,7 +108,7 @@ setClass(
 #' # calculate (pooled) length at first capture first
 #' lc <- Lc(data = ple7e_length, pool = 2017:2021)
 #' # calculate mean catch length
-#' lmean <- Lmean(data = data, Lc = lc, units = "mm")
+#' lmean <- Lmean(data = ple7e_length, Lc = lc, units = "mm")
 #' # reference length
 #' lref <- Lref(Lc = 264, Linf = 585)
 #' # calculate component f
@@ -117,6 +117,7 @@ setClass(
 #' advice(f)
 #' plot(f)
 #' 
+#' @rdname f
 #' @export
 setGeneric(
   name = "f",
