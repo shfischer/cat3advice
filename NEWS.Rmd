@@ -7,6 +7,14 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## 01/03/2024 - Version 0.0.3
+
+Added more functionality for chr rule
+
+* The inverse indicator ratio for component f is now included in `indicator(f)` and can be shown with `inverse_indicator(f)`.
+
+* The inverse indicator ratio can now be plotted with `plot(f, inverse = TRUE)` and this plots mimics the one shown in ICES advice sheets.
+
 ## Version 0.0.2
 
 Changes to `advice()` for rfb/rb/chr rule

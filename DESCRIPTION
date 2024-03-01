@@ -1,7 +1,7 @@
 Package: cat3advice
 Type: Package
 Title: ICES category 3 empirical harvest control rules
-Version: 0.0.2
+Version: 0.0.3
 Authors@R: c(
   person("Simon H.", "Fischer", email = "simon.fischer@cefas.gov.uk",
     role = c("aut", "cre")))
@@ -26,7 +26,7 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.0
 Collate: 
     'generics.R'
     'A.R'
