@@ -7,6 +7,12 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## 09/04/2024 - Version 0.0.4
+
+Adapted rounding in `advice()` to match ICES advice sheets:
+
+* Component f of the rfb rule; if units are supplied for the reference length and mean catch length, these values are not rounded according to ICES rounding rules, but instead to the nearest millimetre (e.g. "341 mm" or "34.1 cm"). The indicator value is still rounded according to ICES rounding rules.
+
 ## 01/03/2024 - Version 0.0.3
 
 Added more functionality for chr rule

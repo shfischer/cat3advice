@@ -368,14 +368,46 @@ setMethod(
     txt_f1 <- paste0("f: Fishing pressure proxy relative to MSY proxy")
     txt_f2 <- paste0("   (L", object@yr_last, "/", object@Lref@basis, ")")
 
-    val_Lmean <- paste0(
-      icesAdvice::icesRound(object@Lmean@value[as.character(object@yr_last)]),
-      ifelse(!is.na(object@units), paste0(" ", object@units), "")
-    )
-    val_Lref <- paste0(
-      icesAdvice::icesRound(object@Lref@value),
-      ifelse(!is.na(object@units), paste0(" ", object@units), "")
-    )
+    ### mean length
+    val_Lmean <- as.vector(object@Lmean@value[as.character(object@yr_last)])
+    ### rounding - depending on units
+    ### if "mm" -> round to nearest mm
+    ### if "cm" -> round to nearest mm
+    if (!is.na(object@units)) {
+      if (identical(object@units, "mm")) {
+        val_Lmean <- paste0(formatC(val_Lmean, digits = 0, format = "f"),
+                            " ", object@units)
+      } else if (identical(object@units, "cm")) {
+        val_Lmean <- paste0(formatC(val_Lmean, digits = 1, format = "f"),
+                            " ", object@units)
+      } else {
+        val_Lmean <- icesAdvice::icesRound(val_Lmean)
+      }
+    ### otherwise -> use ICES rounding rules...
+    } else {
+      val_Lmean <- icesAdvice::icesRound(val_Lmean)
+    }
+    
+    ### reference length
+    val_Lref <- as.vector(object@Lref@value)
+    ### rounding - depending on units
+    ### if "mm" -> round to nearest mm
+    ### if "cm" -> round to nearest mm
+    if (!is.na(object@units)) {
+      if (identical(object@units, "mm")) {
+        val_Lref <- paste0(formatC(val_Lref, digits = 0, format = "f"),
+                            " ", object@units)
+      } else if (identical(object@units, "cm")) {
+        val_Lref <- paste0(formatC(val_Lref, digits = 1, format = "f"),
+                            " ", object@units)
+      } else {
+        val_Lref <- icesAdvice::icesRound(val_Lref)
+      }
+      ### otherwise -> use ICES rounding rules...
+    } else {
+      val_Lref <- icesAdvice::icesRound(val_Lref)
+    }
+    
     val_f <- icesAdvice::icesRound(object@value)
 
     txt <- paste0(
