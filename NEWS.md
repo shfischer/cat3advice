@@ -1,6 +1,11 @@
 NEWS
 ================
 
+## 22/04/2024 - Version 0.0.5
+
+Fixed bug in `A()` when argument `avg_years` is a vector of years (see
+[GitHub issue](https://github.com/shfischer/cat3advice/issues/3)).
+
 ## 09/04/2024 - Version 0.0.4
 
 Adapted rounding in `advice()` to match ICES advice sheets:
