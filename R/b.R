@@ -494,7 +494,7 @@ setMethod(
     txt_I <- paste0("Last index value (I", I_last_year, ")")
     txt_I_trigger <- paste0("Index trigger value (Itrigger = Iloss x ", 
                             object@w, ")")
-    txt_b1 <- paste0("b: index relative to trigger value,")
+    txt_b1 <- paste0("b: multiplier for index relative to trigger,")
     txt_b2 <- paste0("min{I", I_last_year, "/Itrigger, 1}")
     
     val_I <- paste0(icesAdvice::icesRound(object@idx_value), 

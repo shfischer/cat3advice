@@ -416,7 +416,7 @@ setMethod(
     object@units <- ifelse(!is.na(object@A@units), 
                            paste0(" ", object@A@units), "")
     ### rfb calculation (uncapped advice)
-    rfb_txt <- "RFB calculation (r*f*b*m)"
+    rfb_txt <- "RFB calculation (Ay*r*f*b*m)"
     rfb_val <- paste0(round(object@advice_uncapped), 
                       object@units)
     txt_rfb <- paste0(

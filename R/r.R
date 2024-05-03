@@ -371,7 +371,8 @@ setMethod(
 
     txt_A <- paste0("Index A (", paste0(object@n1_yrs, collapse = ","), ")")
     txt_B <- paste0("Index B (", paste0(object@n2_yrs, collapse = ","), ")")
-    txt_r <- paste0("r: stock biomass trend (index ratio A/B)")
+    txt_r1 <- paste0("r: multiplier for stock biomass trend")
+    txt_r2 <- paste0("   (index ratio A/B)")
     
     val_A <- paste0(icesAdvice::icesRound(object@n1_mean), 
                     ifelse(!is.na(object@units), paste0(" ", object@units), ""))
@@ -386,9 +387,10 @@ setMethod(
                   paste0(format(txt_B, width = 48), " | ",
                          format(val_B, width = 29, justify = "right"),
                          "\n"),
-                  paste0(format(txt_r, width = 48), " | ",
+                  paste0(format(txt_r1, width = 48), " | ",
                          format(val_r, width = 29, justify = "right"),
-                         "\n")
+                         "\n"),
+                  paste0(format(txt_r2, width = 48), " | ", "\n")
                   )
     #txt <- paste0(txt, paste(rep("-", 80), collapse = ""), "\n")
     

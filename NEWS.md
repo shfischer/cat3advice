@@ -1,6 +1,16 @@
 NEWS
 ================
 
+## 03/05/2024 - version 0.0.6
+
+Adapted advice table (`advice()`) to match updated ICES guidance for
+completing single-stock advice 2024.
+
+- Text changes (e.g. changed “Fishing Pressure proxy” header to “Fishing
+  pressure”, added “multiplier” where needed)
+
+- Added row with “Fishing pressure proxy” (inverted f)
+
 ## 22/04/2024 - Version 0.0.5
 
 Fixed bug in `A()` when argument `avg_years` is a vector of years (see

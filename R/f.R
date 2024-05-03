@@ -359,13 +359,14 @@ setMethod(
   definition = function(object) {
     txt <- paste0(
       paste(rep("-", 80), collapse = ""), "\n",
-      "Fishing pressure proxy\n",
+      "Fishing pressure\n",
       paste(rep("-", 80), collapse = ""), "\n"
     )
 
     txt_Lmean <- paste0("Mean catch length (Lmean = L", object@yr_last, ")")
     txt_Lref <- paste0("MSY proxy length (", object@Lref@basis, ")")
-    txt_f1 <- paste0("f: Fishing pressure proxy relative to MSY proxy")
+    txt_f_inverse <- paste0("Fishing pressure proxy (LF=M/Lmean)")
+    txt_f1 <- paste0("f: multiplier for relative mean length in catches")
     txt_f2 <- paste0("   (L", object@yr_last, "/", object@Lref@basis, ")")
 
     ### mean length
@@ -408,6 +409,7 @@ setMethod(
       val_Lref <- icesAdvice::icesRound(val_Lref)
     }
     
+    val_f_inverse <- icesAdvice::icesRound(1/object@value)
     val_f <- icesAdvice::icesRound(object@value)
 
     txt <- paste0(
@@ -422,10 +424,16 @@ setMethod(
         format(val_Lref, width = 29, justify = "right"),
         "\n"
       ),
-      paste0(format(txt_f1, width = 48), " | \n"),
+      paste0(
+        format(txt_f_inverse, width = 48), " | ",
+        format(val_f_inverse, width = 29, justify = "right"),
+        "\n"
+      ),
+      paste0(format(txt_f1, width = 48), "| ", 
+             format(val_f, width = 29, justify = "right"),
+             "\n"),
       paste0(
         format(txt_f2, width = 48), " | ",
-        format(val_f, width = 29, justify = "right"),
         "\n"
       )
     )
