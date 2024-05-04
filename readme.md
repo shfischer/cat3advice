@@ -22,8 +22,18 @@ GitHub](https://github.com/shfischer/cat3advice/blob/main/vignettes/cat3advice.m
 
 ## Installation
 
-The latest version of the `cat3advice` R package can be installed from
-GitHub with
+The easiest way to install the `cat3advice` package is to install it as
+a binary package from ICES r-universe:
+
+``` r
+install.packages("cat3advice", repos = c("https://ices-tools-prod.r-universe.dev", "https://cran.r-project.org"))
+```
+
+It is also possible to install it directly from the GitHub repository.
+However, this means building the package locally and requires the
+necessary build tools (e.g. on Windows RTools
+<https://cran.r-project.org/bin/windows/Rtools/> and the `devtools` R
+package).
 
 ``` r
 library(remotes)
