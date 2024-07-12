@@ -7,6 +7,12 @@ output: github_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+## 12/07/2024 - version 0.0.7
+
+Rounding of index values in advice tables (for component r and b)
+
+* If index values are above 100, round normally instead of using ICES rounding to avoid loosing digits, e.g. 221 stays 221 instead of becoming 220
+
 ## 03/05/2024 - version 0.0.6
 
 Adapted advice table (`advice()`) to match updated ICES guidance for completing single-stock advice 2024.

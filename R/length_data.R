@@ -237,7 +237,9 @@ setMethod(Lc,
       if (identical(length(object@value), length(object@summary$Lc))) {
         names(object@value) <- smry$year
       } else {
-        names(object@value) <- "pooled"
+        names(object@value) <- ""
+        if (!isFALSE(pool)) names(object@value) <- "pooled"
+        if (!isFALSE(average)) names(object@value) <- "averaged"
       }
     }
 

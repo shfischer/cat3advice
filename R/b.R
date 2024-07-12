@@ -497,10 +497,15 @@ setMethod(
     txt_b1 <- paste0("b: multiplier for index relative to trigger,")
     txt_b2 <- paste0("min{I", I_last_year, "/Itrigger, 1}")
     
-    val_I <- paste0(icesAdvice::icesRound(object@idx_value), 
+    val_I <- paste0(ifelse(object@idx_value > 100, 
+                           round(object@idx_value),
+                           icesAdvice::icesRound(object@idx_value)),
                     ifelse(!is.na(object@units), paste0(" ", object@units), ""))
-    val_I_trigger <- paste0(icesAdvice::icesRound(object@Itrigger), 
-                    ifelse(!is.na(object@units), paste0(" ", object@units), ""))
+    val_I_trigger <- paste0(ifelse(object@Itrigger > 100, 
+                                   round(object@Itrigger),
+                                   icesAdvice::icesRound(object@Itrigger)),
+                            ifelse(!is.na(object@units), 
+                                   paste0(" ", object@units), ""))
     val_b <- icesAdvice::icesRound(object@value)
     
     txt <- paste0(txt,

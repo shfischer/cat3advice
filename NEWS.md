@@ -1,6 +1,14 @@
 NEWS
 ================
 
+## 12/07/2024 - version 0.0.7
+
+Round of index values in advice tables (for component r and b)
+
+- If index values are above 100, round normally instead of using ICES
+  rounding to avoid losing digits, e.g. 221 stays 221 instead of
+  becoming 220
+
 ## 03/05/2024 - version 0.0.6
 
 Adapted advice table (`advice()`) to match updated ICES guidance for

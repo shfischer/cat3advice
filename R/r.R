@@ -374,9 +374,15 @@ setMethod(
     txt_r1 <- paste0("r: multiplier for stock biomass trend")
     txt_r2 <- paste0("   (index ratio A/B)")
     
-    val_A <- paste0(icesAdvice::icesRound(object@n1_mean), 
+    ### A/B value: round according to ICES
+    ### but, if value > 100, round to full number
+    val_A <- paste0(ifelse(object@n1_mean > 100, 
+                           round(object@n1_mean),
+                           icesAdvice::icesRound(object@n1_mean)),
                     ifelse(!is.na(object@units), paste0(" ", object@units), ""))
-    val_B <- paste0(icesAdvice::icesRound(object@n2_mean), 
+    val_B <- paste0(ifelse(object@n2_mean > 100, 
+                           round(object@n2_mean),
+                           icesAdvice::icesRound(object@n2_mean)),
                     ifelse(!is.na(object@units), paste0(" ", object@units), ""))
     val_r <- icesAdvice::icesRound(object@value)
     
