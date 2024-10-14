@@ -15,6 +15,8 @@ NULL
 #' (catch, landings) as well as the resulting harvest rates. 
 #' 
 #' @slot value The values of the harvest rate time series.
+#' @slot metric The metric for the harvest rate (e.g. catch, landings, or
+#'  dead catch)
 #' @slot data \code{data.frame}. The input data (catch and index values)
 #' @slot units \code{character}. The units of the harvest rate.
 #' @slot units_catch \code{character}. The units of the catch.
@@ -28,6 +30,7 @@ setClass(
   Class = "HR",
   slots = c(
     value = "numeric",
+    metric = "character",
     data = "data.frame",
     units = "character",
     units_catch = "character",
@@ -36,6 +39,7 @@ setClass(
   ),
   prototype = list(
     value = NA_real_,
+    metric = "catch",
     data = data.frame(matrix(
       ncol = 3,
       nrow = 0,
@@ -57,11 +61,18 @@ setClass(
 #'
 #' The (relative) harvest rate is calculated by dividing the catch values by biomass index values.
 #' 
-#' Usually, this functions is used by providing a \code{data.frame} with columns 'year', 'catch' and 'index' is provided. The catch can be split into landings and discards by providing 'landings' and 'discards' columns.
+#' Usually, this functions is used by providing a \code{data.frame} with columns 'year', 'catch' and 'index'. 
+#' The catch can be split into landings and discards by providing 'landings' and 'discards' columns. 
+#' The harvest rate can be calculated on the dead catch by specifying 
+#' \code{split_catch=TRUE} and defining \code{discard_survival}. In this case,
+#' the harvest rate will be calculated on the dead catch (landings plus
+#' proportion of discards that die).
 #' 
 #' If an object of class \code{HR} is provided, its validity is checked.
 #'
 #' @param object The data to use. Usually a \code{data.frame} with columns 'year', 'catch' and 'index'.
+#' @param split_discards Shall the catch be split into landings and discards? Defaults to \code{FALSE}.
+#' @param discard_survival Discard survival (0-1). If \code{split_discards=TRUE}, this will be used to calculate the dead discards and these will be used in the harvest rate calculation.
 #' @param units Optional. The units of the harvest rate. Can be derived automatically from \code{units_catch} and \code{units_index}.
 #' @param units_catch Optional. The units of the catch, e.g. 'tonnes'.
 #' @param units_index Optional. The units of the biomass index, e.g. 'kg/hr'.
@@ -94,20 +105,24 @@ setClass(
 #' @export
 setGeneric(
   name = "HR",
-  def = function(object, units_catch, units_index, units, ...) {
+  def = function(object, split_discards = FALSE, discard_survival, units_catch,
+                 units_index, units, ...) {
     standardGeneric("HR")
   },
   signature = c("object")
 )
 
-### object = HR, data = missing -> validate
+### object = data.frame -> calculate HR
 #' @rdname HR
 #' @usage NULL
 #' @export
 setMethod(HR,
           signature = c(object = "data.frame"),
-          function(object, units_catch, units_index, units, ...) {
-  object <- calc_HR(data = object, units_catch = units_catch, 
+          function(object, split_discards = FALSE, discard_survival = 0,
+                   units_catch, units_index, units, ...) {
+  object <- calc_HR(data = object, split_discards = split_discards,
+                    discard_survival = discard_survival,
+                    units_catch = units_catch, 
                     units_index = units_index, units = units)
   validObject(object)
   return(object)
@@ -119,7 +134,8 @@ setMethod(HR,
 #' @export
 setMethod(HR,
           signature = c(object = "HR"),
-          function(object, units_catch, units_index, units, ...) {
+          function(object, split_discards = FALSE, discard_survival = 0,
+                   units_catch, units_index, units, ...) {
   validObject(object)
   return(object)
 })
@@ -127,7 +143,11 @@ setMethod(HR,
 ### ------------------------------------------------------------------------ ###
 ### calculate HR ####
 ### ------------------------------------------------------------------------ ###
-calc_HR <- function(object = new("HR"), data, units_catch, units_index, units) {
+calc_HR <- function(object = new("HR"), 
+                    data, 
+                    split_discards = FALSE,
+                    discard_survival,
+                    units_catch, units_index, units) {
   #browser()
   
   names(data) <- tolower(names(data))
@@ -137,12 +157,36 @@ calc_HR <- function(object = new("HR"), data, units_catch, units_index, units) {
     stop("column \"catch\" missing")
   object@data <- data
   
+  ### get catch
+  ### default: use (total) catch
+  if (isFALSE(split_discards)) {
+    catch <- object@data$catch
+  } else  {
+  ### alternative: use dead catch (landings + dead discards)
+    if (!"landings" %in% names(data)) 
+      stop("split of catch into landings/discards requested ", 
+           "but column \"landings\" missing")
+    if (!"discards" %in% names(data)) 
+      stop("split of catch into landings/discards requested ", 
+           "but column \"discards\" missing")
+    if (!missing(discard_survival))
+      object@data$discard_survival <- discard_survival
+    catch <- object@data$landings + 
+      object@data$discards * (1 - object@data$discard_survival)
+  }
+  
   ### calculate harvest rate
-  object@data$harvest_rate <- object@data$catch/object@data$index
+  object@data$harvest_rate <- catch/object@data$index
   
   object@value <- object@data$harvest_rate
   names(object@value) <- object@data$year
   object@value <- object@value[!is.na(object@value)]
+  
+  object@metric <- "catch"
+  if (isTRUE(split_discards)) {
+    object@metric <- ifelse(isTRUE(discard_survival < 1),
+                            "dead catch", "landings")
+  }
   
   if (!missing(units)) object@units <- units
   if (!missing(units_catch)) object@units_catch <- units_catch
@@ -167,14 +211,6 @@ setValidity("HR", function(object) {
     "slot hcr must be of length 1"
   } else if (!identical(length(object@units), 1L)) {
     "slot units must be of length 1"
-  } else if (!identical(length(object@units), 1L)) {
-    "slot units must be of length 1"
-  } else if (!identical(length(object@units), 1L)) {
-    "slot units must be of length 1"
-  } else if (!identical(length(object@units), 1L)) {
-    "slot units must be of length 1"
-  } else if (!identical(length(object@units), 1L)) {
-    "slot units must be of length 1"
   } else {
     TRUE
   }
@@ -194,7 +230,7 @@ setMethod(f = "value", signature = "HR",
 setMethod(f = "print", signature = "HR", 
           definition = function(x) {
             cat(paste0("An object of class \"", class(x), "\".\n",
-                       "Value(s): \n"))
+                       "Value(s) (based on ", x@metric, "): \n"))
             print(x@value)
           })
 
@@ -202,7 +238,7 @@ setMethod(f = "print", signature = "HR",
 setMethod(f = "show", signature = "HR", 
           definition = function(object) {
             cat(paste0("An object of class \"", class(object), "\".\n",
-                       "Value(s): \n"))
+                       "Value(s) (based on ", object@metric, "): \n"))
             print(object@value)
           })
 
@@ -216,7 +252,8 @@ setMethod(
       "An object of class \"", class(object), "\".\n",
       "Harvest rate values: ", sum(!is.na(object@data$harvest_rate)), "\n",
       "Catch observations: ", sum(!is.na(object@data$catch)), "\n",
-      "Index observations: ", sum(!is.na(object@data$index)), "\n")
+      "Index observations: ", sum(!is.na(object@data$index)), "\n",
+      "Harvest rate based on ", object@metric, "\n")
     cat(txt)
   }
 )
@@ -231,12 +268,16 @@ setMethod(
 #' This class (\code{F}) stores the input for the target harvest rate (if any) as well as the resulting target harvest rate.
 #' 
 #' @slot value The target harvest rate value.
+#' @slot metric The metric for the harvest rate (e.g. catch, landings, or
+#'  dead catch)
 #' @slot data \code{data.frame}. The data (harvest rates) used for calculating the target harvest rate.
 #' @slot yr_ref \code{numeric}. The years from which data are used.
 #' @slot units \code{character}. The units of the harvest rate.
 #' @slot HR \code{HR}. The harvest rate input data.
 #' @slot indicator \code{F}. The indicator used to select years of the harvest rate.
 #' @slot hcr \code{character}. The harvest control rule (hcr) for which the index is used. Only applicable to 'chr'.
+#' @slot MSE \code{logical}. Is the harvest rate a generic value or was it calculated with stock-specific simulations (MSE)? Defaults to \code{FALSE}.
+#' @slot multiplier \code{numeric}. Optional. Multiplier to adjust the target harvest rate. Only applicable if \code{MSE=TRUE}.
 #' 
 #' @name Ftarget-class
 #' @title F
@@ -245,15 +286,19 @@ setClass(
   Class = "F",
   slots = c(
     value = "numeric",
+    metric = "character",
     data = "data.frame",
     yr_ref = "numeric",
     units = "character",
     HR = "HR",
     indicator = "f",
-    hcr = "character"
+    hcr = "character",
+    MSE = "logical",
+    multiplier = "numeric"
   ),
   prototype = list(
     value = NA_real_,
+    metric = "catch",
     data = data.frame(matrix(
       ncol = 2,
       nrow = 0,
@@ -263,7 +308,9 @@ setClass(
     units = NA_character_,
     HR = new("HR"),
     indicator = new("f"),
-    hcr = "chr"
+    hcr = "chr",
+    MSE = FALSE,
+    multiplier = NA_real_
   )
 )
 
@@ -274,7 +321,11 @@ setClass(
 #'
 #' This function calculates the target harvest rate for chr rule.
 #' 
-#' Usually, this functions is used by providing a time series of (relative) harvest rate values (see \code{\link{HR}}) and a length-based indicator based on the mean catch length (see \code{\link{f}}). The functions then finds those years where the indicator values is above 1, indicating that the fishing pressure is likely below Fmsy, extracts the corresponding (relative) harvest rate values for these years, and returns the average of these values as the target harvest rate. Alternatively, years can directly be specified with the argument \code{yr_ref} and the target harvest rate is then calculated as the average of the (relative) harvest rates for these years. See the ICES technical guidelines (ICES, 2022) for details.
+#' Usually, this functions is used by providing a time series of (relative) harvest rate values (see \code{\link{HR}}) and a length-based indicator based on the mean catch length (see \code{\link{f}}). The functions then finds those years where the indicator values are above 1, indicating that the fishing pressure is likely below Fmsy, extracts the corresponding (relative) harvest rate values for these years, and returns the average of these values as the target harvest rate.
+#' 
+#' Alternatively, years can directly be specified with the argument \code{yr_ref} and the target harvest rate is then calculated as the average of the (relative) harvest rates for these years. See the ICES technical guidelines (ICES, 2022) for details.
+#' 
+#' If stock-specific simulations were conducted to derive the target harvest rate, the calculation may differ. Nevertheless, it is good practice to express the target harvest rate relative to the harvest of one or more years. This is useful when historical harvest rates are revised (e.g. because of a revision of historical biomass index values) because the target harvest rate will then be scaled accordingly. If the argument \code{MSE=TRUE}, it is possible to include a multiplier directly in the calculation of the target harvest with the argument \code{multiplier}.
 #' 
 #' If an object of class \code{F} is provided, its validity is checked.
 #'
@@ -282,6 +333,8 @@ setClass(
 #' @param indicator The length based indicator. See \code{\link{f}}.
 #' @param units Optional. The units of the harvest rate. Can be derived automatically from argument \code{HR}.
 #' @param yr_ref Optional. Allows direct specification of years to include in the calculation instead of using \code{indicator}.
+#' @param MSE Optional. \code{TRUE/FALSE}. Is the harvest rate a generic value or was it calculated with stock-specific simulations (MSE)?
+#' @param multiplier Optional. \code{numeric}. Multiplier to adjust the target harvest rate. Only used if \code{MSE=TRUE}.
 #' @param ... Additional arguments. Not currently used.
 #'
 #' @references
@@ -338,7 +391,7 @@ setClass(
 #' @export
 setGeneric(
   name = "F",
-  def = function(object, indicator, yr_ref, units, ...) {
+  def = function(object, indicator, yr_ref, units, MSE, ...) {
     standardGeneric("F")
   },
   signature = c("object", "indicator")
@@ -350,9 +403,9 @@ setGeneric(
 #' @export
 setMethod(F,
           signature = c(object = "HR", indicator = "f"),
-          function(object, indicator, yr_ref, units, ...) {
+          function(object, indicator, yr_ref, units, MSE, multiplier, ...) {
   object <- calc_F(HR = object, indicator = indicator, units = units,
-                   yr_ref = yr_ref)
+                   yr_ref = yr_ref, MSE = MSE, multiplier = multiplier)
   validObject(object)
   return(object)
 })
@@ -363,9 +416,9 @@ setMethod(F,
 #' @export
 setMethod(F,
           signature = c(object = "HR", indicator = "missing"),
-          function(object, indicator, yr_ref, units, ...) {
+          function(object, indicator, yr_ref, units, MSE, multiplier, ...) {
   object <- calc_F(HR = object, indicator = indicator, units = units,
-                   yr_ref = yr_ref)
+                   yr_ref = yr_ref, MSE = MSE, multiplier = multiplier)
   validObject(object)
   return(object)
 })
@@ -377,7 +430,8 @@ setMethod(F,
 setMethod(F,
           signature = c(object = "numeric",
                         indicator = "missing"),
-          function(object = new("F"), indicator, yr_ref, units, ...) {
+          function(object = new("F"), indicator, yr_ref, units, MSE, multiplier,
+                   ...) {
   value <- object
   object <- new("F")
   object@value <- value
@@ -393,7 +447,7 @@ setMethod(F,
 #' @export
 setMethod(F,
           signature = c(object = "F", indicator = "missing"),
-          function(object, indicator, yr_ref, units, ...) {
+          function(object, indicator, yr_ref, units, MSE, multiplier, ...) {
   validObject(object)
   return(object)
 })
@@ -403,7 +457,8 @@ setMethod(F,
 ### F calculation ####
 ### ------------------------------------------------------------------------ ###
 ### calculate target harvest rate
-calc_F <- function(object = new("F"), HR, indicator, yr_ref, units) {
+calc_F <- function(object = new("F"), HR, indicator, yr_ref, units, MSE,
+                   multiplier) {
   #browser()
   
   ### use indicator to select years, if supplied
@@ -434,6 +489,18 @@ calc_F <- function(object = new("F"), HR, indicator, yr_ref, units) {
   } else if (!is.na(object@HR@units)) {
     object@units <- object@HR@units
   }
+  ### catch metric
+  object@metric <- object@HR@metric
+  
+  ### harvest rate origin: generic approach or MSE?
+  if (!missing(MSE)) object@MSE <- MSE
+  
+  ### apply multiplier to harvest rate
+  ### (only applicable after stock-specific MSE)
+  if (isTRUE(object@MSE) & !missing(multiplier)) {
+    object@multiplier <- multiplier
+    object@value <- object@value * multiplier
+  }
   
   return(object)
   
@@ -450,6 +517,12 @@ setValidity("F", function(object) {
     "slot units must be of length 1"
   } else if (!identical(length(object@hcr), 1L)) {
     "slot hcr must be of length 1"
+  } else if (!identical(length(object@metric), 1L)) {
+    "slot metric must be of length 1"
+  } else if (!identical(length(object@MSE), 1L)) {
+    "slot MSE must be of length 1"
+  } else if (!identical(length(object@multiplier), 1L)) {
+    "slot multiplier must be of length 1"
   } else {
     TRUE
   }
@@ -521,22 +594,45 @@ setMethod(
       paste(rep("-", 80), collapse = ""), "\n"
     )
     
-    txt_F1 <- paste0("FMSYproxy: MSY proxy harvest rate (average of")
-    txt_F2 <- paste0("  the ratio of catch to biomass index for the")
-    txt_F3 <- paste0("  years for which f>1, where f=Lmean/LF=M)")
-    
-    val_F <- paste0(icesAdvice::icesRound(object@value),
+    val_F <- paste0(ifelse(object@value > 100, 
+                           round(object@value),
+                           icesAdvice::icesRound(object@value)),
                     ifelse(!is.na(object@units), paste0(" ", object@units), ""))
+    
+    if (!isTRUE(object@MSE)) {
+      txt_F1 <- paste0("HRMSYproxy: MSY proxy harvest rate (average of")
+      txt_F2 <- paste0("  the ratio of catch to biomass index for the")
+      txt_F3 <- paste0("  years for which f>1, where f=Lmean/LF=M)")
+      
+      txt2 <- paste0(
+        paste0(format(txt_F1, width = 48), " | \n"),
+        paste0(format(txt_F2, width = 48), " | \n"),
+        paste0(
+          format(txt_F3, width = 48), " | ",
+          format(val_F, width = 29, justify = "right"),
+          "\n"
+        )
+      )
+    } else {
+      txt_F1 <- "HRMSYproxy: MSY proxy harvest rate"
+      txt_F2 <- "  (derived from stock-specific simulations)"
+      
+      txt2 <- paste0(
+        paste0(format(txt_F1, width = 48), " | \n"),
+        paste0(
+          format(txt_F2, width = 48), " | ",
+          format(val_F, width = 29, justify = "right"),
+          "\n"
+        )
+      )
+      
+    }
+    
 
+    
     txt <- paste0(
       txt,
-      paste0(format(txt_F1, width = 48), " | \n"),
-      paste0(format(txt_F2, width = 48), " | \n"),
-      paste0(
-        format(txt_F3, width = 48), " | ",
-        format(val_F, width = 29, justify = "right"),
-        "\n"
-      )
+      txt2
     )
     
     cat(txt)
