@@ -14,6 +14,9 @@ This class (\code{F}) stores the input for the target harvest rate (if any) as w
 \describe{
 \item{\code{value}}{The target harvest rate value.}
 
+\item{\code{metric}}{The metric for the harvest rate (e.g. catch, landings, or
+dead catch)}
+
 \item{\code{data}}{\code{data.frame}. The data (harvest rates) used for calculating the target harvest rate.}
 
 \item{\code{yr_ref}}{\code{numeric}. The years from which data are used.}
@@ -25,5 +28,9 @@ This class (\code{F}) stores the input for the target harvest rate (if any) as w
 \item{\code{indicator}}{\code{F}. The indicator used to select years of the harvest rate.}
 
 \item{\code{hcr}}{\code{character}. The harvest control rule (hcr) for which the index is used. Only applicable to 'chr'.}
+
+\item{\code{MSE}}{\code{logical}. Is the harvest rate a generic value or was it calculated with stock-specific simulations (MSE)? Defaults to \code{FALSE}.}
+
+\item{\code{multiplier}}{\code{numeric}. Optional. Multiplier to adjust the target harvest rate. Only applicable if \code{MSE=TRUE}.}
 }}
 

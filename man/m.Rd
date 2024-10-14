@@ -16,13 +16,13 @@
 \alias{chr_m,missing-method}
 \title{rfb/rb/chr rule - component m (multiplier)}
 \usage{
-m(object, hcr, k, ...)
+m(object, hcr, k, MSE, ...)
 
-rfb_m(object, hcr = "rfb", k, ...)
+rfb_m(object, hcr = "rfb", k, MSE, ...)
 
-rb_m(object, hcr = "rb", k, ...)
+rb_m(object, hcr = "rb", k, MSE, ...)
 
-chr_m(object, hcr = "chr", k, ...)
+chr_m(object, hcr = "chr", k, MSE, ...)
 }
 \arguments{
 \item{object}{Optional. A multiplier m value, if known, or an existing \code{m} object.}
@@ -30,6 +30,8 @@ chr_m(object, hcr = "chr", k, ...)
 \item{hcr}{The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
 
 \item{k}{Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).}
+
+\item{MSE}{Optional. \code{logical}. Default multiplier or multiplier derived from stock specific MSE?}
 
 \item{...}{Additional arguments. Not used.}
 }

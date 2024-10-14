@@ -6,10 +6,22 @@
 \alias{HR,HR-method}
 \title{Calculation of the (relative) harvest rate}
 \usage{
-HR(object, units_catch, units_index, units, ...)
+HR(
+  object,
+  split_discards = FALSE,
+  discard_survival,
+  units_catch,
+  units_index,
+  units,
+  ...
+)
 }
 \arguments{
 \item{object}{The data to use. Usually a \code{data.frame} with columns 'year', 'catch' and 'index'.}
+
+\item{split_discards}{Shall the catch be split into landings and discards? Defaults to \code{FALSE}.}
+
+\item{discard_survival}{Discard survival (0-1). If \code{split_discards=TRUE}, this will be used to calculate the dead discards and these will be used in the harvest rate calculation.}
 
 \item{units_catch}{Optional. The units of the catch, e.g. 'tonnes'.}
 
@@ -26,7 +38,12 @@ An object of class \code{HR} with the harvest rate value(s).
 The (relative) harvest rate is calculated by dividing the catch values by biomass index values.
 }
 \details{
-Usually, this functions is used by providing a \code{data.frame} with columns 'year', 'catch' and 'index' is provided. The catch can be split into landings and discards by providing 'landings' and 'discards' columns.
+Usually, this functions is used by providing a \code{data.frame} with columns 'year', 'catch' and 'index'. 
+The catch can be split into landings and discards by providing 'landings' and 'discards' columns. 
+The harvest rate can be calculated on the dead catch by specifying 
+\code{split_catch=TRUE} and defining \code{discard_survival}. In this case,
+the harvest rate will be calculated on the dead catch (landings plus
+proportion of discards that die).
 
 If an object of class \code{HR} is provided, its validity is checked.
 }

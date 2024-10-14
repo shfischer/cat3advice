@@ -3,6 +3,7 @@
 \name{b}
 \alias{b}
 \alias{b,data.frame-method}
+\alias{b,I-method}
 \alias{b,numeric-method}
 \alias{b,b-method}
 \alias{rfb_b}
@@ -13,7 +14,7 @@
 \alias{chr_b,ANY-method}
 \title{rb/rfb/chr rule - component b (biomass safeguard)}
 \usage{
-b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, hcr, ...)
+b(object, idx_value, Itrigger, Iloss, w, yr_ref, lag, n_yrs, units, hcr, ...)
 
 rfb_b(
   object,
@@ -22,13 +23,26 @@ rfb_b(
   Iloss,
   w,
   yr_ref,
-  n0,
+  lag,
+  n_yrs,
   units,
   hcr = "rfb",
   ...
 )
 
-rb_b(object, idx_value, Itrigger, Iloss, w, yr_ref, n0, units, hcr = "rb", ...)
+rb_b(
+  object,
+  idx_value,
+  Itrigger,
+  Iloss,
+  w,
+  yr_ref,
+  lag,
+  n_yrs,
+  units,
+  hcr = "rb",
+  ...
+)
 
 chr_b(
   object,
@@ -37,7 +51,8 @@ chr_b(
   Iloss,
   w,
   yr_ref,
-  n0,
+  lag,
+  n_yrs,
   units,
   hcr = "chr",
   ...
@@ -56,7 +71,9 @@ chr_b(
 
 \item{yr_ref}{Optional. If supplied, this specifies the year in the biomass index which is used as \code{Iloss} and \code{Itrigger} is calculated from this value.}
 
-\item{n0}{Optional. Time lag between the last index year and the last year to be used. By default, the last index year is used (\code{n0=0})}
+\item{lag}{Optional. Time lag between the last index year and the last year to be used. By default, the last index year is used (\code{lag=0}).}
+
+\item{n_yrs}{Optional. The number of years used in the index. By default, only the last index value is used (\code{n_yrs=1}).}
 
 \item{units}{Optional. The units of the biomass index, e.g. 'kg/hr'. Only used for plotting.}
 

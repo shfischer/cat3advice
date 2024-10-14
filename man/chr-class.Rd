@@ -15,13 +15,19 @@ This class contains the components of the chr rule
 
 \item{\code{advice_landings}}{Landings corresponding to the catch advice.}
 
+\item{\code{advice_discards}}{Discards corresponding to the catch advice.}
+
+\item{\code{advice_discards_dead}}{Dead discards corresponding to the catch advice.}
+
+\item{\code{advice_discards_surviving}}{Surviving discards corresponding to the catch advice.}
+
 \item{\code{advice_uncapped}}{The value of the catch advice without the uncertainty cap.}
 
 \item{\code{units}}{The unit (e.g. tonnes) of the catch advice.}
 
 \item{\code{advice_metric}}{The advice metric, 'catch' or 'landings'.}
 
-\item{\code{frequency}}{The advice frequence (annual/biennial).}
+\item{\code{frequency}}{The advice frequency (annual/biennial).}
 
 \item{\code{years}}{The years for which the advice is valid.}
 
@@ -46,5 +52,7 @@ This class contains the components of the chr rule
 \item{\code{change_uncapped}}{Change in advice compared to previous advice before application of the uncertainty cap.}
 
 \item{\code{discard_rate}}{Discard rate (\%).}
+
+\item{\code{discard_survival}}{Discard survival (\%).}
 }}
 

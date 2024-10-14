@@ -8,7 +8,7 @@
 \alias{F,F,missing-method}
 \title{Calculation of the (relative) harvest rate target}
 \usage{
-F(object, indicator, yr_ref, units, ...)
+F(object, indicator, yr_ref, units, MSE, ...)
 }
 \arguments{
 \item{object}{The time series with (relative) harvest rate values. See \code{\link{HR}}.}
@@ -19,7 +19,11 @@ F(object, indicator, yr_ref, units, ...)
 
 \item{units}{Optional. The units of the harvest rate. Can be derived automatically from argument \code{HR}.}
 
+\item{MSE}{Optional. \code{TRUE/FALSE}. Is the harvest rate a generic value or was it calculated with stock-specific simulations (MSE)?}
+
 \item{...}{Additional arguments. Not currently used.}
+
+\item{multiplier}{Optional. \code{numeric}. Multiplier to adjust the target harvest rate. Only used if \code{MSE=TRUE}.}
 }
 \value{
 An object of class \code{F} with the target harvest rate and the input data.
@@ -28,7 +32,11 @@ An object of class \code{F} with the target harvest rate and the input data.
 This function calculates the target harvest rate for chr rule.
 }
 \details{
-Usually, this functions is used by providing a time series of (relative) harvest rate values (see \code{\link{HR}}) and a length-based indicator based on the mean catch length (see \code{\link{f}}). The functions then finds those years where the indicator values is above 1, indicating that the fishing pressure is likely below Fmsy, extracts the corresponding (relative) harvest rate values for these years, and returns the average of these values as the target harvest rate. Alternatively, years can directly be specified with the argument \code{yr_ref} and the target harvest rate is then calculated as the average of the (relative) harvest rates for these years. See the ICES technical guidelines (ICES, 2022) for details.
+Usually, this functions is used by providing a time series of (relative) harvest rate values (see \code{\link{HR}}) and a length-based indicator based on the mean catch length (see \code{\link{f}}). The functions then finds those years where the indicator values are above 1, indicating that the fishing pressure is likely below Fmsy, extracts the corresponding (relative) harvest rate values for these years, and returns the average of these values as the target harvest rate.
+
+Alternatively, years can directly be specified with the argument \code{yr_ref} and the target harvest rate is then calculated as the average of the (relative) harvest rates for these years. See the ICES technical guidelines (ICES, 2022) for details.
+
+If stock-specific simulations were conducted to derive the target harvest rate, the calculation may differ. Nevertheless, it is good practice to express the target harvest rate relative to the harvest of one or more years. This is useful when historical harvest rates are revised (e.g. because of a revision of historical biomass index values) because the target harvest rate will then be scaled accordingly. If the argument \code{MSE=TRUE}, it is possible to include a multiplier directly in the calculation of the target harvest with the argument \code{multiplier}.
 
 If an object of class \code{F} is provided, its validity is checked.
 }

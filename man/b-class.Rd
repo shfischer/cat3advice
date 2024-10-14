@@ -34,7 +34,9 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 
 \item{\code{yr_last}}{Last data year of the biomass index. The index value in this year is compared to \code{Itrigger}.}
 
-\item{\code{n0}}{Time lag between the last index year and the last year to be used.}
+\item{\code{lag}}{\code{numeric}. Time lag between the last index year and the last year to be used.}
+
+\item{\code{n_years}}{\code{numeric}. The number of years used for the index value.}
 
 \item{\code{idx}}{\code{data.frame}. A \code{data.frame} with the index values.}
 

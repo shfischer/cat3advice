@@ -9,9 +9,7 @@
 \alias{ple7e_hr}
 \alias{ple7e_idx}
 \alias{ple7e_length}
-\title{Western English Channel plaice example data
-
-This data set contains 2022 example data from Western English Channel plaice (ple.27.7e) to illustrate the application of the ICES category 3 empirical harvest control rules.}
+\title{Western English Channel plaice example data}
 \format{
 An object of class \code{data.frame} with 36 rows and 5 columns.
 
@@ -42,8 +40,6 @@ ple7e_idx
 ple7e_length
 }
 \description{
-Western English Channel plaice example data
-
 This data set contains 2022 example data from Western English Channel plaice (ple.27.7e) to illustrate the application of the ICES category 3 empirical harvest control rules.
 }
 \keyword{datasets}

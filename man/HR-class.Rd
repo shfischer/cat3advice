@@ -15,6 +15,9 @@ This class (\code{HR}) stores the input for the harvest rate
 \describe{
 \item{\code{value}}{The values of the harvest rate time series.}
 
+\item{\code{metric}}{The metric for the harvest rate (e.g. catch, landings, or
+dead catch)}
+
 \item{\code{data}}{\code{data.frame}. The input data (catch and index values)}
 
 \item{\code{units}}{\code{character}. The units of the harvest rate.}

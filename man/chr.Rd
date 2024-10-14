@@ -21,6 +21,7 @@ chr(
   years,
   frequency = "annual",
   discard_rate = NA,
+  discard_survival = 0,
   ...
 )
 }
@@ -47,9 +48,11 @@ chr(
 
 \item{frequency}{Optional. The frequency of the advice ('annual'/'biennial'/'triennial'). Defaults to 'annual'.}
 
-\item{discard_rate}{Optional. \code{numeric}. The discard rate for the advice. If provided, advice values for catch and landings are given.}
+\item{discard_rate}{Optional. \code{numeric}. The discard rate (in \%) for the advice. If provided, advice values for catch and landings are given.}
 
 \item{...}{Additional parameters. Not used.}
+
+\item{discard_surival}{Optional. \code{numeric}. The discard survival rate (in \%) for the advice. If provided, Discards are split into dead and surviving discards.}
 }
 \value{
 An object of class \code{chr}.

@@ -2,11 +2,7 @@
 % Please edit documentation in R/generics.R
 \name{show}
 \alias{show}
-\title{show 
-
-Show a summary of the elements of the empirical harvest control rule}
+\title{show}
 \description{
-show 
-
 Show a summary of the elements of the empirical harvest control rule
 }

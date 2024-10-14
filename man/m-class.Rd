@@ -23,5 +23,7 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 \item{\code{hcr}}{The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
 
 \item{\code{k}}{Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).}
+
+\item{\code{MSE}}{\code{logical}. Generic multiplier or multiplier based on stock-specific simulations.}
 }}
 
