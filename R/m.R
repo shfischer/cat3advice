@@ -18,17 +18,20 @@ NULL
 #' @slot value The value of component m
 #' @slot hcr The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @slot k Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).
+#' @slot MSE \code{logical}. Generic multiplier or multiplier based on stock-specific simulations.
 #' 
 #' @name m-class
 #' @export
 setClass(Class = "m", 
          slots = c(value = "numeric",
                    hcr = "character",
-                   k = "numeric"
+                   k = "numeric",
+                   MSE = "logical"
                    ),
          prototype = list(value = NA_real_, 
                           hcr = NA_character_,
-                          k = NA_real_))
+                          k = NA_real_,
+                          MSE = FALSE))
 
 #' @rdname m-class
 setClass(Class = "rfb_m", 
@@ -71,6 +74,7 @@ setClass(Class = "chr_m",
 #' @param object Optional. A multiplier m value, if known, or an existing \code{m} object.
 #' @param hcr The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @param k Optional. The von Bertalanffy k parameter (individual growth rate, unit: 1/year).
+#' @param MSE Optional. \code{logical}. Default multiplier or multiplier derived from stock specific MSE?
 #' @param ... Additional arguments. Not used.
 #'  
 #' @section Warning:
@@ -108,7 +112,7 @@ NULL
 #' @rdname m
 #' @export
 setGeneric(name = "m", 
-           def = function(object, hcr, k, ...) 
+           def = function(object, hcr, k, MSE, ...) 
              standardGeneric("m"),
            signature = c("object"))
 
@@ -118,11 +122,11 @@ setGeneric(name = "m",
 #' @export
 setMethod(m, 
           signature = c(object = "numeric"), 
-          function(object, hcr, k, ...) {
+          function(object, hcr, k, MSE, ...) {
             
   value <- object
   object <- new(Class = "m")
-  m_calc(object = object, value = value, hcr = hcr, k = k,
+  m_calc(object = object, value = value, hcr = hcr, k = k, MSE = MSE,
               ...)
     
 })
@@ -132,10 +136,10 @@ setMethod(m,
 #' @export
 setMethod(m, 
           signature = c(object = "m"), 
-          function(object, hcr, k, ...) {
+          function(object, hcr, k, MSE, ...) {
             
   validObject(object)
-  m_calc(object = object, hcr = hcr, k = k,
+  m_calc(object = object, hcr = hcr, k = k, MSE = MSE,
               ...)
 
 })
@@ -146,9 +150,9 @@ setMethod(m,
 #' @export
 setMethod(m, 
           signature = c(object = "missing"), 
-          function(object, hcr, k, ...) {
+          function(object, hcr, k, MSE, ...) {
             
-  m_calc(object = object, hcr = hcr, k = k,
+  m_calc(object = object, hcr = hcr, k = k, MSE = MSE,
               ...)
   
 })
@@ -156,10 +160,12 @@ setMethod(m,
 ### ------------------------------------------------------------------------ ###
 ### m calculation ####
 ### ------------------------------------------------------------------------ ###
-m_calc <- function(object, value, hcr, k, ...) {
+m_calc <- function(object, value, hcr, k, MSE, ...) {
   
   ### create empty object, if missing
   if (missing(object)) object <- new(Class = "m")
+  
+  if (!missing(MSE)) object@MSE <- MSE
   
   if (!missing(hcr))
     object@hcr <- match.arg(hcr, choices = c("rfb", "rb", "chr"))
@@ -188,7 +194,8 @@ m_calc <- function(object, value, hcr, k, ...) {
                          "range of 0.32<=k<0.45/year for the chr rule. ",
                          "Proceed with caution!"))
       }
-      object@value <- 0.5
+      if (isTRUE(is.na(object@value)))
+        object@value <- 0.5
     ### rb rule
     } else if (identical(object@hcr, "rb")) {
       object@value <- 0.5
@@ -254,7 +261,7 @@ m_calc <- function(object, value, hcr, k, ...) {
 #' @rdname m
 #' @export
 setGeneric(name = "rfb_m", 
-           def = function(object, hcr = "rfb", k, ...) 
+           def = function(object, hcr = "rfb", k, MSE, ...) 
              standardGeneric("rfb_m"),
            signature = c("object"))
 #' @rdname m
@@ -262,11 +269,11 @@ setGeneric(name = "rfb_m",
 #' @usage NULL
 setMethod(rfb_m, 
           signature = c(object = "ANY"), 
-          function(object, hcr = "rfb", k, ...) {
+          function(object, hcr = "rfb", k, MSE, ...) {
   hcr <- match.arg(hcr)
   #if (is.numeric(object)) value <- object
   object <- m(object = object, hcr = hcr, 
-                   k = k, ...)
+                   k = k, MSE = MSE, ...)
   class(object) <- "rfb_m"
   return(object)
 })
@@ -275,9 +282,9 @@ setMethod(rfb_m,
 #' @usage NULL
 setMethod(rfb_m, 
           signature = c(object = "missing"), 
-          function(object, hcr = "rfb", k, ...) {
+          function(object, hcr = "rfb", k, MSE, ...) {
   hcr <- match.arg(hcr)
-  object <- m(hcr = hcr, k = k, ...)
+  object <- m(hcr = hcr, k = k, MSE = MSE, ...)
   class(object) <- "rfb_m"
   return(object)
 })
@@ -286,7 +293,7 @@ setMethod(rfb_m,
 #' @rdname m
 #' @export
 setGeneric(name = "rb_m", 
-           def = function(object, hcr = "rb", k, ...) 
+           def = function(object, hcr = "rb", k, MSE, ...) 
              standardGeneric("rb_m"),
            signature = c("object"))
 #' @rdname m
@@ -294,9 +301,9 @@ setGeneric(name = "rb_m",
 #' @usage NULL
 setMethod(rb_m, 
           signature = c(object = "ANY"), 
-          function(object, hcr = "rb", k, ...) {
+          function(object, hcr = "rb", k, MSE, ...) {
   hcr <- match.arg(hcr)
-  object <- m(object = object, hcr = hcr, 
+  object <- m(object = object, hcr = hcr, MSE = MSE,
                    k = k, ...)
   class(object) <- "rb_m"
   return(object)
@@ -306,9 +313,9 @@ setMethod(rb_m,
 #' @usage NULL
 setMethod(rb_m, 
           signature = c(object = "missing"), 
-          function(object, hcr = "rb", k, ...) {
+          function(object, hcr = "rb", k, MSE, ...) {
   hcr <- match.arg(hcr)
-  object <- m(hcr = hcr, k = k, ...)
+  object <- m(hcr = hcr, k = k, MSE = MSE, ...)
   class(object) <- "rb_m"
   return(object)
 })
@@ -317,7 +324,7 @@ setMethod(rb_m,
 #' @rdname m
 #' @export
 setGeneric(name = "chr_m", 
-           def = function(object, hcr = "chr", k, ...) 
+           def = function(object, hcr = "chr", k, MSE, ...) 
              standardGeneric("chr_m"),
            signature = c("object"))
 #' @rdname m
@@ -325,10 +332,10 @@ setGeneric(name = "chr_m",
 #' @usage NULL
 setMethod(chr_m, 
           signature = c(object = "ANY"), 
-          function(object, hcr = "chr", k, ...) {
+          function(object, hcr = "chr", k, MSE, ...) {
   hcr <- match.arg(hcr)
   object <- m(object = object, hcr = hcr, 
-                   k = k, ...)
+                   k = k, MSE = MSE, ...)
   class(object) <- "chr_m"
   return(object)
 })
@@ -337,9 +344,9 @@ setMethod(chr_m,
 #' @usage NULL
 setMethod(chr_m, 
           signature = c(object = "missing"), 
-          function(object, hcr = "chr", k, ...) {
+          function(object, hcr = "chr", k, MSE, ...) {
   hcr <- match.arg(hcr)
-  object <- m(hcr = hcr, k = k, ...)
+  object <- m(hcr = hcr, k = k, MSE = MSE, ...)
   class(object) <- "chr_m"
   return(object)
 })
@@ -424,13 +431,13 @@ setMethod(
                   "Precautionary multiplier to maintain biomass above Blim ",
                   "with 95% probability\n",
                   paste(rep("-", 80), collapse = ""), "\n")
-    if (is(object, "rfb_m") | identical(object@hcr, "rfb") &
+    if ((is(object, "rfb_m") | identical(object@hcr, "rfb")) &
         isTRUE(object@value %in% c(0.95, 0.9))) {
       generic <- TRUE
-    } else if (is(object, "rb_m") | identical(object@hcr, "rb") &
+    } else if ((is(object, "rb_m") | identical(object@hcr, "rb")) &
                isTRUE(object@value %in% c(0.5))) {
       generic <- TRUE
-    } else if (is(object, "chr_m") | identical(object@hcr, "chr") &
+    } else if ((is(object, "chr_m") | identical(object@hcr, "chr")) &
                isTRUE(object@value %in% c(0.5))) {
       generic <- TRUE
     } else {
@@ -441,6 +448,8 @@ setMethod(
     txt_m2 <- paste0(ifelse(generic, 
                             "(generic multiplier based on life history)",
                             "(stock-specific multiplier)"))
+    if (isTRUE(object@MSE)) 
+      txt_m2 <- "(derived from stock-specific simulations)"
     val_m <- icesAdvice::icesRound(object@value)
     
     txt <- paste0(txt,
