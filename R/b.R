@@ -23,7 +23,8 @@ NULL
 #' @slot w Index trigger buffer. Connects \code{Itrigger} to \code{Iloss}.
 #' @slot yr_ref Reference year on which Itrigger is based.
 #' @slot yr_last Last data year of the biomass index. The index value in this year is compared to \code{Itrigger}.
-#' @slot n0 Time lag between the last index year and the last year to be used.
+#' @slot lag \code{numeric}. Time lag between the last index year and the last year to be used.
+#' @slot n_years \code{numeric}. The number of years used for the index value.
 #' @slot idx \code{data.frame}. A \code{data.frame} with the index values.
 #' @slot units \code{character}. The units of the biomass index, e.g. 'kg/hr'.
 #' @slot hcr \code{character}. The harvest control rule (hcr) for which the biomass safeguard is used. One of 'rfb', 'rb', or 'chr'.
@@ -38,7 +39,8 @@ setClass(Class = "b",
                    w = "numeric",
                    yr_ref = "numeric",
                    yr_last = "numeric",
-                   n0 = "numeric",
+                   lag = "numeric",
+                   n_yrs = "numeric",
                    idx = "data.frame",
                    units = "character",
                    hcr = "character"),
@@ -49,7 +51,8 @@ setClass(Class = "b",
                           w = 1.4,
                           yr_ref = NA_real_,
                           yr_last = NA_real_,
-                          n0 = 0,
+                          lag = 0,
+                          n_yrs = 1,
                           idx = data.frame(year = NULL, index = NULL),
                           units = NA_character_,
                           hcr = NA_character_))
@@ -109,7 +112,8 @@ setClass(Class = "chr_b",
 #' @param Iloss Optional. The lowest index value, can be used to calculate \code{Itrigger}.
 #' @param w Optional. The index trigger buffer (multiplier) to link \code{Itrigger} to \code{Iloss}. Defaults to \code{w=1.4}.
 #' @param yr_ref Optional. If supplied, this specifies the year in the biomass index which is used as \code{Iloss} and \code{Itrigger} is calculated from this value.
-#' @param n0 Optional. Time lag between the last index year and the last year to be used. By default, the last index year is used (\code{n0=0})
+#' @param lag Optional. Time lag between the last index year and the last year to be used. By default, the last index year is used (\code{lag=0}).
+#' @param n_yrs Optional. The number of years used in the index. By default, only the last index value is used (\code{n_yrs=1}).
 #' @param units Optional. The units of the biomass index, e.g. 'kg/hr'. Only used for plotting.
 #' @param hcr Optional. One of 'rfb', 'rb', or 'chr'.
 #' @param ... Additional arguments. Not used.
@@ -158,24 +162,10 @@ setClass(Class = "chr_b",
 #' @export
 setGeneric(name = "b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, hcr, ...) 
+                          yr_ref, lag, n_yrs, units, hcr, ...) 
            standardGeneric("b"),
            signature = c("object"))
 
-### FLQuant -> convert to data.frame
-# #' @rdname b
-# #' @usage NULL
-# #' @export
-# setMethod(b, 
-#           signature = c(object = "FLQuant"), 
-#           function(object, idx_value, Itrigger, Iloss, w,
-#                    yr_ref, n0, units, ...) {
-#   ### convert FLQuant into data.frame
-#   idx <- as.data.frame(object)[, c("year", "data")]
-#   names(idx)[2] <- "index"
-#   b(object = idx, idx_value = idx_value, Itrigger = Itrigger, Iloss = Iloss, 
-#          w = w, yr_ref = yr_ref, n0 = n0, units = units, ...)
-# })
 ### data.frame -> use as index
 #' @rdname b
 #' @usage NULL
@@ -183,7 +173,7 @@ setGeneric(name = "b",
 setMethod(b, 
           signature = c(object = "data.frame"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, hcr, ...) {
+                   yr_ref, lag, n_yrs, units, hcr, ...) {
   idx <- object
   names(idx) <- tolower(names(idx))
   ### check if "year" column exists
@@ -199,9 +189,25 @@ setMethod(b,
     }
   }
   b_calc(idx = idx, idx_value = idx_value, Itrigger = Itrigger, 
-              Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, units = units, 
-              ...)
+         Iloss = Iloss, w = w, yr_ref = yr_ref, lag = lag, n_yrs = n_yrs,
+         units = units, 
+         ...)
 })
+
+### I -> use as index
+#' @rdname b
+#' @usage NULL
+#' @export
+setMethod(b, 
+          signature = c(object = "I"),
+          function(object, idx_value, Itrigger, Iloss, w,
+                   yr_ref, lag, n_yrs, units, hcr, ...) {
+  b_calc(idx = object@idx, idx_value = object, Itrigger = Itrigger, 
+         Iloss = Iloss, w = w, yr_ref = yr_ref, lag = lag, n_yrs = n_yrs,
+         units = units,
+         ...)
+})
+
 ### numeric -> use as b
 #' @rdname b
 #' @usage NULL
@@ -209,7 +215,7 @@ setMethod(b,
 setMethod(b, 
           signature = c(object = "numeric"), 
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, hcr, ...) {
+                   yr_ref, lag, n_yrs, units, hcr, ...) {
             
   ### create empty b object
   res <- new("b")
@@ -236,7 +242,7 @@ setMethod(b,
 setMethod(b, 
           signature = c(object = "b"), 
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, hcr, ...) {
+                   yr_ref, lag, n_yrs, units, hcr, ...) {
   ### check validity
   validObject(object)
   ### run b() to update slots and recalculate if needed
@@ -254,7 +260,7 @@ setMethod(b,
 #' @export
 setGeneric(name = "rfb_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, hcr = "rfb", ...) 
+                          yr_ref, lag, n_yrs, units, hcr = "rfb", ...) 
              standardGeneric("rfb_b"),
            signature = c("object"))
 #' @rdname b
@@ -263,12 +269,13 @@ setGeneric(name = "rfb_b",
 setMethod(rfb_b, 
           signature = c(object = "ANY"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, hcr = "rfb", ...) {
+                   yr_ref, lag, n_yrs, units, hcr = "rfb", ...) {
   hcr <- match.arg(hcr)
   object <- b(object = object, idx_value = idx_value, Itrigger = Itrigger,
-                   Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
-                   units = units, hcr = hcr, ... = ...)
+              Iloss = Iloss, w = w, yr_ref = yr_ref, lag = lag, n_yrs = n_yrs, 
+              units = units, hcr = hcr, ... = ...)
   class(object) <- "rfb_b"
+  object@hcr <- "rfb"
   return(object)
 })
 ### rb
@@ -276,7 +283,7 @@ setMethod(rfb_b,
 #' @export
 setGeneric(name = "rb_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, hcr = "rb", ...) 
+                          yr_ref, lag, n_yrs, units, hcr = "rb", ...) 
              standardGeneric("rb_b"),
            signature = c("object"))
 #' @rdname b
@@ -285,12 +292,13 @@ setGeneric(name = "rb_b",
 setMethod(rb_b, 
           signature = c(object = "ANY"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, hcr = "rb", ...) {
+                   yr_ref, lag, n_yrs, units, hcr = "rb", ...) {
   hcr <- match.arg(hcr)
   object <- b(object = object, idx_value = idx_value, Itrigger = Itrigger,
-                   Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
-                   units = units, hcr = hcr, ... = ...)
+              Iloss = Iloss, w = w, yr_ref = yr_ref, lag = lag, n_yrs = n_yrs,
+              units = units, hcr = hcr, ... = ...)
   class(object) <- "rb_b"
+  object@hcr <- "rb"
   return(object)
 })
 ### chr
@@ -298,7 +306,7 @@ setMethod(rb_b,
 #' @export
 setGeneric(name = "chr_b", 
            def = function(object, idx_value, Itrigger, Iloss, w,
-                          yr_ref, n0, units, hcr = "chr", ...) 
+                          yr_ref, lag, n_yrs, units, hcr = "chr", ...) 
              standardGeneric("chr_b"),
            signature = c("object"))
 #' @rdname b
@@ -307,12 +315,13 @@ setGeneric(name = "chr_b",
 setMethod(chr_b, 
           signature = c(object = "ANY"),
           function(object, idx_value, Itrigger, Iloss, w,
-                   yr_ref, n0, units, hcr = "chr", ...) {
+                   yr_ref, lag, n_yrs, units, hcr = "chr", ...) {
   hcr <- match.arg(hcr)
   object <- b(object = object, idx_value = idx_value, Itrigger = Itrigger,
-                   Iloss = Iloss, w = w, yr_ref = yr_ref, n0 = n0, 
-                   units = units, hcr = hcr, ... = ...)
+              Iloss = Iloss, w = w, yr_ref = yr_ref, lag = lag, n_yrs = n_yrs,
+              units = units, hcr = hcr, ... = ...)
   class(object) <- "chr_b"
+  object@hcr <- "chr"
   return(object)
 })
 
@@ -335,8 +344,10 @@ setValidity("b", function(object) {
     "slot w must be of length 1"
   } else if (!identical(length(object@yr_ref), 1L)) {
     "slot yr_ref must be of length 1"
-  } else if (!identical(length(object@n0), 1L)) {
-    "slot n0 must be of length 1"
+  } else if (!identical(length(object@lag), 1L)) {
+    "slot lag must be of length 1"
+  } else if (!identical(length(object@n_yrs), 1L)) {
+    "slot lag must be of length 1"
   } else if (!is(object@idx, "data.frame")) {
     "slot idx must be a data.frame"
   } else if (!identical(length(object@units), 1L)) {
@@ -350,8 +361,8 @@ setValidity("b", function(object) {
 ### b calculation ####
 ### ------------------------------------------------------------------------ ###
 ### function for creating/calculating biomass safeguard
-b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
-                       yr_last, units, hcr) {
+b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, lag, n_yrs,
+                   yr_ref, yr_last, units, hcr) {
   ### create empty b object, if missing
   if (missing(object)) object <- new("b")
   if (!missing(hcr)) object@hcr <- hcr
@@ -360,11 +371,12 @@ b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
   if (!missing(idx)) object@idx <- idx
   
   ### add/update parameters, if provided
-  if (!missing(idx_value)) object@idx_value <- idx_value
+  #if (!missing(idx_value)) ### later
   if (!missing(Itrigger)) object@Itrigger <- Itrigger
   if (!missing(Iloss)) object@Iloss <- Iloss
   if (!missing(w)) object@w <- w
-  if (!missing(n0)) object@n0 <- n0
+  if (!missing(lag)) object@lag <- lag
+  if (!missing(n_yrs)) object@n_yrs <- n_yrs
   if (!missing(yr_ref)) object@yr_ref <- yr_ref
   if (!missing(units)) object@units <- units
   
@@ -397,15 +409,24 @@ b_calc <- function(object, idx, idx_value, Itrigger, Iloss, w, n0, yr_ref,
   ### if index value supplied as argument, use this value
   if (!missing(idx_value)) {
     
-    object@idx_value <- idx_value
+    if (is(idx_value, "I")) {
+      object@idx_value <- idx_value@value
+      object@lag <- idx_value@lag
+      object@n_yrs <- idx_value@n_yrs
+      object@yr_last <- idx_value@yr_last
+    } else {
+      object@idx_value <- idx_value
+    }
     
   ### get index value from object@idx
   } else if (isTRUE(length(object@idx) > 0)) {
   
-    ### find last index value to use
-    object@idx_value <- object@idx$index[which(object@idx$year == 
-                                                 object@yr_last) -
-                                           object@n0]
+    ### determine years to use
+    yrs_use <- seq(from = object@yr_last - object@lag - object@n_yrs + 1, 
+                   to = object@yr_last - object@lag)
+    ### estimate mean index over these years
+    object@idx_value <- mean(object@idx$index[object@idx$year %in% yrs_use],
+                         na.rm = TRUE)
     
   }
   
@@ -490,7 +511,15 @@ setMethod(
                   "Biomass safeguard\n",
                   paste(rep("-", 80), collapse = ""), "\n")
     
-    I_last_year <- ifelse(!is.na(object@yr_last), object@yr_last, "last")
+    if (!is.na(object@yr_last)) {
+      I_last_year <- object@yr_last
+      if (isTRUE(object@n_yrs > 1)) {
+        I_last_year <- paste(c(I_last_year - object@n_yrs + 1, I_last_year),
+                             collapse = "-")
+      }
+    } else {
+      I_last_year <- "last"
+    }
     txt_I <- paste0("Last index value (I", I_last_year, ")")
     txt_I_trigger <- paste0("Index trigger value (Itrigger = Iloss x ", 
                             object@w, ")")
@@ -508,10 +537,14 @@ setMethod(
                                    paste0(" ", object@units), ""))
     val_b <- icesAdvice::icesRound(object@value)
     
-    txt <- paste0(txt,
-                  paste0(format(txt_I, width = 48), " | ",
+    txt_I_full <- paste0(format(txt_I, width = 48), " | ",
                          format(val_I, width = 29, justify = "right"),
-                         "\n"),
+                         "\n")
+    ### don't show index value for chr rule 
+    ### (already shown above in same table)
+    if (identical(object@hcr, "chr")) txt_I_full <- NULL
+    
+    txt <- paste0(txt,
                   paste0(format(txt_I_trigger, width = 48), " | ",
                          format(val_I_trigger, width = 29, justify = "right"),
                          "\n"),
