@@ -162,7 +162,8 @@ setMethod(I,
 #' @export
 setMethod(I, 
           signature = c(object = "I"),
-          function(object, lag = 0, n_yrs = 1, units, hcr = "chr", ...) {
+          function(object, lag = object@lag, n_yrs = object@n_yrs, 
+                   units = object@units, hcr = object@hcr, ...) {#browser()
   validObject(object)
   ### update slots, if provided
   if (!missing(lag)) object@lag <- lag
@@ -309,9 +310,13 @@ setMethod(
                   paste(rep("-", 80), collapse = ""), "\n")
     
     I_last_year <- ifelse(!is.na(object@yr_last), object@yr_last, "last")
+    if (isTRUE(object@n_yrs > 1))
+      I_last_year <- paste0(I_last_year - object@n_yrs + 1, "-", I_last_year)
     txt_I <- paste0("I: most recent biomass index (I", I_last_year, ")")
     
-    val_I <- paste0(icesAdvice::icesRound(object@value), 
+    val_I <- paste0(ifelse(object@value > 100, 
+                           round(object@value),
+                           icesAdvice::icesRound(object@value)),
                     ifelse(!is.na(object@units), paste0(" ", object@units), ""))
     
     txt <- paste0(txt,
