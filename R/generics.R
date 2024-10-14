@@ -36,8 +36,7 @@ setGeneric(name = "value",
 ### show ####
 ### ------------------------------------------------------------------------ ###
 #' @title show 
-#'
-#' Show a summary of the elements of the empirical harvest control rule
+#' @description Show a summary of the elements of the empirical harvest control rule
 #'
 #' @name show
 NULL

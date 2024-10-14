@@ -1,6 +1,5 @@
 #' @title Western English Channel plaice example data
-#'
-#' This data set contains 2022 example data from Western English Channel plaice (ple.27.7e) to illustrate the application of the ICES category 3 empirical harvest control rules.
+#' @description This data set contains 2022 example data from Western English Channel plaice (ple.27.7e) to illustrate the application of the ICES category 3 empirical harvest control rules.
 #'
 #'
 #' @source \url{https://github.com/ices-taf}
