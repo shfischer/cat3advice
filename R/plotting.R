@@ -479,7 +479,15 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
       y_label <- paste0(y_label, " in ", object@HR@units)
   }
   ### hr target
-  hr_target <- data.frame(y = x@value, type = "F[MSYproxy]")
+  hr_target <- data.frame(y = x@value, type = "HR[MSYproxy]")
+  
+  ### catch metric
+  if (!identical(x@metric, "catch")) {
+    hr_title <- paste0("Harvest rate (", x@metric, " / biomass index)")
+  } else {
+    hr_title <- "Harvest rate (catches / biomass index)"
+  }
+  
   ### create HR plot
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(data = object@HR@data,
@@ -490,18 +498,14 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
                         ggplot2::aes(yintercept = y, linetype = type),
                         alpha = 0.8, colour = "#679dfe") +
     ggplot2::scale_linetype_manual("", values = "solid",
-                                   labels = expression(F[MSYproxy])) +
-    ggplot2::geom_point(data = object@data,
-                        ggplot2::aes(x = year, y = harvest_rate,
-                                     shape = "reference years"),
-                        colour = "#ed6028") +
+                                   labels = expression(HR[MSYproxy])) +
     ggplot2::scale_shape_manual("", values = 16, ) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
     ggplot2::coord_cartesian(ylim = c(0, hr_max * 1.1),
                              xlim = c(yr_min - 1, yr_max + 1),
                              expand = FALSE) +
     ggplot2::labs(x = "", y = y_label, 
-                  title = "Harvest rate (catches / biomass index)") +
+                  title = hr_title) +
     ggplot2::theme_bw(base_size = 8) +
     ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
                    axis.title.x = ggplot2::element_blank(),
@@ -509,6 +513,13 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
                    legend.key.height = ggplot2::unit(0.5, "lines"),
                    plot.title = ggplot2::element_text(face = "bold", 
                                                       colour = "#ed6028"))
+  ### add points for reference years if show.data=TRUE
+  if (isTRUE(show.data))
+    p <- p + 
+      ggplot2::geom_point(data = object@data,
+                          ggplot2::aes(x = year, y = harvest_rate,
+                                       shape = "reference years"),
+                          colour = "#ed6028")
   #p
   
   ### length indicator
@@ -700,7 +711,7 @@ setMethod(
 setMethod(f = "plot", signature = c(x = "HR"), 
           definition = function(x, y, y_label, 
                                 show.data = TRUE,
-                                ...) {
+                                ...) {#browser()
   #browser()
   object <- x
   
@@ -724,9 +735,13 @@ setMethod(f = "plot", signature = c(x = "HR"),
     if (!is.na(object@units))
       y_label <- paste0(y_label, " in ", object@units)
   }
-  # 
-  # ### data.frame for reference length
-  # Lref_df <- data.frame(name = "L[F==M]", value = x@Lref@value)
+  
+  ### catch metric
+  if (!identical(x@metric, "catch")) {
+    hr_title <- paste0("Harvest rate (", x@metric, " / biomass index)")
+  } else {
+    hr_title <- "Harvest rate (catches / biomass index)"
+  }
   
   ### create plot
   p <- ggplot2::ggplot() +
@@ -739,7 +754,7 @@ setMethod(f = "plot", signature = c(x = "HR"),
                              xlim = c(yr_min - 1, yr_max + 1),
                              expand = FALSE) +
     ggplot2::labs(x = "", y = y_label, 
-                  title = "Harvest rate (catches / biomass index)") +
+                  title = hr_title) +
     ggplot2::theme_bw(base_size = 8) +
     ggplot2::theme(axis.title.y = ggplot2::element_text(face = "bold"),
                    axis.title.x = ggplot2::element_blank(),
