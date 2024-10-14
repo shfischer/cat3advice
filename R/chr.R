@@ -19,10 +19,13 @@ NULL
 #'
 #' @slot advice The value of the catch advice.
 #' @slot advice_landings Landings corresponding to the catch advice.
+#' @slot advice_discards Discards corresponding to the catch advice.
+#' @slot advice_discards_dead Dead discards corresponding to the catch advice.
+#' @slot advice_discards_surviving Surviving discards corresponding to the catch advice.
 #' @slot advice_uncapped The value of the catch advice without the uncertainty cap.
 #' @slot units The unit (e.g. tonnes) of the catch advice.
 #' @slot advice_metric The advice metric, 'catch' or 'landings'.
-#' @slot frequency The advice frequence (annual/biennial).
+#' @slot frequency The advice frequency (annual/biennial).
 #' @slot years The years for which the advice is valid.
 #' @slot A The reference catch (previous catch advice).
 #' @slot I Component I (the biomass index value).
@@ -35,6 +38,7 @@ NULL
 #' @slot change Change in advice compared to previous advice.
 #' @slot change_uncapped Change in advice compared to previous advice before application of the uncertainty cap.
 #' @slot discard_rate Discard rate (\%).
+#' @slot discard_survival Discard survival (\%).
 #'
 #' @rdname chr-class
 #' @export
@@ -43,6 +47,9 @@ setClass(
   slots = c(
     advice = "numeric",
     advice_landings = "numeric",
+    advice_discards = "numeric",
+    advice_discards_dead = "numeric",
+    advice_discards_surviving = "numeric",
     advice_uncapped = "numeric",
     units = "character",
     advice_metric = "character",
@@ -58,11 +65,15 @@ setClass(
     cap_upper = "numeric",
     change = "numeric",
     change_uncapped = "numeric",
-    discard_rate = "numeric"
+    discard_rate = "numeric",
+    discard_survival = "numeric"
   ),
   prototype = list(
     advice = NA_real_,
     advice_landings = NA_real_,
+    advice_discards = NA_real_,
+    advice_discards_dead = NA_real_,
+    advice_discards_surviving = NA_real_,
     advice_uncapped = NA_real_,
     units = NA_character_,
     advice_metric = NA_character_,
@@ -78,7 +89,8 @@ setClass(
     cap_upper = 20,
     change = NA_real_,
     change_uncapped = NA_real_,
-    discard_rate = NA_real_
+    discard_rate = NA_real_,
+    discard_survival = 0
   )
 )
 
@@ -108,7 +120,8 @@ setClass(
 #' @param cap_lower Optional. \code{numeric}. The maximum allowed decrease in the catch advice in \%. Default to -20.
 #' @param years Optional. \code{numeric}. The years for which the advice should be given.
 #' @param frequency Optional. The frequency of the advice ('annual'/'biennial'/'triennial'). Defaults to 'annual'.
-#' @param  discard_rate Optional. \code{numeric}. The discard rate for the advice. If provided, advice values for catch and landings are given.
+#' @param  discard_rate Optional. \code{numeric}. The discard rate (in \%) for the advice. If provided, advice values for catch and landings are given.
+#' @param  discard_surival Optional. \code{numeric}. The discard survival rate (in \%) for the advice. If provided, Discards are split into dead and surviving discards.
 #' @param ... Additional parameters. Not used.
 #'
 #' @section Warning:
@@ -187,6 +200,7 @@ setGeneric(name = "chr",
                           years,
                           frequency = "annual",
                           discard_rate = NA,
+                          discard_survival = 0,
                           ...)
              standardGeneric("chr"),
            signature = c("object", "A", "I", "F", "b", "m"))
@@ -204,11 +218,14 @@ setMethod(chr,
                    cap_lower = -30,
                    years, frequency = "annual",
                    discard_rate = NA,
+                   discard_survival = 0,
                    ...) {#browser()
   object <- chr_calc(A = A, I = I, F = F, b = b, m = m,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
                      years = years, frequency = frequency,
-                     discard_rate = discard_rate, ... = ...)
+                     discard_rate = discard_rate, 
+                     discard_survival = discard_survival,
+                     ... = ...)
   return(object)
 })
 ### object = missing, A/I/F/b/m = numeric
@@ -225,11 +242,14 @@ setMethod(chr,
                    cap_lower = -30,
                    years, frequency = "annual",
                    discard_rate = NA,
+                   discard_survival = 0,
                    ...) {#browser()
   object <- chr_calc(A = A, I = I, F = F, b = b, m = m,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
                      years = years, frequency = frequency,
-                     discard_rate = discard_rate, ... = ...)
+                     discard_rate = discard_rate, 
+                     discard_survival = discard_survival,
+                     ... = ...)
   return(object)
 })
 ### object = chr, A/I/F/b/m = missing -> check validity
@@ -248,6 +268,7 @@ setMethod(chr,
                    cap_lower = -30,
                    years, frequency = "annual",
                    discard_rate = NA,
+                   discard_survival = 0,
                    ...) {
   ### check validity
   validObject(object)
@@ -255,7 +276,9 @@ setMethod(chr,
   object <- chr_calc(object = object,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
                      years = years, frequency = frequency,
-                     discard_rate = discard_rate, ... = ...)
+                     discard_rate = discard_rate, 
+                     discard_survival = discard_survival,
+                     ... = ...)
   return(object)
 
 })
@@ -275,6 +298,7 @@ setMethod(chr,
                    cap_lower = -30,
                    years, frequency = "biennial",
                    discard_rate = NA,
+                   discard_survival = 0,
                    ...) {
   ### check validity
   validObject(object)
@@ -283,7 +307,9 @@ setMethod(chr,
                      A = A, I = I, F = F, b = b, m = m,
                      cap = cap, cap_upper = cap_upper, cap_lower = cap_lower,
                      years = years, frequency = frequency,
-                     discard_rate = discard_rate, ... = ...)
+                     discard_rate = discard_rate, 
+                     discard_survival = discard_survival,
+                     ... = ...)
   return(object)
 })
 
@@ -300,12 +326,13 @@ chr_calc <- function(object = new("chr"),
                      years,
                      frequency = "annual",
                      discard_rate = NA,
+                     discard_survival = 0,
                      ...) {
   #browser()
 
   ### convert all components into corresponding classes and check validity
   if (!missing(A)) object@A <- chr_A(A)
-  if (!missing(I)) object@I <- chr_I(I)
+  if (!missing(I)) object@I <- I(I)
   if (!missing(F)) object@F <- F(F)
   if (!missing(b)) object@b <- chr_b(b)
   if (!missing(m)) {
@@ -365,12 +392,22 @@ chr_calc <- function(object = new("chr"),
   if (!is.na(discard_rate)) {
     object@discard_rate <- discard_rate
     object@advice_landings <- object@advice * (1 - object@discard_rate/100)
+    object@advice_discards <- object@advice * (object@discard_rate/100)
+    
+    ### discard survival
+    if (!identical(discard_survival, 0L)) {
+      object@discard_survival <- discard_survival
+      object@advice_discards_dead <- object@advice_discards * 
+        (1 - object@discard_survival/100)
+      object@advice_discards_surviving <- object@advice_discards *
+        (object@discard_survival/100)
+    }
   } else {
     object@advice_landings <- object@advice
   }
   
   ### advice years
-  object@frequency <- match.arg(frequency)
+  object@frequency <- frequency
   ### if advice years missing, try to guess from previous advice
   if (missing(years)) {
     if (!is.na(object@A@avg_years)) {
@@ -434,7 +471,7 @@ setMethod(
     object@units <- ifelse(!is.na(object@A@units),
                            paste0(" ", object@A@units), "")
     ### chr calculation (uncapped advice)
-    chr_txt <- "CHR calculation (I*F*b*m)"
+    chr_txt <- "CHR calculation (I*HR*b*m)"
     chr_val <- paste0(round(object@advice_uncapped),
                       object@units)
     txt_chr <- paste0(
@@ -455,7 +492,7 @@ setMethod(
                              paste0(object@years, collapse = " and "))
     catch_adv_txt2 <- ifelse(isTRUE(object@cap),
                              "   (Ay * stability clause)",
-                             "   (I * F * b * m)")
+                             "   (I * HR * b * m)")
     catch_adv_val <- paste0(round(object@advice), object@units)
     txt_catch_adv <- paste0(format(catch_adv_txt1, width = 48), " | \n",
                             format(catch_adv_txt2, width = 48), " | ",
@@ -475,6 +512,38 @@ setMethod(
                               format(land_txt, width = 48), " | ",
                               format(land_val, width = 29,
                                      justify = "right"), "\n")
+      ### discard survival
+      if (isTRUE(object@discard_survival > 0)) {
+        disc_surv_txt <- "Discard survival"
+        disc_surv_val <- paste0(icesAdvice::icesRound(object@discard_survival),
+                                "%")
+        disc_txt <- "Projected total discards"
+        disc_val <- paste0(round(object@advice_discards),
+                           object@units)
+        disc_dead_txt <- "Projected dead discards"
+        disc_dead_val <- paste0(round(object@advice_discards_dead),
+                                object@units)
+        disc_surv_txt2 <- "Projected surviving discards"
+        disc_surv_val2 <- paste0(round(object@advice_discards_surviving),
+                                object@units)
+        
+        txt_disc_add <- paste0(format(disc_txt, width = 48), " | ",
+                               format(disc_val, width = 29,
+                                      justify = "right"), "\n",
+                               format(disc_surv_txt, width = 48), " | ",
+                               format(disc_surv_val, width = 29,
+                                      justify = "right"), "\n",
+                               format(disc_dead_txt, width = 48), " | ",
+                               format(disc_dead_val, width = 29,
+                                      justify = "right"), "\n",
+                               format(disc_surv_txt2, width = 48), " | ",
+                               format(disc_surv_val2, width = 29,
+                                      justify = "right"), 
+                               "\n")
+        txt_disc_land <- paste0(txt_disc_land,
+                               txt_disc_add)
+      }
+      
     } else {
       txt_disc_land <- ""
     }
