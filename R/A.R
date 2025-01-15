@@ -14,11 +14,14 @@ NULL
 #' is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 #' 
 #' @slot value The value of component Ay (reference catch)
+#' @slot value_landings Optional. The landings corresponding to \code{value}.
+#' @slot value_discards Optional. The discards corresponding to \code{value}.
 #' @slot hcr The harvest control rule (hcr) for which Ay is used. One of 'rfb', 'rb', or 'chr'.
 #' @slot data Time series of historical catches and/or advice
 #' @slot avg_years Number of years for calculating average catch
 #' @slot basis Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch
 #' @slot advice_metric Advice metric, 'catch' or 'landings'.
+#' @slot discard_survival Optional. Discard survival. Can be used to show the reference catch (or advice) in the form of dead catch (or advice).
 #' 
 #' @name A-class
 #' @export
@@ -26,15 +29,20 @@ setClass(
   Class = "A",
   slots = c(
     value = "numeric",
+    value_landings = "numeric",
+    value_discards = "numeric",
     units = "character",
     hcr = "character",
     data = "vector",
     avg_years = "numeric",
     basis = "character",
-    advice_metric = "character"
+    advice_metric = "character",
+    discard_survival = "numeric"
   ),
   prototype = list(
     value = NA_real_,
+    value_landings = NA_real_,
+    value_discards = NA_real_,
     units = NA_character_,
     hcr = NA_character_,
     data = data.frame(matrix(
@@ -43,7 +51,8 @@ setClass(
     )),
     avg_years = NA_real_,
     basis = NA_character_,
-    advice_metric = NA_character_
+    advice_metric = NA_character_,
+    discard_survival = 0
   )
 )
 
@@ -64,6 +73,10 @@ setClass(Class = "chr_A",
 setValidity("A", function(object) {
   if (!identical(length(object@value), 1L)) {
     "slot value must be of length 1"
+  } else if (!identical(length(object@value_landings), 1L)) {
+    "slot value_landings must be of length 1"
+  } else if (!identical(length(object@value_discards), 1L)) {
+    "slot value_discards must be of length 1"
   } else if (!identical(length(object@units), 1L)) {
     "slot units must be of length 1"
   } else if (isFALSE(object@hcr %in% c(NA, "rfb", "rb", "chr"))) {
@@ -78,6 +91,10 @@ setValidity("A", function(object) {
     "slot basis must be of length 1"
   } else if (!identical(length(object@advice_metric), 1L)) {
     "slot advice_metric must be of length 1"
+  } else if (!identical(length(object@discard_survival), 1L)) {
+    "slot discard_survival must be of length 1"
+  } else if (isTRUE(discard_survival < 0 | discard_survival > 1)) {
+    "slot discard_survival must be a value between 0-1"
   } else {
     TRUE
   }
@@ -95,6 +112,7 @@ setValidity("A", function(object) {
 #' - a single value representing a reference catch, e.g. the previous catch advice
 #' - a vector of historical values which are used to calculate the average catch
 #' - a data.frame with columns 'year' and either of 'advice', 'catch', 'landings'
+#' - a data.frame with columns 'year', 'advice', 'advice_landings', 'advice_discards'
 #' - an object of class `A`
 #' 
 #' \code{rfb_A()}, \code{rb_A()}, and \code{chr_A()} are aliases for
@@ -107,6 +125,8 @@ setValidity("A", function(object) {
 #' if the rfb/rb/chr rule is applied the first time, it can be based on an
 #' average of historical catches.
 #' 
+#' In some cases, discard survival is considered for the rfb/rb/chr rules. In these cases, it can be useful to provide the advice split into landings and discards (provided with columns \code{advice_landings} and \code{advice_discards}) to calculate the assumed dead catch corresponding to the advice. This is done with the discard survival rate provided with \code{discard_survival}.
+#' 
 #' @param object The reference catch. See details
 #' @param units [Optional] The units of the reference catch, e.g. "tonnes".
 #' @param hcr [Optional] The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
@@ -114,6 +134,7 @@ setValidity("A", function(object) {
 #' @param avg_years [Optional] Number of years for calculating average catch or vector years to use
 #' @param basis [Optional] Basis of Ay. Either "advice" for using the previous advice or "average catch" when based on an average of historical catch
 #' @param advice_metric Advice metric, e.g. catch or landings.
+#' @param discard_survival [Optional] Discard survival (0-1).
 #' @param ... Additional arguments (Not used) 
 #'
 #' @references 
@@ -141,7 +162,8 @@ NULL
 setGeneric(
   name = "A",
   def = function(object, value, units, hcr, data, avg_years, 
-                 basis = "advice", advice_metric = "catch", ...) {
+                 basis = "advice", advice_metric = "catch", 
+                 discard_survival = 0, ...) {
     standardGeneric("A")
   },
   signature = c("object")
@@ -154,13 +176,14 @@ setGeneric(
 setMethod(A,
   signature = c(object = "numeric"),
   function(object, value, units, hcr, data, avg_years, basis,
-           advice_metric, ...) {
+           advice_metric, discard_survival = 0, ...) {
     value <- object
     object <- new(Class = "A")
     A_calc(
       object = object, value = value, units = units, hcr = hcr, 
       data = data, avg_years = avg_years, basis = basis,
-      advice_metric = advice_metric, ...
+      advice_metric = advice_metric, discard_survival = discard_survival,
+      ...
     )
   }
 )
@@ -172,13 +195,13 @@ setMethod(A,
 setMethod(A,
   signature = c(object = "data.frame"),
   function(object, value, units, hcr, data, avg_years, basis,
-           advice_metric, ...) {
+           advice_metric, discard_survival = 0, ...) {
     data <- object
     object <- new(Class = "A")
     A_calc(
       object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
-      advice_metric = advice_metric, ...
+      advice_metric = advice_metric, discard_survival = discard_survival, ...
     )
   }
 )
@@ -191,12 +214,14 @@ setMethod(A,
   signature = c(object = "A"),
   function(object, value, units = object@units, hcr = object@hcr, data, 
            avg_years = object@avg_years, basis = object@basis, 
-           advice_metric = object@advice_metric, ...) {
+           advice_metric = object@advice_metric, 
+           discard_survival = object@discard_survival,
+           ...) {
     validObject(object)
     A_calc(
       object = object, value = value, units = units, hcr = hcr,
       data = data, avg_years = avg_years, basis = basis,
-      advice_metric = advice_metric, ...
+      advice_metric = advice_metric, discard_survival = discard_survival, ...
     )
   }
 )
@@ -205,7 +230,7 @@ setMethod(A,
 ### A calculation ####
 ### ------------------------------------------------------------------------ ###
 A_calc <- function(object, value, units, hcr, data, avg_years, 
-                         basis, advice_metric, ...) {
+                         basis, advice_metric, discard_survival = 0, ...) {
   
   ### create empty object, if missing
   if (missing(object)) object <- new(Class = "A")
