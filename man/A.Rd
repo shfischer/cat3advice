@@ -22,6 +22,7 @@ A(
   avg_years,
   basis = "advice",
   advice_metric = "catch",
+  discard_survival = 0,
   ...
 )
 
@@ -76,6 +77,8 @@ chr_A(
 
 \item{advice_metric}{Advice metric, e.g. catch or landings.}
 
+\item{discard_survival}{[Optional] Discard survival (0-1).}
+
 \item{...}{Additional arguments (Not used)}
 }
 \value{
@@ -90,6 +93,7 @@ The function accepts as its first argument (`object`):
 - a single value representing a reference catch, e.g. the previous catch advice
 - a vector of historical values which are used to calculate the average catch
 - a data.frame with columns 'year' and either of 'advice', 'catch', 'landings'
+- a data.frame with columns 'year', 'advice', 'advice_landings', 'advice_discards'
 - an object of class `A`
 
 \code{rfb_A()}, \code{rb_A()}, and \code{chr_A()} are aliases for
@@ -101,6 +105,8 @@ The reference catch is set following ICES (2022).
 Usually, the reference catch is the previous advised catch. Alternatively,
 if the rfb/rb/chr rule is applied the first time, it can be based on an
 average of historical catches.
+
+In some cases, discard survival is considered for the rfb/rb/chr rules. In these cases, it can be useful to provide the advice split into landings and discards (provided with columns \code{advice_landings} and \code{advice_discards}) to calculate the assumed dead catch corresponding to the advice. This is done with the discard survival rate provided with the argument \code{discard_survival}.
 }
 \examples{
 # data.frame with advice/catch history

@@ -4,6 +4,7 @@
 \name{advice}
 \alias{advice}
 \alias{advice,A-method}
+\alias{advice,chr_A-method}
 \alias{advice,f-method}
 \alias{advice,rfb_f-method}
 \alias{advice,F-method}

@@ -20,6 +20,12 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 \describe{
 \item{\code{value}}{The value of component Ay (reference catch)}
 
+\item{\code{value_landings}}{Optional. The landings corresponding to \code{value}.}
+
+\item{\code{value_discards}}{Optional. The discards corresponding to \code{value}.}
+
+\item{\code{value_catch}}{Optional. The total catch corresponding to \code{value}. May differ from \code{value} if discard survival is considered.}
+
 \item{\code{hcr}}{The harvest control rule (hcr) for which Ay is used. One of 'rfb', 'rb', or 'chr'.}
 
 \item{\code{data}}{Time series of historical catches and/or advice}
@@ -29,5 +35,7 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 \item{\code{basis}}{Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch}
 
 \item{\code{advice_metric}}{Advice metric, 'catch' or 'landings'.}
+
+\item{\code{discard_survival}}{Optional. Discard survival. Can be used to show the reference catch (or advice) in the form of dead catch (or advice).}
 }}
 

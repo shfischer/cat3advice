@@ -13,6 +13,8 @@ This class contains the components of the chr rule
 \describe{
 \item{\code{advice}}{The value of the catch advice.}
 
+\item{\code{advice_dead}}{The dead catch corresponding to the advice.}
+
 \item{\code{advice_landings}}{Landings corresponding to the catch advice.}
 
 \item{\code{advice_discards}}{Discards corresponding to the catch advice.}
