@@ -16,6 +16,7 @@ NULL
 #' @slot value The value of component Ay (reference catch)
 #' @slot value_landings Optional. The landings corresponding to \code{value}.
 #' @slot value_discards Optional. The discards corresponding to \code{value}.
+#' @slot value_catch Optional. The total catch corresponding to \code{value}. May differ from \code{value} if discard survival is considered.
 #' @slot hcr The harvest control rule (hcr) for which Ay is used. One of 'rfb', 'rb', or 'chr'.
 #' @slot data Time series of historical catches and/or advice
 #' @slot avg_years Number of years for calculating average catch
@@ -31,6 +32,7 @@ setClass(
     value = "numeric",
     value_landings = "numeric",
     value_discards = "numeric",
+    value_catch = "numeric",
     units = "character",
     hcr = "character",
     data = "vector",
@@ -43,6 +45,7 @@ setClass(
     value = NA_real_,
     value_landings = NA_real_,
     value_discards = NA_real_,
+    value_catch = NA_real_,
     units = NA_character_,
     hcr = NA_character_,
     data = data.frame(matrix(
@@ -125,7 +128,7 @@ setValidity("A", function(object) {
 #' if the rfb/rb/chr rule is applied the first time, it can be based on an
 #' average of historical catches.
 #' 
-#' In some cases, discard survival is considered for the rfb/rb/chr rules. In these cases, it can be useful to provide the advice split into landings and discards (provided with columns \code{advice_landings} and \code{advice_discards}) to calculate the assumed dead catch corresponding to the advice. This is done with the discard survival rate provided with \code{discard_survival}.
+#' In some cases, discard survival is considered for the rfb/rb/chr rules. In these cases, it can be useful to provide the advice split into landings and discards (provided with columns \code{advice_landings} and \code{advice_discards}) to calculate the assumed dead catch corresponding to the advice. This is done with the discard survival rate provided with the argument \code{discard_survival}.
 #' 
 #' @param object The reference catch. See details
 #' @param units [Optional] The units of the reference catch, e.g. "tonnes".
@@ -246,6 +249,11 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
   if (!missing(advice_metric))
     object@advice_metric <- match.arg(advice_metric, 
                                       choices = c("catch", "landings"))
+  if (!missing(discard_survival)) {
+    if (isTRUE(discard_survival < 0 | discard_survival > 1))
+      stop("discard_survival must not be negative or above 1")
+    object@discard_survival <- discard_survival
+  }
   
   ### argument "data" contains data to use for calculating Ay
   if (!missing(data)) {
@@ -256,7 +264,7 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
       if (identical(ncol(data), 1L)) {
         ### if single column provided, assume this contains the catch
         names(data) <- object@advice_metric
-        data$year <- seq_along(data$catch)
+        data$year <- seq(nrow(data))
       } else {
         if (all(!c("catch", "landings", "advice") %in% names(data))) 
           stop("column 'catch'/'landings'/'advice' missing in data.frame provided as data")
@@ -273,6 +281,7 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
             stop("Average landings requested but landings not provided")
         }
       }
+
     }
     object@data <- data
     ### if avg_years not specified, use all years
@@ -293,27 +302,91 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
   ### use value, if provided
   if (!missing(value)) {
     object@value <- value
+  value_landings <- value_discards <- value_catch <- NA
     
   ### calculate Ay
   } else if (!missing(data)) {
-    if (is.na(object@basis) | identical(object@basis, "average catch")) {
-      value <- mean(object@data$catch[object@data$year %in% object@avg_years],
-                  na.rm = TRUE)
-      object@basis <- "average catch"
-    } else if (identical(object@basis, "advice")) {
-      ### use advice 
-      if (all(!is.na(object@avg_years))) {
-        value <- mean(object@data$advice[object@data$year == object@avg_years],
-                      na.rm = TRUE)
-      } else {
-        ### find last advice value 
-        pos <- tail(which(!is.na(object@data$advice)), 1)
-        value <- object@data$advice[pos]
-        if (isTRUE(nrow(object@data) > 0))
-          object@avg_years <- object@data$year[pos]
+    
+    ### check if discard survival needs to be accounted for
+    ### 1st - no discard survival
+    if (isFALSE(discard_survival > 0)) {
+    
+      ### Ay is average catch
+      if (is.na(object@basis) | identical(object@basis, "average catch")) {
+        value <- mean(object@data$catch[object@data$year %in% object@avg_years],
+                    na.rm = TRUE)
+        object@basis <- "average catch"
+      
+      ### Ay is last advice
+      } else if (identical(object@basis, "advice")) {
+        ### use advice 
+        if (all(!is.na(object@avg_years))) {
+          value <- mean(object@data$advice[object@data$year == object@avg_years],
+                        na.rm = TRUE)
+        } else {
+          ### find last advice value 
+          pos <- tail(which(!is.na(object@data$advice)), 1)
+          value <- object@data$advice[pos]
+          if (isTRUE(nrow(object@data) > 0))
+            object@avg_years <- object@data$year[pos]
+        }
       }
+    
+    ### 2nd - discard survival > 0
+    ### -> consider discard survival for Ay calculation
+    } else {
+      
+      ### Ay is average DEAD catch
+      if (is.na(object@basis) | identical(object@basis, "average catch")) {
+        ### check if dead catch can be calculated
+        if (all(c("landings", "discards") %in% names(object@data))) {
+          object@data$catch_dead <- object@data$landings + 
+            object@data$discards * (1 - discard_survival)
+        } else {
+          stop(paste("Discard survival > 0 but dead catch cannot be",
+                     "calculated because columns 'landings' and/or",
+                     "'discards' missing!"))
+        }
+        value <- mean(object@data$catch_dead[object@data$year %in% object@avg_years],
+                      na.rm = TRUE)
+        object@basis <- "average catch"
+        
+      ### Ay is last advice but account for discard survival
+      } else if (identical(object@basis, "advice")) {
+        
+        ### check if dead advice can be calculated
+        if (all(c("advice_landings", "advice_discards") %in% names(object@data))) {
+          object@data$advice_dead <- object@data$advice_landings + 
+            object@data$advice_discards * (1 - discard_survival)
+        } else {
+          stop(paste("Discard survival > 0 but dead advice cannot be",
+                     "calculated because columns 'advice_landings' and/or",
+                     "'advice_discards' missing!"))
+        }
+
+        ### use advice 
+        if (all(!is.na(object@avg_years))) {
+          value <- mean(object@data$advice_dead[object@data$year == object@avg_years],
+                        na.rm = TRUE)
+        } else {
+          ### find last advice value 
+          pos <- tail(which(!is.na(object@data$advice_dead)), 1)
+          value <- object@data$advice_dead[pos]
+          value_landings <- object@data$advice_landings[pos]
+          value_discards <- object@data$advice_discards[pos]
+          value_catch <- object@data$advice[pos]
+          if (isTRUE(nrow(object@data) > 0))
+            object@avg_years <- object@data$year[pos]
+        }
+      }
+
     }
+    
+    ### insert values
     object@value <- value
+    object@value_landings <- value_landings
+    object@value_discards <- value_discards
+    object@value_catch <- value_catch
     
   }
   
@@ -469,12 +542,17 @@ setMethod(
 ### ------------------------------------------------------------------------ ###
 ### ICES advice style table ####
 ### ------------------------------------------------------------------------ ###
+### generic A
 #' @rdname advice
 #' @usage NULL
 #' @export
 setMethod(
   f = "advice", signature = "A",
   definition = function(object) {
+    
+    ### if chr rule, use dedicated method (defined below)
+    if (identical(object@hcr, "chr")) return(advice(chr_A(object)))
+    
     txt <- paste0(paste(rep("-", 80), collapse = ""), "\n")
     if (identical(object@basis, "advice")) {
       txt_A <- paste0("Previous ", object@advice_metric, 
@@ -492,6 +570,61 @@ setMethod(
                       format(txt_A_value, width = 29, justify = "right"),
                       "\n")
     txt <- paste0(txt, txt_add)
+    cat(txt)
+  }
+)
+
+### for chr rule 
+#' @rdname advice
+#' @usage NULL
+#' @export
+setMethod(
+  f = "advice", signature = "chr_A",
+  definition = function(object) {
+    
+    ### text depends on whether there is discard survival
+    if (isFALSE(object@discard_survival > 0)) {
+      
+      if (identical(object@basis, "advice")) {
+        txt_A <- paste0("Ay: previous ", object@advice_metric,
+                        " advice (advised ", object@advice_metric, " for ",
+                        object@avg_years, ")")
+      } else if (identical(object@basis, "average catch")) {
+        txt_A <- paste0("Cy: mean ", object@advice_metric, " (",
+                        paste0(object@avg_years, collapse = ", "), ")")
+      } else {
+        txt_A <- paste0("Reference ", object@advice_metric)
+      }
+      Ay_value <- round(object@value)
+      txt_A_value <- paste0(Ay_value, " ", object@units)
+      txt_add <- paste0(format(txt_A, width = 48), " | ",
+                        format(txt_A_value, width = 29, justify = "right"),
+                        "\n")
+      txt <- paste0(txt_add)
+    
+    ### account for discard survival - show dead reference catch
+    } else {
+      
+      if (identical(object@basis, "advice")) {
+        txt_A1 <- paste0("Ay: Dead ", object@advice_metric,
+                        " corresponding to previous")
+        txt_A2 <- paste0("\n   ", object@advice_metric, " advice")
+      } else if (identical(object@basis, "average catch")) {
+        txt_A1 <- paste0("Cy: Dead mean ", object@advice_metric, " (",
+                        paste0(object@avg_years, collapse = ", "), ")")
+        txt_A2 <- ""
+      } else {
+        txt_A1 <- paste0("Reference ", object@advice_metric)
+        txt_A2 <- ""
+      }
+      Ay_value <- round(object@value)
+      txt_A_value <- paste0(Ay_value, " ", object@units)
+      txt <- paste0(format(txt_A1, width = 48), " | ",
+                    format(txt_A_value, width = 29, justify = "right"),
+                    txt_A2,
+                    "\n")
+      
+    }
     cat(txt)
   }
 )
