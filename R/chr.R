@@ -18,6 +18,7 @@ NULL
 #' (\code{\link{I}}, \code{\link{F}}, \code{b}, \code{m}).
 #'
 #' @slot advice The value of the catch advice.
+#' @slot advice_dead The dead catch corresponding to the advice.
 #' @slot advice_landings Landings corresponding to the catch advice.
 #' @slot advice_discards Discards corresponding to the catch advice.
 #' @slot advice_discards_dead Dead discards corresponding to the catch advice.
@@ -46,6 +47,7 @@ setClass(
   Class = "chr",
   slots = c(
     advice = "numeric",
+    advice_dead = "numeric",
     advice_landings = "numeric",
     advice_discards = "numeric",
     advice_discards_dead = "numeric",
@@ -70,6 +72,7 @@ setClass(
   ),
   prototype = list(
     advice = NA_real_,
+    advice_dead = NA_real_,
     advice_landings = NA_real_,
     advice_discards = NA_real_,
     advice_discards_dead = NA_real_,
@@ -327,6 +330,7 @@ chr_calc <- function(object = new("chr"),
                      frequency = "annual",
                      discard_rate = NA,
                      discard_survival = 0,
+                     units, advice_metric,
                      ...) {
   #browser()
 
@@ -343,21 +347,26 @@ chr_calc <- function(object = new("chr"),
   }
   if (!missing(cap_upper)) object@cap_upper <- cap_upper
   if (!missing(cap_lower)) object@cap_lower <- cap_lower
+  
   ### check arguments
   if (!missing(frequency)) 
     frequency <- match.arg(arg = frequency, 
                            choices = c("biennial", "annual", "triennial"))
   if (!missing(cap)) 
     cap <- match.arg(arg = cap, choices = c("conditional", TRUE, FALSE))
+  
+  ### units
+  if (!missing(units)) object@units <- units
+  if (!missing(advice_metric)) object@advice_metric <- advice_metric
 
   ### calculate I*F*b*m
-  advice <- object@I@value * object@F@value * object@b@value * object@m@value
+  chr_value <- object@I@value * object@F@value * object@b@value * object@m@value
 
   ### calculate new catch advice
-  object@advice_uncapped <- object@advice <- advice
+  object@advice_uncapped <- object@advice_dead <- chr_value
   
   ### advice change
-  object@change <- (object@advice_uncapped/object@A@value - 1)*100
+  object@change <- (object@advice_dead/object@A@value - 1)*100
   object@change_uncapped <- object@change
 
   ### uncertainty cap / catch constraint
@@ -376,34 +385,59 @@ chr_calc <- function(object = new("chr"),
       ### cap_upper/cap_lower are values in percent
       object@change_uncapped <- object@change
       if (isTRUE(object@change_uncapped > object@cap_upper)) {
-        object@advice <- object@A@value * (100 + object@cap_upper)/100
+        object@advice_dead <- object@A@value * (100 + object@cap_upper)/100
         object@cap <- TRUE
       } else if (isTRUE(object@change_uncapped < object@cap_lower)) {
         ### use "+" because cap_lower is negative value
-        object@advice <- object@A@value * (100 + object@cap_lower)/100
+        object@advice_dead <- object@A@value * (100 + object@cap_lower)/100
         object@cap <- TRUE
       }
+      ### update advice change
+      object@change <- (object@advice_dead/object@A@value - 1)*100
     }
     
   }
-  object@change <- (object@advice/object@A@value - 1)*100
   
-  ### discards
+  ### consider discards
   if (!is.na(discard_rate)) {
-    object@discard_rate <- discard_rate
-    object@advice_landings <- object@advice * (1 - object@discard_rate/100)
-    object@advice_discards <- object@advice * (object@discard_rate/100)
     
-    ### discard survival
-    if (!identical(discard_survival, 0L)) {
+    object@discard_rate <- discard_rate
+    
+    ### no discard survival (or not considered)
+    if (identical(discard_survival, 0L)) {
+      
+      ### all advised catch is considered dead
+      object@advice <- object@advice_dead
+      object@advice_landings <- object@advice * (1 - object@discard_rate/100)
+      object@advice_discards <- object@advice * (object@discard_rate/100)
+    
+    ### discard survival > 0
+    } else {
+      
       object@discard_survival <- discard_survival
+      ### get total advice from dead advice
+      object@advice <- object@advice_dead/(1 - (discard_rate/100) *
+                                             discard_survival/100)
+      ### get landings and discards corresponding to advice
+      object@advice_landings <- object@advice * (1 - object@discard_rate/100)
+      object@advice_discards <- object@advice * (object@discard_rate/100)
+      ### split discards into dead and surviving discards
       object@advice_discards_dead <- object@advice_discards * 
         (1 - object@discard_survival/100)
       object@advice_discards_surviving <- object@advice_discards *
         (object@discard_survival/100)
+      
+      ### update advice change 
+      ### -> refers to total advice relative to previous total advice
+      object@change <- (object@advice/object@A@value_catch - 1)*100
+      
     }
+  
+  ### no discards
   } else {
-    object@advice_landings <- object@advice
+    object@advice_landings <- object@advice <- object@advice_dead
+    object@advice_discards <- object@advice_discards_dead <-
+      object@advice_discards_surviving <- 0
   }
   
   ### advice years
@@ -417,7 +451,10 @@ chr_calc <- function(object = new("chr"),
                                               "biennial" = 2, 
                                               "triennial" = 3))
     } else {
-      object@years <- 1:2
+      object@years <- switch(object@frequency, 
+                             "annual" = 1, 
+                             "biennial" = 1:2, 
+                             "triennial" = 1:3)
     }
   }
 
@@ -460,93 +497,132 @@ setMethod(f = "show", signature = "chr",
 setMethod(
   f = "advice", signature = "chr",
   definition = function(object) {
-
+    #browser()
     ### chr rule components
-    txt_A <- paste0(capture.output(advice(object@A)), collapse = "\n")
     txt_I <- paste0(capture.output(advice(object@I)), collapse = "\n")
     txt_F <- paste0(capture.output(advice(object@F)), collapse = "\n")
     txt_b <- paste0(capture.output(advice(object@b)), collapse = "\n")
     txt_m <- paste0(capture.output(advice(object@m)), collapse = "\n")
 
-    object@units <- ifelse(!is.na(object@A@units),
-                           paste0(" ", object@A@units), "")
+    ### units
+    if (is.na(object@units) & !is.na(object@A@units))
+      object@units <- object@A@units
+    
+    ### advice calculation header
+    txt_header <- paste0(
+      paste(rep("-", 80), collapse = ""), "\n",
+      "Catch advice calculations\n",
+      paste(rep("-", 80), collapse = ""), "\n"
+    )
+    
     ### chr calculation (uncapped advice)
-    chr_txt <- "CHR calculation (I*HR*b*m)"
-    chr_val <- paste0(round(object@advice_uncapped),
-                      object@units)
+    chr_txt <- "chr calculation (I*HR*b*m)"
+    chr_val <- paste(round(object@advice_uncapped), object@units)
     txt_chr <- paste0(
       format(chr_txt, width = 48), " | ",
       format(chr_val, width = 29, justify = "right"), "\n")
+    
+    ### previous advice (for stability clause)
+    txt_A <- paste0(capture.output(advice(object@A)), collapse = "\n")
+    
     ### stability clause (uncertainty cap)
     cap_txt1 <- paste0("Stability clause (+", object@cap_upper, "%/",
-                       object@cap_lower, "% compared to Ay,")
-    cap_txt2 <- paste0("   only applied if b=1)")
+                       object@cap_lower, "%, chr calculation")
+    cap_txt2 <- paste0("   compared to Ay, only applied if b=1)")
     cap_val1 <- ifelse(object@cap, "Applied", "Not applied")
     cap_val2 <- ifelse(object@cap, object@advice/object@A@value, "")
     txt_cap <- paste0(format(cap_txt1, width = 48), " | \n",
                       format(cap_txt2, width = 48), " | ",
                       format(cap_val1, width = 13, justify = "right"), " | ",
                       format(cap_val2, width = 13, justfify = "right"), "\n")
+    
+    ### check if discards are used 
+    if (!is.na(object@discard_rate)) {
+      if (isTRUE(discard_rate > 0)) {
+        use_discards <- TRUE
+      }
+    } else {
+      use_discards <- FALSE
+    }
+    
+    ### discard rate
+    if (isTRUE(use_discards)) {
+      disc_rate_txt <- "Discard rate"
+      disc_rate_val <- paste0(icesAdvice::icesRound(object@discard_rate), 
+                              "%")
+      txt_disc_rate <- paste0(format(disc_rate_txt, width = 48), " | ",
+                              format(disc_rate_val, width = 29, 
+                                     justify = "right"), "\n")
+    } else {
+      txt_disc_rate <- ""
+    }
+    
+    ### discard survival
+    if (isTRUE(object@discard_survival > 0)) {
+      disc_surv_txt <- "Discard survival"
+      disc_surv_val <- paste0(icesAdvice::icesRound(object@discard_survival), 
+                              "%")
+      txt_surv_rate <- paste0(format(disc_surv_txt, width = 48), " | ",
+                              format(disc_surv_val, width = 29, 
+                                     justify = "right"), "\n")
+    } else {
+      txt_surv_rate <- ""
+    }
+    
     ### catch advice
     catch_adv_txt1 <- paste0("Catch advice for ",
                              paste0(object@years, collapse = " and "))
-    catch_adv_txt2 <- ifelse(isTRUE(object@cap),
-                             "   (Ay * stability clause)",
-                             "   (I * HR * b * m)")
-    catch_adv_val <- paste0(round(object@advice), object@units)
-    txt_catch_adv <- paste0(format(catch_adv_txt1, width = 48), " | \n",
-                            format(catch_adv_txt2, width = 48), " | ",
+    catch_adv_val <- paste0(round(object@advice), " ", object@units)
+    txt_catch_adv <- paste0(format(catch_adv_txt1, width = 48), " |",
                             format(catch_adv_val, width = 29,
                                    justify = "right"), "\n")
-    ### discards
-    if (!is.na(object@discard_rate)) {
-      disc_rate_txt <- "Discard rate"
-      disc_rate_val <- paste0(icesAdvice::icesRound(object@discard_rate),
-                              "%")
-      land_txt <- "Projected landings corresponding to advice"
-      land_val <- paste0(round(object@advice_landings),
-                         object@units)
-      txt_disc_land <- paste0(format(disc_rate_txt, width = 48), " | ",
-                              format(disc_rate_val, width = 29,
-                                     justify = "right"), "\n",
-                              format(land_txt, width = 48), " | ",
+    ### add formula for catch advice
+    if (isFALSE(object@discard_survival > 0)) {
+      catch_adv_txt2 <- ifelse(isTRUE(object@cap),
+                               "   (Ay * stability clause)",
+                               "   (I * HR * b * m)")
+      txt_catch_adv <- paste0(txt_catch_adv,
+                              paste0(format(catch_adv_txt2, width = 48), 
+                                     " | ", "\n"))
+    } else {
+      catch_adv_txt2 <- ifelse(isTRUE(object@cap),
+                               "   ([Ay * stability clause]/",
+                               "   ([I * HR * b * m]/")
+      catch_adv_txt3 <- "   [1 - discard rate * discard survival])"
+      txt_catch_adv <- paste0(txt_catch_adv,
+                              paste0(format(catch_adv_txt2, width = 48), 
+                                     " | ", "\n"),
+                              paste0(format(catch_adv_txt3, width = 48), 
+                                     " | ", "\n"))
+    }
+ 
+    ### landings/discards corresponding to advice
+    if (isTRUE(use_discards)) {
+      
+      ### landings
+      land_txt <- "Landings corresponding to advice"
+      land_val <- paste(round(object@advice_landings),
+                        object@units)
+      
+      ### discards
+      disc_txt <- ifelse(isFALSE(object@discard_survival > 0),
+                         "Discards corresponding to advice",
+                         "Total discards corresponding to advice")
+      disc_val <- paste(round(object@advice_discards),
+                        object@units)
+      
+      ### combine text
+      txt_disc_land <- paste0(format(land_txt, width = 48), " | ",
                               format(land_val, width = 29,
+                                     justify = "right"), "\n",
+                              format(disc_txt, width = 48), " | ",
+                              format(disc_val, width = 29,
                                      justify = "right"), "\n")
-      ### discard survival
-      if (isTRUE(object@discard_survival > 0)) {
-        disc_surv_txt <- "Discard survival"
-        disc_surv_val <- paste0(icesAdvice::icesRound(object@discard_survival),
-                                "%")
-        disc_txt <- "Projected total discards"
-        disc_val <- paste0(round(object@advice_discards),
-                           object@units)
-        disc_dead_txt <- "Projected dead discards"
-        disc_dead_val <- paste0(round(object@advice_discards_dead),
-                                object@units)
-        disc_surv_txt2 <- "Projected surviving discards"
-        disc_surv_val2 <- paste0(round(object@advice_discards_surviving),
-                                object@units)
-        
-        txt_disc_add <- paste0(format(disc_txt, width = 48), " | ",
-                               format(disc_val, width = 29,
-                                      justify = "right"), "\n",
-                               format(disc_surv_txt, width = 48), " | ",
-                               format(disc_surv_val, width = 29,
-                                      justify = "right"), "\n",
-                               format(disc_dead_txt, width = 48), " | ",
-                               format(disc_dead_val, width = 29,
-                                      justify = "right"), "\n",
-                               format(disc_surv_txt2, width = 48), " | ",
-                               format(disc_surv_val2, width = 29,
-                                      justify = "right"), 
-                               "\n")
-        txt_disc_land <- paste0(txt_disc_land,
-                               txt_disc_add)
-      }
       
     } else {
       txt_disc_land <- ""
     }
+
     ### advice change
     change_txt <- "% advice change"
     change_val <- paste0(icesAdvice::icesRound(object@change), "%")
@@ -555,9 +631,13 @@ setMethod(
                                 justify = "right"), "\n")
 
     txt <- paste0(
-      txt_A, "\n", txt_I, "\n", txt_F, "\n", txt_b, "\n", txt_m, "\n",
+      txt_I, "\n", txt_F, "\n", txt_b, "\n", txt_m, "\n",
+      txt_header,
       txt_chr,
+      txt_A, "\n",
       txt_cap,
+      txt_disc_rate,
+      txt_surv_rate,
       txt_catch_adv,
       txt_disc_land,
       txt_change
