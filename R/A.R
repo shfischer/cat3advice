@@ -372,9 +372,9 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
           ### find last advice value 
           pos <- tail(which(!is.na(object@data$advice_dead)), 1)
           value <- object@data$advice_dead[pos]
-          value_landings <- object@data$advice_landings[pos]
-          value_discards <- object@data$advice_discards[pos]
-          value_catch <- object@data$advice[pos]
+          object@value_landings <- object@data$advice_landings[pos]
+          object@value_discards <- object@data$advice_discards[pos]
+          object@value_catch <- object@data$advice[pos]
           if (isTRUE(nrow(object@data) > 0))
             object@avg_years <- object@data$year[pos]
         }
@@ -384,9 +384,6 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
     
     ### insert values
     object@value <- value
-    object@value_landings <- value_landings
-    object@value_discards <- value_discards
-    object@value_catch <- value_catch
     
   }
   
