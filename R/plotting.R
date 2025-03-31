@@ -620,7 +620,9 @@ setMethod(f = "plot", signature = c(x = "Lc"),
         )),
       ggplot2::aes(x = L, y = N, fill = source)
     ) +
-    ggplot2::scale_fill_manual("Length", values = c("Lc" = "red", "mode" = "black")) +
+    ggplot2::scale_fill_manual("Length", 
+                               values = c("Lc" = "red", "mode" = "black"),
+                               na.translate = FALSE) +
     ggplot2::geom_hline(
       data = x@summary %>%
         dplyr::select(year, mode = Nmode) %>%
