@@ -497,7 +497,7 @@ setMethod(f = "show", signature = "chr",
 setMethod(
   f = "advice", signature = "chr",
   definition = function(object) {
-    #browser()
+    # browser()
     ### chr rule components
     txt_I <- paste0(capture.output(advice(object@I)), collapse = "\n")
     txt_F <- paste0(capture.output(advice(object@F)), collapse = "\n")
@@ -538,7 +538,7 @@ setMethod(
     
     ### check if discards are used 
     if (!is.na(object@discard_rate)) {
-      if (isTRUE(discard_rate > 0)) {
+      if (isTRUE(object@discard_rate > 0)) {
         use_discards <- TRUE
       }
     } else {

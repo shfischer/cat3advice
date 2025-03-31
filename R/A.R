@@ -96,7 +96,7 @@ setValidity("A", function(object) {
     "slot advice_metric must be of length 1"
   } else if (!identical(length(object@discard_survival), 1L)) {
     "slot discard_survival must be of length 1"
-  } else if (isTRUE(discard_survival < 0 | discard_survival > 1)) {
+  } else if (isTRUE(object@discard_survival < 0 | object@discard_survival > 1)) {
     "slot discard_survival must be a value between 0-1"
   } else {
     TRUE
