@@ -61,7 +61,7 @@ An object of class \code{chr}.
 This function applies the chr rule.
 }
 \details{
-This function applies the chr rule following the ICES technical guidelines (ICES, 2022). The function requires the elements of the chr rule: \out{<i>I</i>} (the biomass index, see \code{\link{chr_I}}), \out{<i>F</i><sub>MSYproxy</sub>} (the target harvest rate, see \code{\link{F}}), \out{<i>b</i>} (the biomass safeguard, see \code{\link{chr_b}}) and \out{<i>m</i>} (the multiplier, see \code{\link{chr_m}}). The catch advice is then calculated as
+This function applies the chr rule following the ICES technical guidelines (ICES, 2025). The function requires the elements of the chr rule: \out{<i>I</i>} (the biomass index, see \code{\link{chr_I}}), \out{<i>F</i><sub>MSYproxy</sub>} (the target harvest rate, see \code{\link{F}}), \out{<i>b</i>} (the biomass safeguard, see \code{\link{chr_b}}) and \out{<i>m</i>} (the multiplier, see \code{\link{chr_m}}). The catch advice is then calculated as
 
 \out{<i>A</i><sub>y+1</sub> = <i>I</i> * <i>F</i><sub>MSYproxy</sub> * <i>b</i> * <i>m</i>}
 
@@ -122,7 +122,7 @@ advice
 
 }
 \references{
-ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+ICES. 2025. ICES Guidelines - Advice rules for stocks in category 2 and 3. Version 3. ICES Guidelines and Policies - Advice Technical Guidelines. 31 pp. \url{https://doi.org/10.17895/ices.pub.28506179}.
 
 Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2023. Risk equivalence in data‐limited and data‐rich fisheries management: An example based on the ICES advice framework. Fish and Fisheries, 24: 231--247. \url{https://doi.org/10.1111/faf.12722}.
 

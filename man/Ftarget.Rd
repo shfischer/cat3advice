@@ -34,7 +34,7 @@ This function calculates the target harvest rate for chr rule.
 \details{
 Usually, this functions is used by providing a time series of (relative) harvest rate values (see \code{\link{HR}}) and a length-based indicator based on the mean catch length (see \code{\link{f}}). The functions then finds those years where the indicator values are above 1, indicating that the fishing pressure is likely below Fmsy, extracts the corresponding (relative) harvest rate values for these years, and returns the average of these values as the target harvest rate.
 
-Alternatively, years can directly be specified with the argument \code{yr_ref} and the target harvest rate is then calculated as the average of the (relative) harvest rates for these years. See the ICES technical guidelines (ICES, 2022) for details.
+Alternatively, years can directly be specified with the argument \code{yr_ref} and the target harvest rate is then calculated as the average of the (relative) harvest rates for these years. See the ICES technical guidelines (ICES, 2025) for details.
 
 If stock-specific simulations were conducted to derive the target harvest rate, the calculation may differ. Nevertheless, it is good practice to express the target harvest rate relative to the harvest of one or more years. This is useful when historical harvest rates are revised (e.g. because of a revision of historical biomass index values) because the target harvest rate will then be scaled accordingly. If the argument \code{MSE=TRUE}, it is possible to include a multiplier directly in the calculation of the target harvest with the argument \code{multiplier}.
 
@@ -85,7 +85,7 @@ F <- F(hr, yr_ref = c(2016, 2019))
 
 }
 \references{
-ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+ICES. 2025. ICES Guidelines - Advice rules for stocks in category 2 and 3. Version 3. ICES Guidelines and Policies - Advice Technical Guidelines. 31 pp. \url{https://doi.org/10.17895/ices.pub.28506179}.
 
 Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2023. Risk equivalence in data‐limited and data‐rich fisheries management: An example based on the ICES advice framework. Fish and Fisheries, 24: 231--247. \url{https://doi.org/10.1111/faf.12722}.
 

@@ -34,7 +34,7 @@ index
 This function calculates component I (the last biomass index value) of the chr rule. The index needs to be a biomass index without age structure.
 }
 \details{
-See ICES (2022) for the full definition definition.
+See ICES (2025) for the full definition definition.
 
 Usually, this method is used by providing only a biomass index, e.g. as a \code{data.frame}. The method uses this index, and takes the last index value.
 
@@ -65,7 +65,7 @@ plot(I)
 
 }
 \references{
-ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+ICES. 2025. ICES Guidelines - Advice rules for stocks in category 2 and 3. Version 3. ICES Guidelines and Policies - Advice Technical Guidelines. 31 pp. \url{https://doi.org/10.17895/ices.pub.28506179}.
 
 Fischer, S. H., De Oliveira, J. A. A., Mumford, J. D., and Kell, L. T. 2023. Risk equivalence in data‐limited and data‐rich fisheries management: An example based on the ICES advice framework. Fish and Fisheries, 24: 231--247. \url{https://doi.org/10.1111/faf.12722}.
 

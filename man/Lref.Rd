@@ -74,6 +74,6 @@ Lref(Lc = 26.4, Linf = 58.5)
 }
 \references{
 Beverton, R. J. H., and Holt, S. J. 1957. On the Dynamics of Exploited Fish Populations. Fishery Investigation Series 2. HMSO for Ministry of Agriculture, Fisheries and Food, London. 533 pp.
-ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+ICES. 2025. ICES Guidelines - Advice rules for stocks in category 2 and 3. Version 3. ICES Guidelines and Policies - Advice Technical Guidelines. 31 pp. \url{https://doi.org/10.17895/ices.pub.28506179}.
 Jardim, E., Azevedo, M., and Brites, N. M. 2015. Harvest control rules for data limited stocks using length-based reference points and survey biomass indices. Fisheries Research, 171: 12–19. \url{https://doi.org/10.1016/j.fishres.2014.11.013}.
 }

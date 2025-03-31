@@ -46,7 +46,7 @@ This function returns the default multiplier for the rfb, rb, and chr rules.
 \code{m()} in which the \code{hcr} argument is already set to 
 'rfb', 'rb', or 'chr'.
 
-The multiplier is set following ICES (2022).
+The multiplier is set following ICES (2025).
 
 For the rfb rule, the multiplier is set depending on the von Bertalanffy 
 parameter k (individual growth rate, units: 1/year; ICES, 2022). 
@@ -86,5 +86,5 @@ m(hcr = "chr") # 0.5
 
 }
 \references{
-ICES. 2022. ICES technical guidance for harvest control rules and stock assessments for stocks in categories 2 and 3. In Report of ICES Advisory Committee, 2022. ICES Advice 2022, Section 16.4.11, 20 pp. \url{https://doi.org/10.17895/ices.advice.19801564}.
+ICES. 2025. ICES Guidelines - Advice rules for stocks in category 2 and 3. Version 3. ICES Guidelines and Policies - Advice Technical Guidelines. 31 pp. \url{https://doi.org/10.17895/ices.pub.28506179}.
 }
