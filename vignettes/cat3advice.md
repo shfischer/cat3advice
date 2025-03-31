@@ -1,7 +1,7 @@
 cat3advice
 ================
 Simon H. Fischer
-01 March, 2024
+31 March, 2025
 
 - [`cat3advice`](#cat3advice)
 - [Documentation](#documentation)
@@ -150,7 +150,7 @@ over last the five years, by dividing the mean of the last two years by
 the mean of the three preceding years:
 
 $$
-r = \Sigma_{i=y-2}^{y-1}(I_i/2)\ / \ \Sigma_{i=y-5}^{y-2}(I_i/3)
+r = \Sigma_{i=y-2}^{y-1}(I_i/2)\ / \ \Sigma_{i=y-5}^{y-3}(I_i/3)
 $$
 
 The ratio is calculated with the function `r`. Index data should be
@@ -181,7 +181,8 @@ advice(r)
 #> --------------------------------------------------------------------------------
 #> Index A (2020,2021)                              |                    0.81 kg/hr
 #> Index B (2017,2018,2019)                         |                    1.10 kg/hr
-#> r: stock biomass trend (index ratio A/B)         |                          0.74
+#> r: multiplier for stock biomass trend            |                          0.74
+#>    (index ratio A/B)                             |
 
 ### plot index
 ### horizontal orange lines correspond to the the 2/3-year averages
@@ -228,9 +229,8 @@ advice(b)
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
-#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
-#> b: index relative to trigger value,              |                          1.00
+#> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |
 
 ### plot
@@ -408,12 +408,13 @@ f
 ### ICES advice style table
 advice(f)
 #> --------------------------------------------------------------------------------
-#> Fishing pressure proxy
+#> Fishing pressure
 #> --------------------------------------------------------------------------------
-#> Mean catch length (Lmean = L2021)                |                        320 mm
-#> MSY proxy length (LF=M)                          |                        340 mm
-#> f: Fishing pressure proxy relative to MSY proxy  | 
-#>    (L2021/LF=M)                                  |                          0.93
+#> Mean catch length (Lmean = L2021)                |                        319 mm
+#> MSY proxy length (LF=M)                          |                        344 mm
+#> Fishing pressure proxy (LF=M/Lmean)              |                          1.08
+#> f: multiplier for relative mean length in catches|                          0.93
+#>    (L2021/LF=M)                                  |
 ### plot
 plot(f)
 ```
@@ -499,27 +500,28 @@ advice(advice)
 #> --------------------------------------------------------------------------------
 #> Index A (2020,2021)                              |                    0.81 kg/hr
 #> Index B (2017,2018,2019)                         |                    1.10 kg/hr
-#> r: stock biomass trend (index ratio A/B)         |                          0.74
+#> r: multiplier for stock biomass trend            |                          0.74
+#>    (index ratio A/B)                             | 
 #> --------------------------------------------------------------------------------
-#> Fishing pressure proxy
+#> Fishing pressure
 #> --------------------------------------------------------------------------------
-#> Mean catch length (Lmean = L2021)                |                        320 mm
-#> MSY proxy length (LF=M)                          |                        340 mm
-#> f: Fishing pressure proxy relative to MSY proxy  | 
-#>    (L2021/LF=M)                                  |                          0.93
+#> Mean catch length (Lmean = L2021)                |                        319 mm
+#> MSY proxy length (LF=M)                          |                        344 mm
+#> Fishing pressure proxy (LF=M/Lmean)              |                          1.08
+#> f: multiplier for relative mean length in catches|                          0.93
+#>    (L2021/LF=M)                                  | 
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
-#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
-#> b: index relative to trigger value,              |                          1.00
+#> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |                              
 #> --------------------------------------------------------------------------------
 #> Precautionary multiplier to maintain biomass above Blim with 95% probability
 #> --------------------------------------------------------------------------------
 #> m: multiplier                                    |                          0.95
 #>    (generic multiplier based on life history)    |                              
-#> RFB calculation (r*f*b*m)                        |                   1134 tonnes
+#> RFB calculation (Ay*r*f*b*m)                     |                   1134 tonnes
 #> Stability clause (+20%/-30% compared to Ay,      | 
 #>    only applied if b=1)                          |       Applied |           0.7
 #> Catch advice for 2023 and 2024                   | 
@@ -611,7 +613,7 @@ over last the five years, by dividing the mean of the last two years by
 the mean of the three preceding years:
 
 $$
-r = \Sigma_{i=y-2}^{y-1}(I_i/2)\ / \ \Sigma_{i=y-5}^{y-2}(I_i/3)
+r = \Sigma_{i=y-2}^{y-1}(I_i/2)\ / \ \Sigma_{i=y-5}^{y-3}(I_i/3)
 $$
 
 The ratio is calculated with the function `r`. Index data should be
@@ -642,7 +644,8 @@ advice(r)
 #> --------------------------------------------------------------------------------
 #> Index A (2020,2021)                              |                    0.81 kg/hr
 #> Index B (2017,2018,2019)                         |                    1.10 kg/hr
-#> r: stock biomass trend (index ratio A/B)         |                          0.74
+#> r: multiplier for stock biomass trend            |                          0.74
+#>    (index ratio A/B)                             |
 
 ### plot index
 ### horizontal orange lines correspond to the the 2/3-year averages
@@ -689,9 +692,8 @@ advice(b)
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
-#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
-#> b: index relative to trigger value,              |                          1.00
+#> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |
 
 ### plot
@@ -789,13 +791,13 @@ advice(advice)
 #> --------------------------------------------------------------------------------
 #> Index A (2020,2021)                              |                    0.81 kg/hr
 #> Index B (2017,2018,2019)                         |                    1.10 kg/hr
-#> r: stock biomass trend (index ratio A/B)         |                          0.74
+#> r: multiplier for stock biomass trend            |                          0.74
+#>    (index ratio A/B)                             | 
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
-#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
-#> b: index relative to trigger value,              |                          1.00
+#> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |                              
 #> --------------------------------------------------------------------------------
 #> Precautionary multiplier to maintain biomass above Blim with 95% probability
@@ -926,7 +928,7 @@ plot(i)
 
 ``` r
 
-### when the value of r is known
+### when the value of I is known
 I(1)
 #> An object of class "I".
 #> Value: 1
@@ -958,9 +960,8 @@ advice(b)
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
-#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
-#> b: index relative to trigger value,              |                          1.00
+#> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |
 
 ### plot
@@ -1197,11 +1198,11 @@ df <- merge(ple7e_catch, ple7e_idx, all = TRUE) # combine catch & index data
 hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr")
 hr
 #> An object of class "HR".
-#> Value(s): 
-#>     2003     2004     2005     2006     2007     2008     2009     2010     2011     2012     2013 
-#> 2882.668 2023.556 2890.803 2779.141 4526.691 3242.396 2091.990 1903.229 2056.537 2161.624 1394.154 
-#>     2014     2015     2016     2017     2018     2019     2020     2021 
-#> 1204.222 1575.161 1937.409 2213.356 2218.476 2487.131 3148.595 1570.355
+#> Value(s) (based on catch): 
+#>     2003     2004     2005     2006     2007     2008     2009     2010     2011     2012     2013     2014 
+#> 2882.668 2023.556 2890.803 2779.141 4526.691 3242.396 2091.990 1903.229 2056.537 2161.624 1394.154 1204.222 
+#>     2015     2016     2017     2018     2019     2020     2021 
+#> 1575.161 1937.409 2213.356 2218.476 2487.131 3148.595 1570.355
 ```
 
 The harvest rate can only be calculated for years in which both catch
@@ -1226,7 +1227,7 @@ F
 #> An object of class "F".
 #> Value: 2212.27020813614
 plot(F)
-#> Warning: Removed 17 rows containing missing values (`geom_line()`).
+#> Warning: Removed 17 rows containing missing values or values outside the scale range (`geom_line()`).
 ```
 
 <img src="cat3advice_files/figure-gfm/unnamed-chunk-49-1.png" width="700" style="display: block; margin: auto;" />
@@ -1296,42 +1297,45 @@ rules:
 ``` r
 advice(advice)
 #> --------------------------------------------------------------------------------
-#> Previous catch advice Ay (advised catch for 2022) |                   1742 tonnes
-#> --------------------------------------------------------------------------------
 #> Biomass index
 #> --------------------------------------------------------------------------------
 #> I: most recent biomass index (I2021)             |                    1.03 kg/hr
 #> --------------------------------------------------------------------------------
 #> MSY proxy harvest rate
 #> --------------------------------------------------------------------------------
-#> FMSYproxy: MSY proxy harvest rate (average of    | 
+#> HRMSYproxy: MSY proxy harvest rate (average of   | 
 #>   the ratio of catch to biomass index for the    | 
-#>   years for which f>1, where f=Lmean/LF=M)       |           2200 tonnes / kg/hr
+#>   years for which f>1, where f=Lmean/LF=M)       |           2212 tonnes / kg/hr
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
-#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
-#> b: index relative to trigger value,              |                          1.00
+#> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |                              
 #> --------------------------------------------------------------------------------
 #> Precautionary multiplier to maintain biomass above Blim with 95% probability
 #> --------------------------------------------------------------------------------
 #> m: multiplier                                    |                          0.50
 #>    (generic multiplier based on life history)    |                              
-#> CHR calculation (I*F*b*m)                        |                   1138 tonnes
-#> Stability clause (+20%/-30% compared to Ay,      | 
-#>    only applied if b=1)                          |       Applied |           0.7
-#> Catch advice for 2023                            | 
-#>    (Ay * stability clause)                       |                   1219 tonnes
+#> --------------------------------------------------------------------------------
+#> Catch advice calculations
+#> --------------------------------------------------------------------------------
+#> chr calculation (I*HR*b*m)                       |                   1138 tonnes
+#> Ay: previous catch advice (advised catch for 2022) |                   1742 tonnes
+#> Stability clause (+20%/-30%, chr calculation     | 
+#>    compared to Ay, only applied if b=1)          |       Applied |           0.7
 #> Discard rate                                     |                           27%
-#> Projected landings corresponding to advice       |                    890 tonnes
-#> % advice change                                  |                          -30%
+#> Catch advice for 2023                            |                  1219 tonnes
+#>    (Ay * stability clause)                       | 
+#> Landings corresponding to advice                 |                    890 tonnes
+#> Discards corresponding to advice                 |                    329 tonnes
+#> % advice change                                  |                             %
 ```
 
 # References
 
-<div id="refs" class="references csl-bib-body hanging-indent">
+<div id="refs" class="references csl-bib-body hanging-indent"
+entry-spacing="0">
 
 <div id="ref-Beverton1957_dynamics_populations" class="csl-entry">
 
