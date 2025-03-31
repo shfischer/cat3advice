@@ -100,7 +100,7 @@ A(2000, units = "tonnes")
 The biomass index trend $r$ calculates the trend in the biomass index over last the five years, by dividing the mean of the last two years by the mean of the three preceding years:
 
 $$
-r = \Sigma_{i=y-2}^{y-1}(I_i/2)\ / \ \Sigma_{i=y-5}^{y-2}(I_i/3)
+r = \Sigma_{i=y-2}^{y-1}(I_i/2)\ / \ \Sigma_{i=y-5}^{y-3}(I_i/3)
 $$
 
 The ratio is calculated with the function `r`. Index data should be provided as a `data.frame` with columns `year` and `index`.
@@ -349,7 +349,7 @@ A(2000, units = "tonnes")
 The biomass index trend $r$ calculates the trend in the biomass index over last the five years, by dividing the mean of the last two years by the mean of the three preceding years:
 
 $$
-r = \Sigma_{i=y-2}^{y-1}(I_i/2)\ / \ \Sigma_{i=y-5}^{y-2}(I_i/3)
+r = \Sigma_{i=y-2}^{y-1}(I_i/2)\ / \ \Sigma_{i=y-5}^{y-3}(I_i/3)
 $$
 
 The ratio is calculated with the function `r`. Index data should be provided as a `data.frame` with columns `year` and `index`.
@@ -511,7 +511,7 @@ advice(i)
 ### plot index
 plot(i)
 
-### when the value of r is known
+### when the value of I is known
 I(1)
 ```
 
