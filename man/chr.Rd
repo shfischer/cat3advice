@@ -67,6 +67,8 @@ This function applies the chr rule following the ICES technical guidelines (ICES
 
 restricted by the stability clause relative to \out{<i>A</i><sub>y</sub>}.
 See the help files of the components for their definition (\code{\link{chr_I}}, \code{\link{F}}, \code{\link{chr_b}}, \code{\link{chr_m}})
+
+The cat3advice package vignette includes an example on how to apply the chr rule with custom control parameters, derived from an MSE, and how to include discard survival.
 }
 \section{Warning}{
 
@@ -97,7 +99,7 @@ plot(f)
 df <- merge(ple7e_catch, ple7e_idx, all = TRUE) # combine catch & index data
 hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr") # harvest rate
 plot(hr)
-F <- F(hr, f) # calculate (relative) target harvest rate
+HR <- F(hr, f) # calculate (relative) target harvest rate
 plot(F)
 # biomass safeguard
 b <- b(ple7e_idx)
@@ -106,7 +108,7 @@ plot(b)
 m <- m(hcr = "chr")
 
 # apply chr rule
-advice <- chr(A = A, I = I, F = F, b = b, m = m, discard_rate = 27)
+advice <- chr(A = A, I = I, F = HR, b = b, m = m, discard_rate = 27)
 advice
 advice(advice)
 
@@ -114,11 +116,33 @@ advice(advice)
 A <- A(object = ple7e_catch, basis = "advice", units = "tonnes", advice_metric = "catch")
 I <- I(ple7e_idx)
 hr <- HR(merge(ple7e_catch, ple7e_idx, all = TRUE), units_catch = "tonnes", units_index = "kg/hr")
-F <- F(hr, yr_ref = c(2016, 2019)) # use reference years to define target
+HR <- F(hr, yr_ref = c(2016, 2019)) # use reference years to define target
 b <- b(ple7e_idx, yr_ref = 2007) # use reference year for Itrigger
 m <- m(0.5) # keep multiplier
-advice <- chr(A = A, I = I, F = F, b = b, m = m, discard_rate = 27)
+advice <- chr(A = A, I = I, F = HR, b = b, m = m, discard_rate = 27)
 advice
+
+# application of custom control parameters and discard survival
+# see package vignette for more details
+data("ple7e_WKBPLAICE")
+A <- chr_A(ple7e_WKBPLAICE, units = "tonnes", 
+           basis = "advice", advice_metric = "catch", 
+           discard_survival = 50)
+I <- chr_I(ple7e_WKBPLAICE, n_yrs = 2, lag = 1, 
+           units = "kg/(hr m beam)")
+hr <- HR(ple7e_WKBPLAICE, units_catch = "tonnes", 
+         units_index = "kg/(hr m beam)", split_discards = TRUE,
+         discard_survival = 50)
+HR <- F(hr, yr_ref = 2003:2023, MSE = TRUE, multiplier = 0.66)
+b <- chr_b(I, ple7e_WKBPLAICE, units = "kg/(hr m beam)", 
+           yr_ref = 2007, w = 3.7)
+m <- chr_m(1, MSE = TRUE)
+advice <- chr(A = A, I = I, F = HR, b = b, m = m,
+              frequency = "biennial",
+              discard_rate = 26.43168,
+              discard_survival = 50,
+              units = "tonnes", advice_metric = "catch")
+advice(advice)
 
 }
 \references{
