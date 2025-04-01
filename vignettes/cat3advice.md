@@ -1,9 +1,11 @@
 cat3advice
 ================
 Simon H. Fischer
-31 March, 2025
+01 April, 2025
 
 - [`cat3advice`](#cat3advice)
+  - [Vignette change log](#vignette-change-log)
+- [cat3advice R package](#cat3advice-r-package)
 - [Documentation](#documentation)
 - [Installation](#installation)
 - [Tutorial](#tutorial)
@@ -25,17 +27,64 @@ Simon H. Fischer
   - [Biomass index value $I_{y-1}$](#biomass-index-value-i_y-1)
   - [Biomass safeguard $b$](#biomass-safeguard-b-2)
   - [Target harvest rate
-    $F_{\text{proxyMSY}}$](#target-harvest-rate-f_textproxymsy)
+    $HR_{\text{MSYproxy}}$](#target-harvest-rate-hr_textmsyproxy)
   - [Multiplier $m$](#multiplier-m-2)
   - [Application of chr rule](#application-of-chr-rule)
+- [chr rule with custom parameters and discard
+  survival](#chr-rule-with-custom-parameters-and-discard-survival)
+  - [Data](#data)
+  - [Reference catch $A_y$](#reference-catch-a_y-3)
+  - [Biomass index value](#biomass-index-value)
+  - [Target harvest rate](#target-harvest-rate)
+  - [Biomass safeguard](#biomass-safeguard)
+  - [Multiplier](#multiplier)
+  - [Application of the (tuned) chr
+    rule](#application-of-the-tuned-chr-rule)
 - [References](#references)
 
 # `cat3advice`
 
+## Vignette change log
+
+<table style="width:98%;">
+<colgroup>
+<col style="width: 7%" />
+<col style="width: 18%" />
+<col style="width: 10%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Version</th>
+<th><code>cat3advice</code> version</th>
+<th>Date</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>0.0.7</td>
+<td>2023</td>
+<td></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>0.1</td>
+<td>2025-04-01</td>
+<td><p>Updated vignette to latest changes in packages;</p>
+<p>Added example of chr rule with tuned control parameters and discard
+survival</p></td>
+</tr>
+</tbody>
+</table>
+
+# cat3advice R package
+
 `cat3advice` is an R package that allows the application of the ICES
 category 3 data-limited harvest control rules (rfb/rb/chr rules) and
-follows the ICES Technical Guidelines (ICES 2022)
-(<https://doi.org/10.17895/ices.advice.19801564>).
+follows the ICES Technical Guidelines (ICES 2025b)
+(<https://doi.org/10.17895/ices.advice.28506179>).
 
 # Documentation
 
@@ -48,12 +97,22 @@ functions has a help file with code examples (see `?rfb`, `?rb` `?chr`).
 
 # Installation
 
-The latest version of the `cat3advice` R package can be installed from
-GitHub with
+The easiest way to install the `cat3advice` package is to install it as
+a binary package from ICES r-universe:
+
+``` r
+install.packages("cat3advice", repos = c("https://ices-tools-prod.r-universe.dev", "https://cran.r-project.org"))
+```
+
+It is also possible to install it directly from the GitHub repository.
+However, this means building the package locally and requires the
+necessary build tools (e.g. on Windows RTools
+<https://cran.r-project.org/bin/windows/Rtools/> and the `devtools` R
+package).
 
 ``` r
 library(remotes)
-install_github("shfischer/cat3advice", build_vignettes = TRUE)
+install_github("shfischer/cat3advice")
 ```
 
 # Tutorial
@@ -63,7 +122,7 @@ stock (ple.27.7e) to illustrate the application of the rfb/rb/chr rules.
 The data are included in the `cat3advice` R package.
 
 Before reading this vignette, please first read the ICES Technical
-Guidelines (ICES 2022).
+Guidelines (ICES 2025b).
 
 For more details on the rfb rule, please refer to Fischer et al. (2020;
 2021b, 2021a, 2023) and for the chr rule, please refer to Fischer et al.
@@ -78,7 +137,7 @@ library(cat3advice)
 
 The rfb rule is an index adjusted harvest control rule that uses a
 biomass index and catch length data. The method is defined as Method 2.1
-in the ICES Technical Guidelines (ICES 2022, 9) as
+in the ICES Technical Guidelines (ICES 2025b) as
 
 $$
 A_{y+1} = A_y \times r \times f \times b \times m
@@ -123,7 +182,7 @@ A
 #> Value: 1742
 ```
 
-The ICES Technical Guidelines (ICES 2022) specify that if the realised
+The ICES Technical Guidelines (ICES 2025b) specify that if the realised
 catch is very different from the advised catch, the reference catch
 could be replaced by an average of recent catches:
 
@@ -189,7 +248,7 @@ advice(r)
 plot(r)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-7-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-8-1.png" width="500" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -237,14 +296,14 @@ advice(b)
 plot(b)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-8-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-9-1.png" width="500" style="display: block; margin: auto;" />
 
 ``` r
 ### plot b and r in one figure
 plot(r, b)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-8-2.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-9-2.png" width="500" style="display: block; margin: auto;" />
 
 **Please note that** $I_{\text{trigger}}$ should only be defined once in
 the first year of the application of the rfb rule. In the following
@@ -307,7 +366,7 @@ lc
 plot(lc)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-11-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-12-1.png" width="500" style="display: block; margin: auto;" />
 
 $L_c$ can change from year to year. Therefore, it is recommended to pool
 data from several (e.g. 5) years:
@@ -319,7 +378,7 @@ lc
 plot(lc)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-12-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-13-1.png" width="500" style="display: block; margin: auto;" />
 
 If length data are noisy, the size of the length classes can be
 increased:
@@ -329,7 +388,7 @@ increased:
 plot(Lc(ple7e_length, pool = 2017:2021, lstep = 20))
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-13-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-14-1.png" width="500" style="display: block; margin: auto;" />
 
 Once defined, $L_c$ should be kept constant and the same value used for
 all data years. $L_c$ should only be changed if there are strong changes
@@ -349,7 +408,7 @@ lmean
 plot(lmean)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-14-1.png" width="700" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-15-1.png" width="700" style="display: block; margin: auto;" />
 
 If length data are noisy, the size of the length classes can be
 increased:
@@ -359,7 +418,7 @@ increased:
 plot(Lmean(data = ple7e_length, Lc = lc, units = "mm", lstep = 20))
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-15-1.png" width="700" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-16-1.png" width="700" style="display: block; margin: auto;" />
 
 ### Reference length
 
@@ -419,7 +478,7 @@ advice(f)
 plot(f)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-17-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-18-1.png" width="500" style="display: block; margin: auto;" />
 
 In this case, the mean catch length (orange curve) is always below the
 MSY proxy reference length (blue horizontal line), indicating that the
@@ -541,7 +600,7 @@ possible.
 The rb rule is an index adjusted harvest control rule that adjusts the
 catch advice based on a biomass index but does not have a target. The
 method is defined as Method 2.3 in the ICES Technical Guidelines (ICES
-2022, 15) as
+2025b) as
 
 $$
 A_{y+1} = A_y \times r \times b \times m
@@ -586,7 +645,7 @@ A
 #> Value: 1742
 ```
 
-The ICES Technical Guidelines (ICES 2022) specify that if the realised
+The ICES Technical Guidelines (ICES 2025b) specify that if the realised
 catch is very different from the advised catch, the reference catch
 could be replaced by an average of recent catches:
 
@@ -652,7 +711,7 @@ advice(r)
 plot(r)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-24-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-25-1.png" width="500" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -700,14 +759,14 @@ advice(b)
 plot(b)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-25-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-26-1.png" width="500" style="display: block; margin: auto;" />
 
 ``` r
 ### plot b and r in one figure
 plot(r, b)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-25-2.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-26-2.png" width="500" style="display: block; margin: auto;" />
 
 **Please note that** $I_{\text{trigger}}$ should only be defined once in
 the first year of the application of the rb rule. In the following
@@ -820,7 +879,7 @@ The chr rule is a (relative) harvest rate-based harvest control rule.
 The relative harvest rate is defined by dividing the catch by the values
 from a biomass index. It is not an absolute harvest rate because the
 absolute stock size is unknown. The method is defined as Method 2.2 in
-the ICES Technical Guidelines (ICES 2022, 13) as
+the ICES Technical Guidelines (ICES 2025b) as
 
 $$
 A_{y+1} = I_{y-1} \times F_{\text{proxyMSY}} \times b \times m
@@ -866,7 +925,7 @@ A
 #> Value: 1742
 ```
 
-The ICES Technical Guidelines (ICES 2022) specify that if the realised
+The ICES Technical Guidelines (ICES 2025b) specify that if the realised
 catch is very different from the advised catch, the reference catch
 could be replaced by an average of recent catches:
 
@@ -924,7 +983,7 @@ advice(i)
 plot(i)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-33-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-34-1.png" width="500" style="display: block; margin: auto;" />
 
 ``` r
 
@@ -968,7 +1027,7 @@ advice(b)
 plot(b)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-34-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-35-1.png" width="500" style="display: block; margin: auto;" />
 
 **Please note that** $I_{\text{trigger}}$ should only be defined once in
 the first year of the application of the chr rule. In the following
@@ -989,11 +1048,11 @@ b(ple7e_idx, units = "kg/hr", yr_ref = 2007)
 #> Value: 1
 ```
 
-## Target harvest rate $F_{\text{proxyMSY}}$
+## Target harvest rate $HR_{\text{MSYproxy}}$
 
-The target harvest rate $F_{\text{proxyMSY}}$ defines the target for the
-chr rule and is a proxy for MSY. The standard approach to define
-$F_{\text{proxyMSY}}$ is to use catch length data, find years in which
+The target harvest rate $HR_{\text{MSYproxy}}$ defines the target for
+the chr rule and is a proxy for MSY. The standard approach to define
+$HR_{\text{MSYproxy}}$ is to use catch length data, find years in which
 the mean catch length $L_{\text{mean}}$ is above a reference length
 ($L_{F=M}$), calculate the harvest rate for these years, and use their
 average. The approach is the same as the one used for component $f$ of
@@ -1036,7 +1095,7 @@ lc
 plot(lc)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-37-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-38-1.png" width="500" style="display: block; margin: auto;" />
 
 $L_c$ can change from year to year. Therefore, it is recommended to pool
 data from several (e.g. 5) years:
@@ -1048,7 +1107,7 @@ lc
 plot(lc)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-38-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-39-1.png" width="500" style="display: block; margin: auto;" />
 
 If length data are noisy, the size of the length classes can be
 increased:
@@ -1058,7 +1117,7 @@ increased:
 plot(Lc(ple7e_length, pool = 2017:2021, lstep = 20))
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-39-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-40-1.png" width="500" style="display: block; margin: auto;" />
 
 Once defined, $L_c$ should be kept constant and the same value used for
 all data years. $L_c$ should only be changed if there are strong changes
@@ -1078,7 +1137,7 @@ lmean
 plot(lmean)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-40-1.png" width="700" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-41-1.png" width="700" style="display: block; margin: auto;" />
 
 If length data are noisy, the size of the length classes can be
 increased:
@@ -1088,7 +1147,7 @@ increased:
 plot(Lmean(data = ple7e_length, Lc = lc, units = "mm", lstep = 20))
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-41-1.png" width="700" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-42-1.png" width="700" style="display: block; margin: auto;" />
 
 ### Reference length
 
@@ -1129,7 +1188,7 @@ f <- f(Lmean = lmean, Lref = lref, units = "mm")
 plot(f)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-43-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-44-1.png" width="500" style="display: block; margin: auto;" />
 
 In this case, the mean catch length (orange curve) is above the
 reference length in two years, indicating that the fishing pressure was
@@ -1142,7 +1201,7 @@ be plotted by adding an `inverse = TRUE` argument to `plot()`:
 plot(f, inverse = TRUE)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-44-1.png" width="500" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-45-1.png" width="500" style="display: block; margin: auto;" />
 
 The time series of the indicator values can be printed with
 
@@ -1213,9 +1272,9 @@ plotted automatically:
 plot(hr)
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-48-1.png" width="700" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-49-1.png" width="700" style="display: block; margin: auto;" />
 
-### Harvest rate target $F_{\text{proxyMSY}}$
+### Harvest rate target $HR_{\text{MSYproxy}}$
 
 Now we can use the indicator and (relative) harvest rate time series to
 calculate the target harvest rate:
@@ -1230,7 +1289,7 @@ plot(F)
 #> Warning: Removed 17 rows containing missing values or values outside the scale range (`geom_line()`).
 ```
 
-<img src="cat3advice_files/figure-gfm/unnamed-chunk-49-1.png" width="700" style="display: block; margin: auto;" />
+<img src="cat3advice_files/figure-gfm/unnamed-chunk-50-1.png" width="700" style="display: block; margin: auto;" />
 
 The years selected for the target harvest rate are indicated by orange
 points.
@@ -1332,6 +1391,243 @@ advice(advice)
 #> % advice change                                  |                             %
 ```
 
+# chr rule with custom parameters and discard survival
+
+The ICES plaice stock in the western English Channel was included in the
+WKBPLAICE (ICES 2025a) benchmark in 2024. During this benchmark, a
+stock-specific management strategy evaluation (MSE) was developed to
+tune the chr rule. This means the control parameters of the chr rule for
+this stock differ from the default values. Furthermore, discard survival
+is also considered. This section of the vignette illustrates how the
+advice can be calculated with the `cat3advice` R package for this
+situation.
+
+## Data
+
+Example data is available in the `ple7e_WKBPLAICE` object:
+
+``` r
+data("ple7e_WKBPLAICE")
+tail(ple7e_WKBPLAICE)
+#>    year advice advice_landings advice_discards   catch landings discards     index
+#> 40 2019   3648            2517            1131 2090.85  1724.63   366.22 0.8407378
+#> 41 2020   2721            1909             812 1887.74  1373.35   514.39 0.5996326
+#> 42 2021   2177            1560             617 1614.75  1403.37   211.38 1.0284297
+#> 43 2022   1742            1250             492 1723.67  1188.09   535.58 0.7578545
+#> 44 2023   1219             894             325 1416.67  1148.37   268.30 0.6750191
+#> 45 2024   1219             894             325      NA       NA       NA        NA
+```
+
+## Reference catch $A_y$
+
+The reference catch $A_y$ is based on the previous catch advice.
+However, there is an assumption of 50% discard survival, and the
+reference catch only considers the dead part of the catch advice
+(landings + dead discards). To calculate this, the data object passed to
+`A_chr()` needs to include the columns `advice_landings` and
+`advice_discards`:
+
+``` r
+tail(ple7e_WKBPLAICE[, c("year", "advice_landings", "advice_discards")])
+#>    year advice_landings advice_discards
+#> 40 2019            2517            1131
+#> 41 2020            1909             812
+#> 42 2021            1560             617
+#> 43 2022            1250             492
+#> 44 2023             894             325
+#> 45 2024             894             325
+
+### define discard survival
+discard_survival <- 50 ### 50%, from WKBPLAICE 2024
+
+A <- chr_A(ple7e_WKBPLAICE, units = "tonnes", 
+           basis = "advice", advice_metric = "catch", 
+           discard_survival = discard_survival)
+A
+#> An object of class "chr_A".
+#> Value: 1056.5
+```
+
+`A_chr()` calculated the reference catch by adding the landings
+corresponding to the last advice and 50% of the discards corresponding
+to the last advice.
+
+## Biomass index value
+
+The biomass index value `I` is set to the average of the values of the
+last two years (not just the last value):
+
+``` r
+I <- chr_I(ple7e_WKBPLAICE, n_yrs = 2, lag = 1, 
+           units = "kg/(hr m beam)")
+I
+#> An object of class "chr_I".
+#> Value: 0.71643679885
+```
+
+The data set has data up to 2024 but the last biomass index value is
+from 2023. The argument `lag = 1` defines that 2023 is the last year to
+use. `n_yrs = 2` specifies that the average over two years should be
+used (2022 and 2023).
+
+## Target harvest rate
+
+Usually, the target harvest rate $HR_\text{MSYproxy}$ is defined by
+looking at historical catch length data. However, WKBPLAICE conducted an
+MSE and the values was defined through simulations.
+
+First, we need to calculate the historical harvest rates. Because of the
+assumed discard survival, the harvest rate only considers the dead
+catch, i.e. dead catch divided by the biomass index. The argument
+`split_discards = TRUE` specifies that the discards should be split into
+dead and surviving discards, and the argument `discard_survival` defines
+the survival:
+
+``` r
+### 1st: calculate historical harvest rates
+hr <- HR(ple7e_WKBPLAICE, units_catch = "tonnes", 
+         units_index = "kg/(hr m beam)", split_discards = TRUE,
+         discard_survival = discard_survival)
+hr
+#> An object of class "HR".
+#> Value(s) (based on dead catch): 
+#>     2003     2004     2005     2006     2007     2008     2009     2010     2011     2012     2013     2014 
+#> 2816.294 1960.305 2764.456 2675.635 4307.496 3036.311 2014.279 1764.984 1906.149 1912.587 1259.691  944.274 
+#>     2015     2016     2017     2018     2019     2020     2021     2022     2023 
+#> 1203.143 1709.766 1905.411 1939.123 2269.126 2719.240 1467.344 1921.055 1899.976
+
+plot(hr)
+```
+
+![](cat3advice_files/figure-gfm/unnamed-chunk-57-1.png)<!-- -->
+
+WKBPLAICE defined $HR_\text{MSYproxy}$ as the average of all historical
+harvest rates (`yr_ref = 2003:2023`), multiplied by 0.66
+(`multiplier = 0.66`):
+
+``` r
+### 2nd: calculate harvest rate target
+HR <- F(hr, yr_ref = 2003:2023, MSE = TRUE, multiplier = 0.66)
+HR
+#> An object of class "F".
+#> Value: 1395.32308253007
+
+plot(HR)
+```
+
+![](cat3advice_files/figure-gfm/unnamed-chunk-58-1.png)<!-- -->
+
+## Biomass safeguard
+
+The biomass safeguard reduces the catch advice when the biomass index
+$I$ falls below $I_\text{trigger}$. This values was defined by WKBPLAICE
+as the lowest observed biomass index value (observed in 2007) multiplied
+by 3.7:
+
+``` r
+b <- chr_b(I, ple7e_WKBPLAICE, units = "kg/(hr m beam)", 
+           yr_ref = 2007, w = 3.7)
+b
+#> An object of class "chr_b".
+#> Value: 0.690709424407383
+
+plot(b)
+#> Warning: Removed 24 rows containing missing values or values outside the scale range (`geom_line()`).
+```
+
+![](cat3advice_files/figure-gfm/unnamed-chunk-59-1.png)<!-- -->
+
+## Multiplier
+
+The multiplier is meant to adjust the target harvest rate. However, for
+this tuned version of the chr rule, the target harvest rate is already a
+tuned value and the multiplier is set to 1:
+
+``` r
+m <- chr_m(1, MSE = TRUE)
+m
+#> An object of class "chr_m".
+#> Value: 1
+```
+
+## Application of the (tuned) chr rule
+
+First, we need to define a discard rate to split the catch advice into
+landings and discards:
+
+``` r
+### discard rate in % for advice:
+### average of 2012 until last year
+discard_rate <- ple7e_WKBPLAICE %>%
+  dplyr::mutate(discard_rate = discards/catch * 100) %>%
+  dplyr::filter(year >= 2012) %>%
+  dplyr::summarise(discard_rate = mean(discard_rate, na.rm = TRUE)) %>% 
+  as.numeric()
+discard_rate
+#> [1] 26.43168
+```
+
+The chr rule can then be applied (including discard survival):
+
+``` r
+advice <- chr(A = A, I = I, F = HR, b = b, m = m,
+              frequency = "biennial",
+              discard_rate = discard_rate,
+              discard_survival = discard_survival,
+              units = "tonnes", advice_metric = "catch")
+advice
+#> An object of class "chr".
+#> Value: 795.623467588535
+
+advice(advice)
+#> --------------------------------------------------------------------------------
+#> Biomass index
+#> --------------------------------------------------------------------------------
+#> I: most recent biomass index (I2023-2024)        |           0.72 kg/(hr m beam)
+#> --------------------------------------------------------------------------------
+#> MSY proxy harvest rate
+#> --------------------------------------------------------------------------------
+#> HRMSYproxy: MSY proxy harvest rate               | 
+#>   (derived from stock-specific simulations)      |  1395 tonnes / kg/(hr m beam)
+#> --------------------------------------------------------------------------------
+#> Biomass safeguard
+#> --------------------------------------------------------------------------------
+#> Index trigger value (Itrigger = Iloss x 3.7)     |           1.04 kg/(hr m beam)
+#> b: multiplier for index relative to trigger,     |                          0.69
+#>    min{I2023-2024/Itrigger, 1}                   |                              
+#> --------------------------------------------------------------------------------
+#> Precautionary multiplier to maintain biomass above Blim with 95% probability
+#> --------------------------------------------------------------------------------
+#> m: multiplier                                    |                          1.00
+#>    (derived from stock-specific simulations)     |                              
+#> --------------------------------------------------------------------------------
+#> Catch advice calculations
+#> --------------------------------------------------------------------------------
+#> chr calculation (I*HR*b*m)                       |                    690 tonnes
+#> Ay: Dead catch corresponding to previous         |                   1056 tonnes
+#>    catch advice
+#> Stability clause (+20%/-30%, chr calculation     | 
+#>    compared to Ay, only applied if b=1)          |   Not applied |              
+#> Discard rate                                     |                           26%
+#> Discard survival                                 |                           50%
+#> Catch advice for 2025 and 2026                   |                   796 tonnes
+#>    ([I * HR * b * m]/                            | 
+#>    [1 - discard rate * discard survival])        | 
+#> Landings corresponding to advice                 |                    585 tonnes
+#> Total discards corresponding to advice           |                    210 tonnes
+#> % advice change                                  |                          -35%
+```
+
+The target harvest rate refers to the dead catch (landings + dead part
+of the discards). Consequently, the advice calculations are based on the
+dead catch but are topped up to derive the total catch (landings, dead
+discards, surviving discards). This is done automatically in `chr()` and
+the advice table illustrates the calculations. The stability clause
+(limiting changes in the catch advice to +20% and -30%) is also applied
+to the dead part of the catch advice.
+
+For further details, see the ICES WKBPLAICE report (ICES 2025a).
+
 # References
 
 <div id="refs" class="references csl-bib-body hanging-indent"
@@ -1393,13 +1689,21 @@ framework</span>.” *Fish and Fisheries* 24 (2): 231–47.
 
 </div>
 
+<div id="ref-ICES2025_WKBPLAICE" class="csl-entry">
+
+ICES. 2025a. “<span class="nocase">Benchmark Workshop on Selected Plaice
+Stocks (WKBPLAICE)</span>.”
+<https://doi.org/10.17895/ices.pub.28400255>.
+
+</div>
+
 <div id="ref-ICES2022_cat23_tech_guidelines" class="csl-entry">
 
-ICES. 2022. “<span class="nocase">ICES technical guidance for harvest
-control rules and stock assessments for stocks in categories 2 and
-3</span>.” In *Report of ICES Advisory Committee, 2022. ICES Advice
-2022, Section 16.4.11*, 20 pp. International Council for the Exploration
-of the Sea (ICES). <https://doi.org/10.17895/ices.advice.19801564>.
+———. 2025b. “<span class="nocase">ICES Guidelines - Advice rules for
+stocks in category 2 and 3. Version 3. ICES Guidelines and Policies -
+Advice Technical Guidelines.</span>” International Council for the
+Exploration of the Sea (ICES).
+<https://doi.org/10.17895/ices.advice.28506179>.
 
 </div>
 

@@ -24,6 +24,20 @@ knitr::opts_chunk$set(
 
 # `cat3advice`
 
+## Vignette change log
+
++---------+----------------------+------------+------------------------------------------------------------------------------+
+| Version | `cat3advice` version | Date       | Changes                                                                      |
++=========+======================+============+==============================================================================+
+| 1       | 0.0.7                | 2023       |                                                                              |
++---------+----------------------+------------+------------------------------------------------------------------------------+
+| 2       | 0.1                  | 2025-04-01 | Updated vignette to latest changes in packages;                              |
+|         |                      |            |                                                                              |
+|         |                      |            | Added example of chr rule with tuned control parameters and discard survival |
++---------+----------------------+------------+------------------------------------------------------------------------------+
+
+# cat3advice R package
+
 `cat3advice` is an R package that allows the application of the ICES category 3 data-limited harvest control rules (rfb/rb/chr rules) and follows the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] (<https://doi.org/10.17895/ices.advice.28506179>).
 
 # Documentation
@@ -34,11 +48,17 @@ The main functions are `rfb()`, `rb()`, and `chr()`. Each of these functions has
 
 # Installation
 
-The latest version of the `cat3advice` R package can be installed from GitHub with
+The easiest way to install the `cat3advice` package is to install it as a binary package from ICES r-universe:
+
+```{R, eval = FALSE}
+install.packages("cat3advice", repos = c("https://ices-tools-prod.r-universe.dev", "https://cran.r-project.org"))
+```
+
+It is also possible to install it directly from the GitHub repository. However, this means building the package locally and requires the necessary build tools (e.g. on Windows RTools <https://cran.r-project.org/bin/windows/Rtools/> and the `devtools` R package).
 
 ```{R, eval = FALSE}
 library(remotes)
-install_github("shfischer/cat3advice", build_vignettes = TRUE)
+install_github("shfischer/cat3advice")
 ```
 
 # Tutorial
@@ -56,7 +76,7 @@ library(cat3advice)
 
 # The rfb rule
 
-The rfb rule is an index adjusted harvest control rule that uses a biomass index and catch length data. The method is defined as Method 2.1 in the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines, page 9] as
+The rfb rule is an index adjusted harvest control rule that uses a biomass index and catch length data. The method is defined as Method 2.1 in the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] as
 
 $$
 A_{y+1} = A_y \times r \times f \times b \times m
@@ -305,7 +325,7 @@ advice(advice)
 
 The rb rule is essentially a simplified version of the rfb rule without component f, i.e. applicable to stocks without reliable catch length data. This method is meant as a last resort and should be avoid if possible.
 
-The rb rule is an index adjusted harvest control rule that adjusts the catch advice based on a biomass index but does not have a target. The method is defined as Method 2.3 in the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines, page 15] as
+The rb rule is an index adjusted harvest control rule that adjusts the catch advice based on a biomass index but does not have a target. The method is defined as Method 2.3 in the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] as
 
 $$
 A_{y+1} = A_y \times r \times b \times m
@@ -451,7 +471,7 @@ advice(advice)
 
 # The chr rule
 
-The chr rule is a (relative) harvest rate-based harvest control rule. The relative harvest rate is defined by dividing the catch by the values from a biomass index. It is not an absolute harvest rate because the absolute stock size is unknown. The method is defined as Method 2.2 in the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines, page 13] as
+The chr rule is a (relative) harvest rate-based harvest control rule. The relative harvest rate is defined by dividing the catch by the values from a biomass index. It is not an absolute harvest rate because the absolute stock size is unknown. The method is defined as Method 2.2 in the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] as
 
 $$
 A_{y+1} = I_{y-1} \times F_{\text{proxyMSY}} \times b \times m
@@ -548,9 +568,9 @@ b(ple7e_idx, units = "kg/hr", Itrigger = 0.3924721)
 b(ple7e_idx, units = "kg/hr", yr_ref = 2007)
 ```
 
-## Target harvest rate $F_{\text{proxyMSY}}$
+## Target harvest rate $HR_{\text{MSYproxy}}$
 
-The target harvest rate $F_{\text{proxyMSY}}$ defines the target for the chr rule and is a proxy for MSY. The standard approach to define $F_{\text{proxyMSY}}$ is to use catch length data, find years in which the mean catch length $L_{\text{mean}}$ is above a reference length ($L_{F=M}$), calculate the harvest rate for these years, and use their average. The approach is the same as the one used for component $f$ of the rfb rule described above. This needs to be done only once in the first year of the application of the chr rule. In subsequent years, no length data are required.
+The target harvest rate $HR_{\text{MSYproxy}}$ defines the target for the chr rule and is a proxy for MSY. The standard approach to define $HR_{\text{MSYproxy}}$ is to use catch length data, find years in which the mean catch length $L_{\text{mean}}$ is above a reference length ($L_{F=M}$), calculate the harvest rate for these years, and use their average. The approach is the same as the one used for component $f$ of the rfb rule described above. This needs to be done only once in the first year of the application of the chr rule. In subsequent years, no length data are required.
 
 ### Length data
 
@@ -676,7 +696,7 @@ The harvest rate can only be calculated for years in which both catch and index 
 plot(hr)
 ```
 
-### Harvest rate target $F_{\text{proxyMSY}}$
+### Harvest rate target $HR_{\text{MSYproxy}}$
 
 Now we can use the indicator and (relative) harvest rate time series to calculate the target harvest rate:
 
@@ -730,5 +750,127 @@ The chr rule includes a stability clause that restricts changes to $+20\%$ and $
 ```{r}
 advice(advice)
 ```
+
+# chr rule with custom parameters and discard survival
+
+The ICES plaice stock in the western English Channel was included in the WKBPLAICE [@ICES2025_WKBPLAICE] benchmark in 2024. During this benchmark, a stock-specific management strategy evaluation (MSE) was developed to tune the chr rule. This means the control parameters of the chr rule for this stock differ from the default values. Furthermore, discard survival is also considered. This section of the vignette illustrates how the advice can be calculated with the `cat3advice` R package for this situation.
+
+## Data
+
+Example data is available in the `ple7e_WKBPLAICE` object:
+
+```{r}
+data("ple7e_WKBPLAICE")
+tail(ple7e_WKBPLAICE)
+```
+
+## Reference catch $A_y$
+
+The reference catch $A_y$ is based on the previous catch advice. However, there is an assumption of 50% discard survival, and the reference catch only considers the dead part of the catch advice (landings + dead discards). To calculate this, the data object passed to `A_chr()` needs to include the columns `advice_landings` and `advice_discards`:
+
+```{r}
+tail(ple7e_WKBPLAICE[, c("year", "advice_landings", "advice_discards")])
+
+### define discard survival
+discard_survival <- 50 ### 50%, from WKBPLAICE 2024
+
+A <- chr_A(ple7e_WKBPLAICE, units = "tonnes", 
+           basis = "advice", advice_metric = "catch", 
+           discard_survival = discard_survival)
+A
+```
+
+`A_chr()` calculated the reference catch by adding the landings corresponding to the last advice and 50% of the discards corresponding to the last advice.
+
+## Biomass index value
+
+The biomass index value `I` is set to the average of the values of the last two years (not just the last value):
+
+```{r}
+I <- chr_I(ple7e_WKBPLAICE, n_yrs = 2, lag = 1, 
+           units = "kg/(hr m beam)")
+I
+```
+
+The data set has data up to 2024 but the last biomass index value is from 2023. The argument `lag = 1` defines that 2023 is the last year to use. `n_yrs = 2` specifies that the average over two years should be used (2022 and 2023).
+
+## Target harvest rate
+
+Usually, the target harvest rate $HR_\text{MSYproxy}$ is defined by looking at historical catch length data. However, WKBPLAICE conducted an MSE and the values was defined through simulations.
+
+First, we need to calculate the historical harvest rates. Because of the assumed discard survival, the harvest rate only considers the dead catch, i.e. dead catch divided by the biomass index. The argument `split_discards = TRUE` specifies that the discards should be split into dead and surviving discards, and the argument `discard_survival` defines the survival:
+
+```{r}
+### 1st: calculate historical harvest rates
+hr <- HR(ple7e_WKBPLAICE, units_catch = "tonnes", 
+         units_index = "kg/(hr m beam)", split_discards = TRUE,
+         discard_survival = discard_survival)
+hr
+
+plot(hr)
+```
+
+WKBPLAICE defined $HR_\text{MSYproxy}$ as the average of all historical harvest rates (`yr_ref = 2003:2023`), multiplied by 0.66 (`multiplier = 0.66`):
+
+```{r, warning=FALSE}
+### 2nd: calculate harvest rate target
+HR <- F(hr, yr_ref = 2003:2023, MSE = TRUE, multiplier = 0.66)
+HR
+
+plot(HR)
+```
+
+## Biomass safeguard
+
+The biomass safeguard reduces the catch advice when the biomass index $I$ falls below $I_\text{trigger}$. This values was defined by WKBPLAICE as the lowest observed biomass index value (observed in 2007) multiplied by 3.7:
+
+```{r}
+b <- chr_b(I, ple7e_WKBPLAICE, units = "kg/(hr m beam)", 
+           yr_ref = 2007, w = 3.7)
+b
+
+plot(b)
+```
+
+## Multiplier
+
+The multiplier is meant to adjust the target harvest rate. However, for this tuned version of the chr rule, the target harvest rate is already a tuned value and the multiplier is set to 1:
+
+```{r}
+m <- chr_m(1, MSE = TRUE)
+m
+```
+
+## Application of the (tuned) chr rule
+
+First, we need to define a discard rate to split the catch advice into landings and discards:
+
+```{r}
+### discard rate in % for advice:
+### average of 2012 until last year
+discard_rate <- ple7e_WKBPLAICE %>%
+  dplyr::mutate(discard_rate = discards/catch * 100) %>%
+  dplyr::filter(year >= 2012) %>%
+  dplyr::summarise(discard_rate = mean(discard_rate, na.rm = TRUE)) %>% 
+  as.numeric()
+discard_rate
+```
+
+The chr rule can then be applied (including discard survival):
+
+```{r}
+advice <- chr(A = A, I = I, F = HR, b = b, m = m,
+              frequency = "biennial",
+              discard_rate = discard_rate,
+              discard_survival = discard_survival,
+              units = "tonnes", advice_metric = "catch")
+advice
+
+advice(advice)
+```
+
+The target harvest rate refers to the dead catch (landings + dead part of the discards). Consequently, the advice calculations are based on the dead catch but are topped up to derive the total catch (landings, dead discards, surviving discards). This is done automatically in `chr()` and the advice table illustrates the calculations. The stability clause (limiting changes in the catch advice to +20% and -30%) is also applied to the dead part of the catch advice.
+
+For further details, see the ICES WKBPLAICE report [@ICES2025_WKBPLAICE].
 
 # References
