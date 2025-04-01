@@ -21,7 +21,7 @@ HR(
 
 \item{split_discards}{Shall the catch be split into landings and discards? Defaults to \code{FALSE}.}
 
-\item{discard_survival}{Discard survival (%). If \code{split_discards=TRUE}, this will be used to calculate the dead discards and these will be used in the harvest rate calculation.}
+\item{discard_survival}{Discard survival (\%). If \code{split_discards=TRUE}, this will be used to calculate the dead discards and these will be used in the harvest rate calculation.}
 
 \item{units_catch}{Optional. The units of the catch, e.g. 'tonnes'.}
 

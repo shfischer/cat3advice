@@ -65,6 +65,8 @@ chr_A(
 \arguments{
 \item{object}{The reference catch. See details}
 
+\item{value}{Value of the reference catch.}
+
 \item{units}{[Optional] The units of the reference catch, e.g. "tonnes".}
 
 \item{hcr}{[Optional] The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.}
@@ -77,7 +79,7 @@ chr_A(
 
 \item{advice_metric}{Advice metric, e.g. catch or landings.}
 
-\item{discard_survival}{[Optional] Discard survival (%).}
+\item{discard_survival}{[Optional] Discard survival (\%).}
 
 \item{...}{Additional arguments (Not used)}
 }

@@ -72,7 +72,7 @@ setClass(
 #'
 #' @param object The data to use. Usually a \code{data.frame} with columns 'year', 'catch' and 'index'.
 #' @param split_discards Shall the catch be split into landings and discards? Defaults to \code{FALSE}.
-#' @param discard_survival Discard survival (%). If \code{split_discards=TRUE}, this will be used to calculate the dead discards and these will be used in the harvest rate calculation.
+#' @param discard_survival Discard survival (\%). If \code{split_discards=TRUE}, this will be used to calculate the dead discards and these will be used in the harvest rate calculation.
 #' @param units Optional. The units of the harvest rate. Can be derived automatically from \code{units_catch} and \code{units_index}.
 #' @param units_catch Optional. The units of the catch, e.g. 'tonnes'.
 #' @param units_index Optional. The units of the biomass index, e.g. 'kg/hr'.
@@ -355,10 +355,10 @@ setClass(
 #' data(ple7e_hr)
 #' data(ple7e_f2)
 #' # calculate target harvest rate
-#' F <- F(ple7e_hr, ple7e_f2)
-#' F
-#' advice(F)
-#' plot(F)
+#' HR <- F(ple7e_hr, ple7e_f2)
+#' HR
+#' advice(HR)
+#' plot(HR)
 #'
 #' # use reference years when using in following years
 #' F(ple7e_hr, yr_ref = c(2016, 2019))
@@ -379,19 +379,19 @@ setClass(
 #' df <- merge(ple7e_catch, ple7e_idx, all = TRUE) # combine catch & index data
 #' hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr")
 #' # calculate (relative) target harvest rate
-#' F <- F(hr, f)
-#' F
-#' advice(F)
-#' plot(F)
+#' HR <- F(hr, f)
+#' HR
+#' advice(HR)
+#' plot(HR)
 #' 
 #' # application in following years without updating target harvest rate
-#' F <- F(hr, yr_ref = c(2016, 2019))
+#' HR <- F(hr, yr_ref = c(2016, 2019))
 #' 
 #' @rdname Ftarget
 #' @export
 setGeneric(
   name = "F",
-  def = function(object, indicator, yr_ref, units, MSE, ...) {
+  def = function(object, indicator, yr_ref, units, MSE, multiplier, ...) {
     standardGeneric("F")
   },
   signature = c("object", "indicator")

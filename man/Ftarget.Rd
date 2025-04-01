@@ -8,7 +8,7 @@
 \alias{F,F,missing-method}
 \title{Calculation of the (relative) harvest rate target}
 \usage{
-F(object, indicator, yr_ref, units, MSE, ...)
+F(object, indicator, yr_ref, units, MSE, multiplier, ...)
 }
 \arguments{
 \item{object}{The time series with (relative) harvest rate values. See \code{\link{HR}}.}
@@ -21,9 +21,9 @@ F(object, indicator, yr_ref, units, MSE, ...)
 
 \item{MSE}{Optional. \code{TRUE/FALSE}. Is the harvest rate a generic value or was it calculated with stock-specific simulations (MSE)?}
 
-\item{...}{Additional arguments. Not currently used.}
-
 \item{multiplier}{Optional. \code{numeric}. Multiplier to adjust the target harvest rate. Only used if \code{MSE=TRUE}.}
+
+\item{...}{Additional arguments. Not currently used.}
 }
 \value{
 An object of class \code{F} with the target harvest rate and the input data.
@@ -51,10 +51,10 @@ For application in ICES, the target harvest rate should only be calculated in th
 data(ple7e_hr)
 data(ple7e_f2)
 # calculate target harvest rate
-F <- F(ple7e_hr, ple7e_f2)
-F
-advice(F)
-plot(F)
+HR <- F(ple7e_hr, ple7e_f2)
+HR
+advice(HR)
+plot(HR)
 
 # use reference years when using in following years
 F(ple7e_hr, yr_ref = c(2016, 2019))
@@ -75,13 +75,13 @@ data(ple7e_catch)
 df <- merge(ple7e_catch, ple7e_idx, all = TRUE) # combine catch & index data
 hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr")
 # calculate (relative) target harvest rate
-F <- F(hr, f)
-F
-advice(F)
-plot(F)
+HR <- F(hr, f)
+HR
+advice(HR)
+plot(HR)
 
 # application in following years without updating target harvest rate
-F <- F(hr, yr_ref = c(2016, 2019))
+HR <- F(hr, yr_ref = c(2016, 2019))
 
 }
 \references{

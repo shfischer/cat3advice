@@ -1281,11 +1281,11 @@ calculate the target harvest rate:
 
 ``` r
 ### calculate (relative) target harvest rate
-F <- F(hr, f) 
-F
+HR <- F(hr, f) 
+HR
 #> An object of class "F".
 #> Value: 2212.27020813614
-plot(F)
+plot(HR)
 #> Warning: Removed 17 rows containing missing values or values outside the scale range (`geom_line()`).
 ```
 
@@ -1336,7 +1336,7 @@ $$
 Now we have all the components of the chr rule and can apply it:
 
 ``` r
-advice <- chr(A = A, I = i, F = F, b = b, m = m, discard_rate = 27)
+advice <- chr(A = A, I = i, F = HR, b = b, m = m, discard_rate = 27)
 advice
 #> An object of class "chr".
 #> Value: 1219.4

@@ -702,9 +702,9 @@ Now we can use the indicator and (relative) harvest rate time series to calculat
 
 ```{r, fig.align='center', fig.width=4, fig.height=3, dpi=300, out.width=700}
 ### calculate (relative) target harvest rate
-F <- F(hr, f) 
-F
-plot(F)
+HR <- F(hr, f) 
+HR
+plot(HR)
 ```
 
 The years selected for the target harvest rate are indicated by orange points.
@@ -737,7 +737,7 @@ $$
 Now we have all the components of the chr rule and can apply it:
 
 ```{r}
-advice <- chr(A = A, I = i, F = F, b = b, m = m, discard_rate = 27)
+advice <- chr(A = A, I = i, F = HR, b = b, m = m, discard_rate = 27)
 advice
 ```
 

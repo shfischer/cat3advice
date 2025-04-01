@@ -22,7 +22,7 @@ NULL
 #' @slot avg_years Number of years for calculating average catch
 #' @slot basis Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch
 #' @slot advice_metric Advice metric, 'catch' or 'landings'.
-#' @slot discard_survival Optional. Discard survival (%). Can be used to show the reference catch (or advice) in the form of dead catch (or advice).
+#' @slot discard_survival Optional. Discard survival (\%). Can be used to show the reference catch (or advice) in the form of dead catch (or advice).
 #' 
 #' @name A-class
 #' @export
@@ -131,13 +131,14 @@ setValidity("A", function(object) {
 #' In some cases, discard survival is considered for the rfb/rb/chr rules. In these cases, it can be useful to provide the advice split into landings and discards (provided with columns \code{advice_landings} and \code{advice_discards}) to calculate the assumed dead catch corresponding to the advice. This is done with the discard survival rate provided with the argument \code{discard_survival}.
 #' 
 #' @param object The reference catch. See details
+#' @param value Value of the reference catch.
 #' @param units [Optional] The units of the reference catch, e.g. "tonnes".
 #' @param hcr [Optional] The harvest control rule (hcr) for which the multiplier is used. One of 'rfb', 'rb', or 'chr'.
 #' @param data [Internal] Data used for calculating reference catch.
 #' @param avg_years [Optional] Number of years for calculating average catch or vector years to use
 #' @param basis [Optional] Basis of Ay. Either "advice" for using the previous advice or "average catch" when based on an average of historical catch
 #' @param advice_metric Advice metric, e.g. catch or landings.
-#' @param discard_survival [Optional] Discard survival (%).
+#' @param discard_survival [Optional] Discard survival (\%).
 #' @param ... Additional arguments (Not used) 
 #'
 #' @references 

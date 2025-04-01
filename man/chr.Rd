@@ -50,9 +50,9 @@ chr(
 
 \item{discard_rate}{Optional. \code{numeric}. The discard rate (in \%) for the advice. If provided, advice values for catch and landings are given.}
 
-\item{...}{Additional parameters. Not used.}
+\item{discard_survival}{Optional. \code{numeric}. The discard survival rate (in \%) for the advice. If provided, Discards are split into dead and surviving discards.}
 
-\item{discard_surival}{Optional. \code{numeric}. The discard survival rate (in \%) for the advice. If provided, Discards are split into dead and surviving discards.}
+\item{...}{Additional parameters. Not used.}
 }
 \value{
 An object of class \code{chr}.
@@ -100,7 +100,7 @@ df <- merge(ple7e_catch, ple7e_idx, all = TRUE) # combine catch & index data
 hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr") # harvest rate
 plot(hr)
 HR <- F(hr, f) # calculate (relative) target harvest rate
-plot(F)
+plot(HR)
 # biomass safeguard
 b <- b(ple7e_idx)
 plot(b)
