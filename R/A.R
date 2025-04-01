@@ -22,7 +22,7 @@ NULL
 #' @slot avg_years Number of years for calculating average catch
 #' @slot basis Basis of Ay. Either "advice" for using previous advice or "average catch" when based on average of historical catch
 #' @slot advice_metric Advice metric, 'catch' or 'landings'.
-#' @slot discard_survival Optional. Discard survival. Can be used to show the reference catch (or advice) in the form of dead catch (or advice).
+#' @slot discard_survival Optional. Discard survival (%). Can be used to show the reference catch (or advice) in the form of dead catch (or advice).
 #' 
 #' @name A-class
 #' @export
@@ -96,8 +96,8 @@ setValidity("A", function(object) {
     "slot advice_metric must be of length 1"
   } else if (!identical(length(object@discard_survival), 1L)) {
     "slot discard_survival must be of length 1"
-  } else if (isTRUE(object@discard_survival < 0 | object@discard_survival > 1)) {
-    "slot discard_survival must be a value between 0-1"
+  } else if (isTRUE(object@discard_survival < 0 | object@discard_survival > 100)) {
+    "slot discard_survival must be a value between 0-100"
   } else {
     TRUE
   }
@@ -137,7 +137,7 @@ setValidity("A", function(object) {
 #' @param avg_years [Optional] Number of years for calculating average catch or vector years to use
 #' @param basis [Optional] Basis of Ay. Either "advice" for using the previous advice or "average catch" when based on an average of historical catch
 #' @param advice_metric Advice metric, e.g. catch or landings.
-#' @param discard_survival [Optional] Discard survival (0-1).
+#' @param discard_survival [Optional] Discard survival (%).
 #' @param ... Additional arguments (Not used) 
 #'
 #' @references 
@@ -250,8 +250,8 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
     object@advice_metric <- match.arg(advice_metric, 
                                       choices = c("catch", "landings"))
   if (!missing(discard_survival)) {
-    if (isTRUE(discard_survival < 0 | discard_survival > 1))
-      stop("discard_survival must not be negative or above 1")
+    if (isTRUE(discard_survival < 0 | discard_survival > 100))
+      stop("discard_survival must not be negative or above 100")
     object@discard_survival <- discard_survival
   }
   
@@ -341,7 +341,7 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
         ### check if dead catch can be calculated
         if (all(c("landings", "discards") %in% names(object@data))) {
           object@data$catch_dead <- object@data$landings + 
-            object@data$discards * (1 - discard_survival)
+            object@data$discards * (1 - discard_survival/100)
         } else {
           stop(paste("Discard survival > 0 but dead catch cannot be",
                      "calculated because columns 'landings' and/or",
@@ -357,7 +357,7 @@ A_calc <- function(object, value, units, hcr, data, avg_years,
         ### check if dead advice can be calculated
         if (all(c("advice_landings", "advice_discards") %in% names(object@data))) {
           object@data$advice_dead <- object@data$advice_landings + 
-            object@data$advice_discards * (1 - discard_survival)
+            object@data$advice_discards * (1 - discard_survival/100)
         } else {
           stop(paste("Discard survival > 0 but dead advice cannot be",
                      "calculated because columns 'advice_landings' and/or",

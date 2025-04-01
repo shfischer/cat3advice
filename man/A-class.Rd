@@ -36,6 +36,6 @@ is set to the corresponding catch rule name ('rfb', 'rb', or 'chr').
 
 \item{\code{advice_metric}}{Advice metric, 'catch' or 'landings'.}
 
-\item{\code{discard_survival}}{Optional. Discard survival. Can be used to show the reference catch (or advice) in the form of dead catch (or advice).}
+\item{\code{discard_survival}}{Optional. Discard survival (%). Can be used to show the reference catch (or advice) in the form of dead catch (or advice).}
 }}
 

@@ -72,7 +72,7 @@ setClass(
 #'
 #' @param object The data to use. Usually a \code{data.frame} with columns 'year', 'catch' and 'index'.
 #' @param split_discards Shall the catch be split into landings and discards? Defaults to \code{FALSE}.
-#' @param discard_survival Discard survival (0-1). If \code{split_discards=TRUE}, this will be used to calculate the dead discards and these will be used in the harvest rate calculation.
+#' @param discard_survival Discard survival (%). If \code{split_discards=TRUE}, this will be used to calculate the dead discards and these will be used in the harvest rate calculation.
 #' @param units Optional. The units of the harvest rate. Can be derived automatically from \code{units_catch} and \code{units_index}.
 #' @param units_catch Optional. The units of the catch, e.g. 'tonnes'.
 #' @param units_index Optional. The units of the biomass index, e.g. 'kg/hr'.
@@ -172,7 +172,7 @@ calc_HR <- function(object = new("HR"),
     if (!missing(discard_survival))
       object@data$discard_survival <- discard_survival
     catch <- object@data$landings + 
-      object@data$discards * (1 - object@data$discard_survival)
+      object@data$discards * (1 - object@data$discard_survival/100)
   }
   
   ### calculate harvest rate
@@ -184,7 +184,7 @@ calc_HR <- function(object = new("HR"),
   
   object@metric <- "catch"
   if (isTRUE(split_discards)) {
-    object@metric <- ifelse(isTRUE(discard_survival < 1),
+    object@metric <- ifelse(isTRUE(discard_survival < 100),
                             "dead catch", "landings")
   }
   

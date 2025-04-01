@@ -77,7 +77,7 @@ chr_A(
 
 \item{advice_metric}{Advice metric, e.g. catch or landings.}
 
-\item{discard_survival}{[Optional] Discard survival (0-1).}
+\item{discard_survival}{[Optional] Discard survival (%).}
 
 \item{...}{Additional arguments (Not used)}
 }
