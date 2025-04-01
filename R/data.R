@@ -23,3 +23,6 @@ NULL
 
 #' @rdname ple7e
 "ple7e_length"
+
+#' @rdname ple7e
+"ple7e_WKBPLAICE"
