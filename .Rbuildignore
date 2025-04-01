@@ -2,6 +2,7 @@
 ^\.Rproj\.user$
 example_data
 example_scripts
+presentations
 ^doc$
 ^Meta$
 tmp*
