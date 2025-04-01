@@ -4,7 +4,7 @@ cat3advice
 `cat3advice` is an R package that allows the application of the ICES
 category 3 data-limited harvest control rules (rfb/rb/chr rules) and
 follows the ICES Technical Guidelines [ICES,
-2022](https://doi.org/10.17895/ices.advice.19801564).
+2025](https://doi.org/10.17895/ices.advice.28506179).
 
 ## Documentation
 
@@ -39,6 +39,12 @@ package).
 library(remotes)
 install_github("shfischer/cat3advice")
 ```
+
+## Updates
+
+See the
+[NEWS](https://github.com/shfischer/cat3advice/blob/main/NEWS.md) file
+for updates to the package.
 
 ## Support
 

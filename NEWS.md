@@ -1,12 +1,27 @@
 NEWS
 ================
 
+## 01/04/2025 - version 0.1
+
+Updates and added features
+
+- Added reference to latest ICES guidelines from 2025
+
+- chr rule: Advice table now refers to target harvest rate as HRMSYproxy
+  (instead of FMSYproxy) after update to ICES guidelines
+
+- Added option for chr rule to include discard survival (see vignette
+  for an example)
+
+- Updated vignette - added example for chr rule on how to use custom
+  control parameters and account for discard survival
+
 ## 12/07/2024 - version 0.0.7
 
-Round of index values in advice tables (for component r and b)
+Rounding of index values in advice tables (for component r and b)
 
 - If index values are above 100, round normally instead of using ICES
-  rounding to avoid losing digits, e.g. 221 stays 221 instead of
+  rounding to avoid loosing digits, e.g. 221 stays 221 instead of
   becoming 220
 
 ## 03/05/2024 - version 0.0.6
