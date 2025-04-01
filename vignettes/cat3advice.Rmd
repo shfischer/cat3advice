@@ -38,7 +38,7 @@ knitr::opts_chunk$set(
 
 # cat3advice R package
 
-`cat3advice` is an R package that allows the application of the ICES category 3 data-limited harvest control rules (rfb/rb/chr rules) and follows the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] (<https://doi.org/10.17895/ices.advice.28506179>).
+`cat3advice` is an R package that allows the application of the ICES category 3 data-limited harvest control rules (rfb/rb/chr rules) and follows the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] (<https://doi.org/10.17895/ices.pub.28506179>).
 
 # Documentation
 

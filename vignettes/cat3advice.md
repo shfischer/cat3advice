@@ -84,7 +84,7 @@ survival</p></td>
 `cat3advice` is an R package that allows the application of the ICES
 category 3 data-limited harvest control rules (rfb/rb/chr rules) and
 follows the ICES Technical Guidelines (ICES 2025b)
-(<https://doi.org/10.17895/ices.advice.28506179>).
+(<https://doi.org/10.17895/ices.pub.28506179>).
 
 # Documentation
 
@@ -1703,7 +1703,7 @@ Stocks (WKBPLAICE)</span>.”
 stocks in category 2 and 3. Version 3. ICES Guidelines and Policies -
 Advice Technical Guidelines.</span>” International Council for the
 Exploration of the Sea (ICES).
-<https://doi.org/10.17895/ices.advice.28506179>.
+<https://doi.org/10.17895/ices.pub.28506179>.
 
 </div>
 
