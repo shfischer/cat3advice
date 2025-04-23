@@ -545,6 +545,7 @@ setMethod(
     if (identical(object@hcr, "chr")) txt_I_full <- NULL
     
     txt <- paste0(txt,
+                  txt_I_full,
                   paste0(format(txt_I_trigger, width = 48), " | ",
                          format(val_I_trigger, width = 29, justify = "right"),
                          "\n"),

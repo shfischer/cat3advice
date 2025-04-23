@@ -1,7 +1,7 @@
 cat3advice
 ================
 Simon H. Fischer
-01 April, 2025
+23 April, 2025
 
 - [`cat3advice`](#cat3advice)
   - [Vignette change log](#vignette-change-log)
@@ -288,6 +288,7 @@ advice(b)
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
+#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
 #> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |
@@ -572,6 +573,7 @@ advice(advice)
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
+#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
 #> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |                              
@@ -751,6 +753,7 @@ advice(b)
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
+#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
 #> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |
@@ -855,6 +858,7 @@ advice(advice)
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
+#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
 #> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |                              
@@ -1019,6 +1023,7 @@ advice(b)
 #> --------------------------------------------------------------------------------
 #> Biomass safeguard
 #> --------------------------------------------------------------------------------
+#> Last index value (I2021)                         |                    1.03 kg/hr
 #> Index trigger value (Itrigger = Iloss x 1.4)     |                    0.39 kg/hr
 #> b: multiplier for index relative to trigger,     |                          1.00
 #>    min{I2021/Itrigger, 1}                        |
@@ -1258,10 +1263,12 @@ hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr")
 hr
 #> An object of class "HR".
 #> Value(s) (based on catch): 
-#>     2003     2004     2005     2006     2007     2008     2009     2010     2011     2012     2013     2014 
-#> 2882.668 2023.556 2890.803 2779.141 4526.691 3242.396 2091.990 1903.229 2056.537 2161.624 1394.154 1204.222 
-#>     2015     2016     2017     2018     2019     2020     2021 
-#> 1575.161 1937.409 2213.356 2218.476 2487.131 3148.595 1570.355
+#>     2003     2004     2005     2006     2007     2008     2009     2010     2011 
+#> 2882.668 2023.556 2890.803 2779.141 4526.691 3242.396 2091.990 1903.229 2056.537 
+#>     2012     2013     2014     2015     2016     2017     2018     2019     2020 
+#> 2161.624 1394.154 1204.222 1575.161 1937.409 2213.356 2218.476 2487.131 3148.595 
+#>     2021 
+#> 1570.355
 ```
 
 The harvest rate can only be calculated for years in which both catch
@@ -1286,7 +1293,8 @@ HR
 #> An object of class "F".
 #> Value: 2212.27020813614
 plot(HR)
-#> Warning: Removed 17 rows containing missing values or values outside the scale range (`geom_line()`).
+#> Warning: Removed 17 rows containing missing values or values outside the scale range
+#> (`geom_line()`).
 ```
 
 <img src="cat3advice_files/figure-gfm/unnamed-chunk-50-1.png" width="700" style="display: block; margin: auto;" />
@@ -1491,10 +1499,12 @@ hr <- HR(ple7e_WKBPLAICE, units_catch = "tonnes",
 hr
 #> An object of class "HR".
 #> Value(s) (based on dead catch): 
-#>     2003     2004     2005     2006     2007     2008     2009     2010     2011     2012     2013     2014 
-#> 2816.294 1960.305 2764.456 2675.635 4307.496 3036.311 2014.279 1764.984 1906.149 1912.587 1259.691  944.274 
-#>     2015     2016     2017     2018     2019     2020     2021     2022     2023 
-#> 1203.143 1709.766 1905.411 1939.123 2269.126 2719.240 1467.344 1921.055 1899.976
+#>     2003     2004     2005     2006     2007     2008     2009     2010     2011 
+#> 2816.294 1960.305 2764.456 2675.635 4307.496 3036.311 2014.279 1764.984 1906.149 
+#>     2012     2013     2014     2015     2016     2017     2018     2019     2020 
+#> 1912.587 1259.691  944.274 1203.143 1709.766 1905.411 1939.123 2269.126 2719.240 
+#>     2021     2022     2023 
+#> 1467.344 1921.055 1899.976
 
 plot(hr)
 ```
@@ -1532,7 +1542,8 @@ b
 #> Value: 0.690709424407383
 
 plot(b)
-#> Warning: Removed 24 rows containing missing values or values outside the scale range (`geom_line()`).
+#> Warning: Removed 24 rows containing missing values or values outside the scale range
+#> (`geom_line()`).
 ```
 
 ![](cat3advice_files/figure-gfm/unnamed-chunk-59-1.png)<!-- -->

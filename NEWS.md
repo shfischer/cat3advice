@@ -1,6 +1,13 @@
 NEWS
 ================
 
+## 23/04/2025 - version 0.1.0
+
+Fix bug from version 0.1:
+
+- When plotting the advice table for the biomass safeguard for the rfb
+  and rb rule, show last biomass index value
+
 ## 01/04/2025 - version 0.1
 
 Updates and added features
