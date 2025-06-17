@@ -151,10 +151,23 @@ setMethod(f,
     ### get mean length data
     object@indicator <- Lmean@summary
     ### add column with reference length
-    if (is.na(Lref@years)) {
+    if (is.na(Lref@years) & isTRUE(length(Lref@value) == 1)) {
       object@indicator$Lref <- Lref@value
     } else {
       # do something with annual values...
+      if (isTRUE(length(Lref@value) == nrow(object@indicator))) {
+        object@indicator$Lref <- Lref@value
+      } else {
+        if (is.null(names(Lref@value))) {
+          stop("Cannot assign Lref values to years because years not provided")
+        } else {
+          Lref_vals <- data.frame(year = as.numeric(names(Lref@value)),
+                                  Lref = Lref@value)
+          row.names(Lref_vals) <- NULL
+          object@indicator <- merge(x = object@indicator, 
+                                    y = Lref_vals, all.x = TRUE)
+        }
+      }
     }
     ### calculate Lmean/Lref ratio
     object@indicator$indicator <- object@indicator$Lmean/object@indicator$Lref
