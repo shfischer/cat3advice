@@ -1,7 +1,7 @@
 cat3advice
 ================
 Simon H. Fischer
-23 April, 2025
+17 June, 2025
 
 - [`cat3advice`](#cat3advice)
   - [Vignette change log](#vignette-change-log)
@@ -483,7 +483,7 @@ plot(f)
 
 In this case, the mean catch length (orange curve) is always below the
 MSY proxy reference length (blue horizontal line), indicating that the
-fishing pressure was above $F_{\text{MSY}}$.
+fishing pressure was above $HR_{\text{MSY proxy}}$.
 
 ## Multiplier $m$
 
@@ -886,11 +886,11 @@ absolute stock size is unknown. The method is defined as Method 2.2 in
 the ICES Technical Guidelines (ICES 2025b) as
 
 $$
-A_{y+1} = I_{y-1} \times F_{\text{proxyMSY}} \times b \times m
+A_{y+1} = I_{y-1} \times HR_{\text{MSY proxy}} \times b \times m
 $$
 
 where $A_{y+1}$ is the new catch advice, $I_{y-1}$ the last biomass
-index value, $F_{\text{proxyMSY}}$ the (relative) harvest rate target,
+index value, $HR_{\text{MSY proxy}}$ the (relative) harvest rate target,
 $b$ a biomass safeguard and $m$ a precautionary multiplier. Furthermore,
 the change in the advice is restricted by a stability clause that only
 allows changes of between $+20\%$ and $-30\%$ relative to the previous
@@ -943,7 +943,7 @@ A(ple7e_catch, units = "tonnes", basis = "average catch", avg_years = 3)
 The reference catch can also be defined manually:
 
 ``` r
-### use 3-year average
+### manual definition
 A(2000, units = "tonnes")
 #> An object of class "A".
 #> Value: 2000
@@ -1197,7 +1197,7 @@ plot(f)
 
 In this case, the mean catch length (orange curve) is above the
 reference length in two years, indicating that the fishing pressure was
-below $F_{\text{MSY}}$ in these two years.
+below $HR_{\text{MSY proxy}}$ in these two years.
 
 ICES advice sheets typically show the inverse indicator ratio. This can
 be plotted by adding an `inverse = TRUE` argument to `plot()`:
@@ -1263,12 +1263,10 @@ hr <- HR(df, units_catch = "tonnes", units_index = "kg/hr")
 hr
 #> An object of class "HR".
 #> Value(s) (based on catch): 
-#>     2003     2004     2005     2006     2007     2008     2009     2010     2011 
-#> 2882.668 2023.556 2890.803 2779.141 4526.691 3242.396 2091.990 1903.229 2056.537 
-#>     2012     2013     2014     2015     2016     2017     2018     2019     2020 
-#> 2161.624 1394.154 1204.222 1575.161 1937.409 2213.356 2218.476 2487.131 3148.595 
-#>     2021 
-#> 1570.355
+#>     2003     2004     2005     2006     2007     2008     2009     2010     2011     2012     2013     2014 
+#> 2882.668 2023.556 2890.803 2779.141 4526.691 3242.396 2091.990 1903.229 2056.537 2161.624 1394.154 1204.222 
+#>     2015     2016     2017     2018     2019     2020     2021 
+#> 1575.161 1937.409 2213.356 2218.476 2487.131 3148.595 1570.355
 ```
 
 The harvest rate can only be calculated for years in which both catch
@@ -1293,8 +1291,7 @@ HR
 #> An object of class "F".
 #> Value: 2212.27020813614
 plot(HR)
-#> Warning: Removed 17 rows containing missing values or values outside the scale range
-#> (`geom_line()`).
+#> Warning: Removed 17 rows containing missing values or values outside the scale range (`geom_line()`).
 ```
 
 <img src="cat3advice_files/figure-gfm/unnamed-chunk-50-1.png" width="700" style="display: block; margin: auto;" />
@@ -1333,10 +1330,10 @@ advice(m)
 Please note that the multiplier $m$ does not lead to a continuous
 reduction in the catch advice. The components of the chr rule are
 multiplicative, this means that $m$ could be considered as adjusting the
-target harvest rate $F_{\text{MSY}}$ to $F'_{\text{MSY}}$:
+target harvest rate $HR_{\text{MSY proxy}}$ to $HR'_{\text{MSY proxy}}$:
 
 $$
-A_{y+1} = I \times F_{\text{proxyMSY}} \times b \times m = I \times \frac{F_{\text{proxyMSY}}}{1/m} \times b = I \times F'_{\text{proxyMSY}} \times b
+A_{y+1} = I \times HR_{\text{MSY proxy}} \times b \times m = I \times \frac{HR_{\text{MSY proxy}}}{1/m} \times b = I \times HR'_{\text{MSY proxy}} \times b
 $$
 
 ## Application of chr rule
@@ -1462,8 +1459,8 @@ to the last advice.
 
 ## Biomass index value
 
-The biomass index value `I` is set to the average of the values of the
-last two years (not just the last value):
+In this specific case, the biomass index value `I` is set to the average
+of the values of the last two years (not just the last value):
 
 ``` r
 I <- chr_I(ple7e_WKBPLAICE, n_yrs = 2, lag = 1, 
@@ -1482,11 +1479,11 @@ used (2022 and 2023).
 
 Usually, the target harvest rate $HR_\text{MSYproxy}$ is defined by
 looking at historical catch length data. However, WKBPLAICE conducted an
-MSE and the values was defined through simulations.
+MSE and the values were defined through simulations.
 
 First, we need to calculate the historical harvest rates. Because of the
 assumed discard survival, the harvest rate only considers the dead
-catch, i.e. dead catch divided by the biomass index. The argument
+catch, i.e. the dead catch divided by the biomass index. The argument
 `split_discards = TRUE` specifies that the discards should be split into
 dead and surviving discards, and the argument `discard_survival` defines
 the survival:
@@ -1499,12 +1496,10 @@ hr <- HR(ple7e_WKBPLAICE, units_catch = "tonnes",
 hr
 #> An object of class "HR".
 #> Value(s) (based on dead catch): 
-#>     2003     2004     2005     2006     2007     2008     2009     2010     2011 
-#> 2816.294 1960.305 2764.456 2675.635 4307.496 3036.311 2014.279 1764.984 1906.149 
-#>     2012     2013     2014     2015     2016     2017     2018     2019     2020 
-#> 1912.587 1259.691  944.274 1203.143 1709.766 1905.411 1939.123 2269.126 2719.240 
-#>     2021     2022     2023 
-#> 1467.344 1921.055 1899.976
+#>     2003     2004     2005     2006     2007     2008     2009     2010     2011     2012     2013     2014 
+#> 2816.294 1960.305 2764.456 2675.635 4307.496 3036.311 2014.279 1764.984 1906.149 1912.587 1259.691  944.274 
+#>     2015     2016     2017     2018     2019     2020     2021     2022     2023 
+#> 1203.143 1709.766 1905.411 1939.123 2269.126 2719.240 1467.344 1921.055 1899.976
 
 plot(hr)
 ```
@@ -1542,8 +1537,7 @@ b
 #> Value: 0.690709424407383
 
 plot(b)
-#> Warning: Removed 24 rows containing missing values or values outside the scale range
-#> (`geom_line()`).
+#> Warning: Removed 24 rows containing missing values or values outside the scale range (`geom_line()`).
 ```
 
 ![](cat3advice_files/figure-gfm/unnamed-chunk-59-1.png)<!-- -->

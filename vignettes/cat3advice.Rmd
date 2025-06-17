@@ -276,7 +276,7 @@ advice(f)
 plot(f)
 ```
 
-In this case, the mean catch length (orange curve) is always below the MSY proxy reference length (blue horizontal line), indicating that the fishing pressure was above $F_{\text{MSY}}$.
+In this case, the mean catch length (orange curve) is always below the MSY proxy reference length (blue horizontal line), indicating that the fishing pressure was above $HR_{\text{MSY proxy}}$.
 
 ## Multiplier $m$
 
@@ -474,10 +474,10 @@ advice(advice)
 The chr rule is a (relative) harvest rate-based harvest control rule. The relative harvest rate is defined by dividing the catch by the values from a biomass index. It is not an absolute harvest rate because the absolute stock size is unknown. The method is defined as Method 2.2 in the ICES Technical Guidelines [@ICES2022_cat23_tech_guidelines] as
 
 $$
-A_{y+1} = I_{y-1} \times F_{\text{proxyMSY}} \times b \times m
+A_{y+1} = I_{y-1} \times HR_{\text{MSY proxy}} \times b \times m
 $$
 
-where $A_{y+1}$ is the new catch advice, $I_{y-1}$ the last biomass index value, $F_{\text{proxyMSY}}$ the (relative) harvest rate target, $b$ a biomass safeguard and $m$ a precautionary multiplier. Furthermore, the change in the advice is restricted by a stability clause that only allows changes of between $+20\%$ and $-30\%$ relative to the previous advice, but the application of the stability clause is conditional on $b=1$ and turned off when $b<1$.
+where $A_{y+1}$ is the new catch advice, $I_{y-1}$ the last biomass index value, $HR_{\text{MSY proxy}}$ the (relative) harvest rate target, $b$ a biomass safeguard and $m$ a precautionary multiplier. Furthermore, the change in the advice is restricted by a stability clause that only allows changes of between $+20\%$ and $-30\%$ relative to the previous advice, but the application of the stability clause is conditional on $b=1$ and turned off when $b<1$.
 
 The chr rule should be applied annually, i.e. the catch advice is valid for one year.
 
@@ -506,7 +506,7 @@ A(ple7e_catch, units = "tonnes", basis = "average catch", avg_years = 3)
 The reference catch can also be defined manually:
 
 ```{r}
-### use 3-year average
+### manual definition
 A(2000, units = "tonnes")
 ```
 
@@ -652,7 +652,7 @@ f <- f(Lmean = lmean, Lref = lref, units = "mm")
 plot(f)
 ```
 
-In this case, the mean catch length (orange curve) is above the reference length in two years, indicating that the fishing pressure was below $F_{\text{MSY}}$ in these two years.
+In this case, the mean catch length (orange curve) is above the reference length in two years, indicating that the fishing pressure was below $HR_{\text{MSY proxy}}$ in these two years.
 
 ICES advice sheets typically show the inverse indicator ratio. This can be plotted by adding an `inverse = TRUE` argument to `plot()`:
 
@@ -726,10 +726,10 @@ chr_m()
 advice(m)
 ```
 
-Please note that the multiplier $m$ does not lead to a continuous reduction in the catch advice. The components of the chr rule are multiplicative, this means that $m$ could be considered as adjusting the target harvest rate $F_{\text{MSY}}$ to $F'_{\text{MSY}}$:
+Please note that the multiplier $m$ does not lead to a continuous reduction in the catch advice. The components of the chr rule are multiplicative, this means that $m$ could be considered as adjusting the target harvest rate $HR_{\text{MSY proxy}}$ to $HR'_{\text{MSY proxy}}$:
 
 $$
-A_{y+1} = I \times F_{\text{proxyMSY}} \times b \times m = I \times \frac{F_{\text{proxyMSY}}}{1/m} \times b = I \times F'_{\text{proxyMSY}} \times b
+A_{y+1} = I \times HR_{\text{MSY proxy}} \times b \times m = I \times \frac{HR_{\text{MSY proxy}}}{1/m} \times b = I \times HR'_{\text{MSY proxy}} \times b
 $$
 
 ## Application of chr rule
@@ -784,7 +784,7 @@ A
 
 ## Biomass index value
 
-The biomass index value `I` is set to the average of the values of the last two years (not just the last value):
+In this specific case, the biomass index value `I` is set to the average of the values of the last two years (not just the last value):
 
 ```{r}
 I <- chr_I(ple7e_WKBPLAICE, n_yrs = 2, lag = 1, 
@@ -796,9 +796,9 @@ The data set has data up to 2024 but the last biomass index value is from 2023. 
 
 ## Target harvest rate
 
-Usually, the target harvest rate $HR_\text{MSYproxy}$ is defined by looking at historical catch length data. However, WKBPLAICE conducted an MSE and the values was defined through simulations.
+Usually, the target harvest rate $HR_\text{MSYproxy}$ is defined by looking at historical catch length data. However, WKBPLAICE conducted an MSE and the values were defined through simulations.
 
-First, we need to calculate the historical harvest rates. Because of the assumed discard survival, the harvest rate only considers the dead catch, i.e. dead catch divided by the biomass index. The argument `split_discards = TRUE` specifies that the discards should be split into dead and surviving discards, and the argument `discard_survival` defines the survival:
+First, we need to calculate the historical harvest rates. Because of the assumed discard survival, the harvest rate only considers the dead catch, i.e. the dead catch divided by the biomass index. The argument `split_discards = TRUE` specifies that the discards should be split into dead and surviving discards, and the argument `discard_survival` defines the survival:
 
 ```{r}
 ### 1st: calculate historical harvest rates

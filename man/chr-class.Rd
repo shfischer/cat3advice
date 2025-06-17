@@ -37,7 +37,7 @@ This class contains the components of the chr rule
 
 \item{\code{I}}{Component I (the biomass index value).}
 
-\item{\code{F}}{Component F (the relative harvest rate target).}
+\item{\code{F}}{Component HR (previously called "F", the relative harvest rate target).}
 
 \item{\code{b}}{Component b (the biomass safeguard).}
 

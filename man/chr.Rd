@@ -61,9 +61,9 @@ An object of class \code{chr}.
 This function applies the chr rule.
 }
 \details{
-This function applies the chr rule following the ICES technical guidelines (ICES, 2025). The function requires the elements of the chr rule: \out{<i>I</i>} (the biomass index, see \code{\link{chr_I}}), \out{<i>F</i><sub>MSYproxy</sub>} (the target harvest rate, see \code{\link{F}}), \out{<i>b</i>} (the biomass safeguard, see \code{\link{chr_b}}) and \out{<i>m</i>} (the multiplier, see \code{\link{chr_m}}). The catch advice is then calculated as
+This function applies the chr rule following the ICES technical guidelines (ICES, 2025). The function requires the elements of the chr rule: \out{<i>I</i>} (the biomass index, see \code{\link{chr_I}}), \out{<i>HR</i><sub>MSYproxy</sub>} (the target harvest rate, see \code{\link{F}}), \out{<i>b</i>} (the biomass safeguard, see \code{\link{chr_b}}) and \out{<i>m</i>} (the multiplier, see \code{\link{chr_m}}). The catch advice is then calculated as
 
-\out{<i>A</i><sub>y+1</sub> = <i>I</i> * <i>F</i><sub>MSYproxy</sub> * <i>b</i> * <i>m</i>}
+\out{<i>A</i><sub>y+1</sub> = <i>I</i> * <i>HR</i><sub>MSYproxy</sub> * <i>b</i> * <i>m</i>}
 
 restricted by the stability clause relative to \out{<i>A</i><sub>y</sub>}.
 See the help files of the components for their definition (\code{\link{chr_I}}, \code{\link{F}}, \code{\link{chr_b}}, \code{\link{chr_m}})

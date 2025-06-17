@@ -5,7 +5,7 @@
 \alias{Ftarget-class}
 \title{F}
 \description{
-An S4 class to represent component F (the target harvest rate) of the chr rule.
+An S4 class to represent component HR (the target harvest rate, previously called "F") of the chr rule.
 
 This class (\code{F}) stores the input for the target harvest rate (if any) as well as the resulting target harvest rate.
 }
