@@ -1,7 +1,19 @@
 NEWS
 ================
 
-## 23/04/2025 - version 0.1.0
+## 17/06/2025 - version 0.1.2
+
+chr rule:
+
+- Consistently refer to “HRMSY proxy” instead of “FMSY proxy” in
+  documentation
+
+- Show advice change when discard survival not considered (missing
+  before)
+
+- Added ability to handle missing years for length indicator
+
+## 23/04/2025 - version 0.1.1
 
 Fix bug from version 0.1:
 
