@@ -428,12 +428,14 @@ chr_calc <- function(object = new("chr"),
     object@discard_rate <- discard_rate
     
     ### no discard survival (or not considered)
-    if (identical(discard_survival, 0L)) {
+    if (identical(discard_survival, 0)) {
       
       ### all advised catch is considered dead
       object@advice <- object@advice_dead
       object@advice_landings <- object@advice * (1 - object@discard_rate/100)
       object@advice_discards <- object@advice * (object@discard_rate/100)
+      object@advice_discards_dead <- object@advice_discards
+      object@advice_discards_surviving <- 0
     
     ### discard survival > 0
     } else {
