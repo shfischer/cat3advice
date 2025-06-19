@@ -49,7 +49,9 @@ NULL
 #' plot(r, b)
 #' 
 #' @export
-#' @name rfb_plot
+#' @name plot
+#' @rdname rfb_plot
+#' @aliases plot,rfb-method
 setGeneric(name = "plot",
            def = function(x, y, y_label, show.data = TRUE, 
                           ...)  standardGeneric("plot"))
@@ -101,15 +103,16 @@ setMethod(f = "plot", signature = c(x = "r", y = "missing"),
     if (isTRUE(idx_max_high > idx_max)) idx_max <- idx_max_high
     p <- p +
       ggplot2::geom_ribbon(data = object@idx,
-                  ggplot2::aes(x = year, ymin = low, ymax = high),
+                  ggplot2::aes(x = .data$year, 
+                               ymin = .data$low, ymax = .data$high),
                   fill = "#077c6c", alpha = 0.7, show.legend = FALSE)
   }
   p <- p +
     ggplot2::geom_line(data = object@idx,
-                       ggplot2::aes(x = year, y = index),
+                       ggplot2::aes(x = .data$year, y = .data$index),
               color = "#077c6c") +
     ggplot2::geom_line(data = df_mean,
-                       ggplot2::aes(x = year, y = value),
+                       ggplot2::aes(x = .data$year, y = .data$value),
               colour = "#ed6028") +
     ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1), 
                     xlim = c(yr_min - 1, yr_max + 1), 
@@ -127,6 +130,7 @@ setMethod(f = "plot", signature = c(x = "r", y = "missing"),
 
 ### rfb_b ####
 #' @rdname rfb_plot
+#' @export
 setMethod(f = "plot", signature = c(x = "b", y = "missing"), 
           definition = function(x, y, y_label, show.data, ...) {
             
@@ -162,15 +166,17 @@ setMethod(f = "plot", signature = c(x = "b", y = "missing"),
     if (isTRUE(idx_max_high > idx_max)) idx_max <- idx_max_high
     p <- p +
       ggplot2::geom_ribbon(data = object@idx,
-                           ggplot2::aes(x = year, ymin = low, ymax = high),
+                           ggplot2::aes(x = .data$year, 
+                                        ymin = .data$low, ymax = .data$high),
                   fill = "#077c6c", alpha = 0.7, show.legend = FALSE)
   }
   p <- p +
     ggplot2::geom_line(data = object@idx,
-                       ggplot2::aes(x = year, y = index),
+                       ggplot2::aes(x = .data$year, y = .data$index),
               color = "#077c6c") +
     ggplot2::geom_hline(data = b_refs, 
-               ggplot2::aes(yintercept = value, linetype = name, colour = name)) +
+               ggplot2::aes(yintercept = .data$value, linetype = .data$name, 
+                            colour = .data$name)) +
     ggplot2::scale_linetype_manual("", 
                           values = c("I[loss]" = "dotted", 
                                      "I[trigger]" = "solid"),
@@ -253,18 +259,20 @@ setMethod(f = "plot", signature = c(x = "r", y = "b"),
     if (isTRUE(idx_max_high > idx_max)) idx_max <- idx_max_high
     p <- p +
       ggplot2::geom_ribbon(data = object@idx,
-                           ggplot2::aes(x = year, ymin = low, ymax = high),
+                           ggplot2::aes(x = .data$year, 
+                                        ymin = .data$low, ymax = .data$high),
                   fill = "#077c6c", alpha = 0.7, show.legend = FALSE)
   }
   p <- p +
     ggplot2::geom_line(data = object@idx,
-                       ggplot2::aes(x = year, y = index),
+                       ggplot2::aes(x = .data$year, y = .data$index),
               color = "#077c6c") +
     ggplot2::geom_line(data = df_mean,
-              ggplot2::aes(x = year, y = value),
+              ggplot2::aes(x = .data$year, y = .data$value),
               colour = "#ed6028") +
     ggplot2::geom_hline(data = b_refs, 
-               ggplot2::aes(yintercept = value, linetype = name, colour = name)) +
+               ggplot2::aes(yintercept = .data$value, linetype = .data$name, 
+                            colour = .data$name)) +
     ggplot2::scale_linetype_manual("", 
                           values = c("I[loss]" = "dotted", 
                                      "I[trigger]" = "solid"),
@@ -329,12 +337,13 @@ setMethod(f = "plot", signature = c(x = "I", y = "missing"),
     if (isTRUE(idx_max_high > idx_max)) idx_max <- idx_max_high
     p <- p +
       ggplot2::geom_ribbon(data = object@idx,
-                           ggplot2::aes(x = year, ymin = low, ymax = high),
+                           ggplot2::aes(x = .data$year, 
+                                        ymin = .data$low, ymax = .data$high),
                            fill = "#077c6c", alpha = 0.7, show.legend = FALSE)
   }
   p <- p +
     ggplot2::geom_line(data = object@idx,
-                       ggplot2::aes(x = year, y = index),
+                       ggplot2::aes(x = .data$year, y = .data$index),
                        color = "#077c6c") +
     ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1), 
                              xlim = c(yr_min - 1, yr_max + 1), 
@@ -396,10 +405,11 @@ setMethod(f = "plot", signature = c(x = "f", y = "missing"),
   
     p <- p +
       ggplot2::geom_line(data = object@indicator,
-                         ggplot2::aes(x = year, y = Lmean),
+                         ggplot2::aes(x = .data$year, y = .data$Lmean),
                 color = "#ed6028") +
       ggplot2::geom_hline(data = Lref_df, 
-                          ggplot2::aes(yintercept = value, colour = name)) +
+                          ggplot2::aes(yintercept = .data$value, 
+                                       colour = .data$name)) +
       ggplot2::scale_colour_manual("",
                           values = c("L[F==M]" = "#679dfe"),
                           labels = scales::parse_format()) +
@@ -422,11 +432,13 @@ setMethod(f = "plot", signature = c(x = "f", y = "missing"),
     idx_max <- max(object@indicator$inverse_indicator, na.rm = TRUE)
     p <- p +
       ggplot2::geom_line(data = object@indicator,
-                         ggplot2::aes(x = year, y = inverse_indicator),
+                         ggplot2::aes(x = .data$year, 
+                                      y = .data$inverse_indicator),
                          color = "#ed6028") +
       ggplot2::geom_hline(data = data.frame(name = "F[MSY~proxy]",
                                             value = 1), 
-                          ggplot2::aes(yintercept = value, colour = name)) +
+                          ggplot2::aes(yintercept = .data$value, 
+                                       colour = .data$name)) +
       ggplot2::scale_colour_manual("",
                                    values = c("F[MSY~proxy]" = "#679dfe"),
                                    labels = scales::parse_format()) +
@@ -491,11 +503,12 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
   ### create HR plot
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(data = object@HR@data,
-                       ggplot2::aes(x = year, y = harvest_rate),
+                       ggplot2::aes(x = .data$year, y = .data$harvest_rate),
                        color = "#ed6028", 
                        na.rm = FALSE) +
     ggplot2::geom_hline(data = hr_target, 
-                        ggplot2::aes(yintercept = y, linetype = type),
+                        ggplot2::aes(yintercept = .data$y, 
+                                     linetype = .data$type),
                         alpha = 0.8, colour = "#679dfe") +
     ggplot2::scale_linetype_manual("", values = "solid",
                                    labels = expression(HR[MSYproxy])) +
@@ -517,7 +530,7 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
   if (isTRUE(show.data))
     p <- p + 
       ggplot2::geom_point(data = object@data,
-                          ggplot2::aes(x = year, y = harvest_rate,
+                          ggplot2::aes(x = .data$year, y = .data$harvest_rate,
                                        shape = "reference years"),
                           colour = "#ed6028")
   #p
@@ -531,12 +544,12 @@ setMethod(f = "plot", signature = c(x = "F", y = "missing"),
     p_indicator <- ggplot2::ggplot() +
     ggplot2::geom_line(
       data = object@indicator@indicator,
-      ggplot2::aes(x = year, y = indicator),
+      ggplot2::aes(x = .data$year, y = .data$indicator),
       color = "#ed6028"
     ) +
     ggplot2::geom_point(
       data = object@indicator@indicator[object@indicator@indicator$indicator >= 1, ],
-      ggplot2::aes(x = year, y = indicator),
+      ggplot2::aes(x = .data$year, y = .data$indicator),
       color = "#ed6028", shape = 16
     ) +
     ggplot2::geom_hline(
@@ -598,45 +611,45 @@ setMethod(f = "plot", signature = c(x = "Lc"),
     x@summary$year <- "pooled data"
             
   p <- x@data %>%
-    ggplot2::ggplot(aes(x = length, y = numbers)) +
+    ggplot2::ggplot(aes(x = .data$length, y = .data$numbers)) +
     ggplot2::geom_col(na.rm = TRUE) +
     ggplot2::geom_col(
       data = dplyr::bind_rows(
         x@summary %>% ### modal length
-          dplyr::select(year, L = Lmode, N = Nmode) %>%
+          dplyr::select(.data$year, L = .data$Lmode, N = .data$Nmode) %>%
           dplyr::mutate(source = "mode"),
         x@summary %>% ### length at first capture
-          dplyr::select(year, L = Lc, N = Nc) %>%
+          dplyr::select(.data$year, L = .data$Lc, N = .data$Nc) %>%
           dplyr::mutate(source = "c"),
         ### empty data to ensure bin width is kept
         x@data %>%
-          dplyr::select(year, L = length) %>%
+          dplyr::select(.data$year, L = .data$length) %>%
           unique() %>%
           dplyr::mutate(N = NA, source = NA)
       ) %>%
-        dplyr::mutate(source = factor(source,
+        dplyr::mutate(source = factor(.data$source,
           levels = c("c", "mode"),
           labels = c("Lc", "mode")
         )),
-      ggplot2::aes(x = L, y = N, fill = source)
+      ggplot2::aes(x = .data$L, y = .data$N, fill = .data$source)
     ) +
     ggplot2::scale_fill_manual("Length", 
                                values = c("Lc" = "red", "mode" = "black"),
                                na.translate = FALSE) +
     ggplot2::geom_hline(
       data = x@summary %>%
-        dplyr::select(year, mode = Nmode) %>%
-        dplyr::mutate("mode/2" = mode / 2) %>%
-        tidyr::pivot_longer(-year) %>%
-        dplyr::mutate(name = factor(name,
+        dplyr::select(.data$year, mode =.data$ Nmode) %>%
+        dplyr::mutate("mode/2" = .data$mode / 2) %>%
+        tidyr::pivot_longer(-.data$year) %>%
+        dplyr::mutate(name = factor(.data$name,
           levels = c("mode", "mode/2")
         )),
-      ggplot2::aes(yintercept = value, linetype = name),
+      ggplot2::aes(yintercept = .data$value, linetype = .data$name),
       size = 0.4
     ) +
     ggplot2::scale_linetype("Numbers") +
     ggplot2::coord_cartesian(xlim = c(0, NA), ylim = c(0, NA)) +
-    ggplot2::facet_wrap(~year) +
+    ggplot2::facet_wrap(~ .data$year) +
     ggplot2::labs(x = paste0("Length", 
                     ifelse(length(x@units) > 0, 
                            paste0(" (", x@units, ")"),
@@ -648,7 +661,7 @@ setMethod(f = "plot", signature = c(x = "Lc"),
   if (isTRUE(x@averaged)) {
     p <- p + 
       ggplot2::geom_vline(data = data.frame(length = x@value, colour = "Lc (average)"),
-                 aes(xintercept = length, colour = colour),
+                 aes(xintercept = .data$length, colour = .data$colour),
                  linetype = "dashed") +
       ggplot2::scale_colour_manual("", values = c("Lc (average)" = "red"))
   }
@@ -670,14 +683,15 @@ setMethod(
     }
 
     p <- x@data %>%
-      ggplot2::ggplot(aes(x = length, y = numbers)) +
+      ggplot2::ggplot(aes(x = .data$length, y = .data$numbers)) +
       ggplot2::geom_col(na.rm = TRUE) +
       ggplot2::geom_vline(data = x@summary %>%
-                   tidyr::pivot_longer(c(Lc, Lmean)) %>%
-                   dplyr::mutate(name = factor(name, 
+                   tidyr::pivot_longer(c(.data$Lc, .data$Lmean)) %>%
+                   dplyr::mutate(name = factor(.data$name, 
                                         levels = c("Lc", "Lmean"),
                                         labels = c("L[c]", "L[mean]"))),
-                   ggplot2::aes(xintercept = value, colour = name, linetype = name)) +
+                   ggplot2::aes(xintercept = .data$value, colour = .data$name, 
+                                linetype = .data$name)) +
       ggplot2::scale_linetype_manual("", 
                             values = c("L[c]" = "dashed", 
                                        "L[mean]" = "solid"), 
@@ -687,7 +701,7 @@ setMethod(
                                      "L[mean]" = "red"), 
                           labels = scales::parse_format()) +
       ggplot2::coord_cartesian(xlim = c(0, NA), ylim = c(0, NA)) +
-      ggplot2::facet_wrap(~year) +
+      ggplot2::facet_wrap(~ .data$year) +
       ggplot2::labs(
         x = paste0(
           "Length",
@@ -710,6 +724,7 @@ setMethod(
 ### ------------------------------------------------------------------------ ###
 ### HR ####
 #' @rdname rfb_plot
+#' @export
 setMethod(f = "plot", signature = c(x = "HR"), 
           definition = function(x, y, y_label, 
                                 show.data = TRUE,
@@ -748,7 +763,7 @@ setMethod(f = "plot", signature = c(x = "HR"),
   ### create plot
   p <- ggplot2::ggplot() +
     ggplot2::geom_line(data = object@data,
-                       ggplot2::aes(x = year, y = harvest_rate),
+                       ggplot2::aes(x = .data$year, y = .data$harvest_rate),
                        color = "#ed6028", 
                        na.rm = TRUE) +
     ggplot2::scale_x_continuous(breaks = scales::pretty_breaks()) +
@@ -783,13 +798,13 @@ setMethod(f = "plot", signature = c(x = "HR"),
       
       ### format for plotting
       df_catch <- object@data[, cols_c] %>% 
-        tidyr::pivot_longer(cols = -year) %>%
-        dplyr::filter(!is.na(value))
+        tidyr::pivot_longer(cols = -.data$year) %>%
+        dplyr::filter(!is.na(.data$value))
       ### max catch value
       c_max <- df_catch %>%
-        dplyr::group_by(year) %>%
-        dplyr::summarise(catch = sum(value)) %>%
-        dplyr::select(catch) %>%
+        dplyr::group_by(.data$year) %>%
+        dplyr::summarise(catch = sum(.data$value)) %>%
+        dplyr::select(.data$catch) %>%
         max(na.rm = TRUE)
       ### axis label
       y_label_catch <- paste0("Catches", 
@@ -798,7 +813,8 @@ setMethod(f = "plot", signature = c(x = "HR"),
                                    ""))
       p_catch <- ggplot2::ggplot() +
         ggplot2::geom_col(data = df_catch,
-                          ggplot2::aes(x = year, y = value, fill = name),
+                          ggplot2::aes(x = .data$year, y = .data$value, 
+                                       fill = .data$name),
                           na.rm = TRUE) +
         ggplot2::scale_fill_manual("",
                                      values = cols_c_colours) + 
@@ -822,7 +838,7 @@ setMethod(f = "plot", signature = c(x = "HR"),
                                    ""))
       p_idx <- ggplot2::ggplot() +
         ggplot2::geom_line(data = object@data,
-                           ggplot2::aes(x = year, y = index),
+                           ggplot2::aes(x = .data$year, y = .data$index),
                            color = "#077c6c",
                            na.rm = TRUE) +
         ggplot2::coord_cartesian(ylim = c(0, idx_max * 1.1), 

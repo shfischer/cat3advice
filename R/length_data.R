@@ -211,17 +211,17 @@ setMethod(Lc,
 
     ### aggregate data - keep only year, length, numbers
     data <- data %>%
-      dplyr::group_by(year, length) %>%
-      dplyr::summarise(numbers = sum(numbers), .groups = "drop")
+      dplyr::group_by(.data$year, .data$length) %>%
+      dplyr::summarise(numbers = sum(.data$numbers), .groups = "drop")
     object@data <- data
     ### find Lc per year (first length class where numbers >= half of mode)
     smry <- data %>%
-      dplyr::group_by(year) %>%
+      dplyr::group_by(.data$year) %>%
       dplyr::summarise(
-        Lmode = length[numbers == max(numbers)],
-        Nmode = max(numbers),
-        Lc = min(length[numbers >= max(numbers) / 2], na.rm = TRUE),
-        Nc = min(numbers[length == Lc], na.rm = TRUE),
+        Lmode = .data$length[.data$numbers == max(.data$numbers)],
+        Nmode = max(.data$numbers),
+        Lc = min(length[.data$numbers >= max(.data$numbers) / 2], na.rm = TRUE),
+        Nc = min(.data$numbers[.data$length == .data$Lc], na.rm = TRUE),
         .groups = "keep"
       )
     smry <- as.data.frame(smry)
@@ -524,12 +524,12 @@ setMethod(Lmean,
       if (any(years %in% years_Lc)) {
         warning(paste0("annual Lc values provided but not for all years in",
                        "data,\n  removing years without Lc from data!"))
-        data <- data %>% filter(year %in% years_Lc)
+        data <- data %>% filter(.data$year %in% years_Lc)
       }
       
       ### add annual Lc values to data
       data <- full_join(x = data, 
-                        y = Lc@summary %>% select(year, Lc),
+                        y = Lc@summary %>% select(.data$year, .data$Lc),
                         by = "year")
       
     ### same value for all years
@@ -545,19 +545,20 @@ setMethod(Lmean,
     
     ### calculate mean length above Lc
     tmp_smry <- data %>%
-      dplyr::group_by(year, length, Lc) %>%
-      dplyr::summarise(numbers = sum(numbers), .groups = "keep") %>%
-      dplyr::ungroup(length)
+      dplyr::group_by(.data$year, .data$length, .data$Lc) %>%
+      dplyr::summarise(numbers = sum(.data$numbers), .groups = "keep") %>%
+      dplyr::ungroup(.data$length)
     ### include Lc?
     if (isTRUE(object@include_Lc)) {
-      tmp_smry <- tmp_smry %>% dplyr::filter(length >= Lc)
+      tmp_smry <- tmp_smry %>% dplyr::filter(length >= .data$Lc)
     } else {
-      tmp_smry <- tmp_smry %>% dplyr::filter(length > Lc)
+      tmp_smry <- tmp_smry %>% dplyr::filter(length > .data$Lc)
     }
     ### mean 
     object@summary <-  tmp_smry %>%
       ### mean of length classes, weighted by catch numbers at length
-      dplyr::summarise(Lmean = stats::weighted.mean(x = length, w = numbers),
+      dplyr::summarise(Lmean = stats::weighted.mean(x = .data$length, 
+                                                    w = .data$numbers),
                        .groups = "keep")
 
     ### add NAs for year with missing data 
@@ -567,7 +568,7 @@ setMethod(Lmean,
     yrs_missing <- setdiff(yrs_full, object@years)
     if (isTRUE(length(yrs_missing) > 0)) {
       object@summary <- dplyr::bind_rows(object@summary, data.frame(year = yrs_missing)) %>%
-        dplyr::arrange(year)
+        dplyr::arrange(.data$year)
     }
     
     ### fill value slot
