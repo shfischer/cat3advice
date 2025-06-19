@@ -23,7 +23,11 @@ GitHub](https://github.com/shfischer/cat3advice/blob/main/vignettes/cat3advice.m
 ## Installation
 
 The easiest way to install the `cat3advice` package is to install it as
-a binary package from ICES r-universe:
+a binary package from [ICES
+r-universe](https://ices-tools-prod.r-universe.dev/cat3advice):
+
+[![r-universe
+version](https://ices-tools-prod.r-universe.dev/cat3advice/badges/version)](https://ices-tools-prod.r-universe.dev/cat3advice)
 
 ``` r
 install.packages("cat3advice", repos = c("https://ices-tools-prod.r-universe.dev", "https://cran.r-project.org"))
